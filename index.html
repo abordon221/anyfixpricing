@@ -313,15 +313,27 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 4px;
+      gap: 8px;
     }
     .quote-item-title { font-weight: 600; }
+
     .quote-item-time {
-      font-size: 0.8rem;
-      color: var(--danger);
       display: flex;
       align-items: center;
       gap: 4px;
+      font-size: 0.8rem;
+      color: var(--muted);
     }
+    .quote-item-time input {
+      width: 72px;
+      padding: 3px 6px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      font-size: 0.8rem;
+      text-align: right;
+      background: #ffffff;
+    }
+
     .quote-item-body {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -506,7 +518,7 @@
 
         <div class="muted">
           Amounts are estimates based on your hourly rate and the configured time
-          for each option.
+          for each option. You can manually override minutes per item if needed.
         </div>
       </div>
     </div>
@@ -811,18 +823,37 @@
           title.className = "quote-item-title";
           title.textContent = item.service;
 
-          const time = document.createElement("div");
-          time.className = "quote-item-time";
-          time.innerHTML = `<span>⏱</span><span>${item.totalMinutes} min</span>`;
+          const timeWrap = document.createElement("div");
+          timeWrap.className = "quote-item-time";
+
+          const timeLabel = document.createElement("span");
+          timeLabel.textContent = "Time (min):";
+
+          const timeInput = document.createElement("input");
+          timeInput.type = "number";
+          timeInput.min = "0";
+          timeInput.step = "1";
+          timeInput.value = item.totalMinutes;
+
+          timeInput.addEventListener("change", () => {
+            let val = Number(timeInput.value);
+            if (!isFinite(val) || val < 0) val = 0;
+            item.totalMinutes = val;
+            timeInput.value = val;
+            updateTotals();
+          });
+
+          timeWrap.appendChild(timeLabel);
+          timeWrap.appendChild(timeInput);
 
           header.appendChild(title);
-          header.appendChild(time);
+          header.appendChild(timeWrap);
 
           const body = document.createElement("div");
           body.className = "quote-item-body";
           item.selections.forEach(sel => {
             const line = document.createElement("div");
-            line.textContent = `${sel.category}: ${sel.option}`;
+            line.textContent = `${sel.category}: ${sel.option} (${sel.minutes} min)`;
             body.appendChild(line);
           });
 
@@ -870,7 +901,7 @@
     }
 
     /***********************
-     * 9) Quote text builder
+     * 9) Quote text & HTML
      ***********************/
     function buildQuoteText(quoteId) {
       const lines = [];
@@ -891,7 +922,7 @@
             `  - ${sel.category}: ${sel.option} (${sel.minutes} min)`
           );
         });
-        lines.push(`  Total time for this item: ${item.totalMinutes} min`);
+        lines.push(`  Total time for this item (overridable): ${item.totalMinutes} min`);
         lines.push("");
       });
 
@@ -904,6 +935,74 @@
       lines.push(`Total amount: $${totalAmount.toFixed(2)}`);
 
       return lines.join("\n");
+    }
+
+    function buildQuoteHtml(quoteId) {
+      const now = new Date();
+      const rate = Number(hourlyRateInput.value) || 0;
+      let totalMinutes = 0;
+
+      let html = `
+        <p style="margin:0 0 12px 0; color:#374151; font-size:14px;">
+          AnyFix Quote <strong>#${quoteId}</strong><br/>
+          Generated: ${now.toLocaleString()}
+        </p>
+      `;
+
+      html += `
+        <table cellpadding="0" cellspacing="0" border="0"
+          style="width:100%; border-collapse:collapse; font-size:14px; margin-bottom:16px;">
+          <thead>
+            <tr>
+              <th align="left" style="border-bottom:1px solid #e5e7eb; padding:8px 4px;">Item</th>
+              <th align="left" style="border-bottom:1px solid #e5e7eb; padding:8px 4px;">Details</th>
+              <th align="right" style="border-bottom:1px solid #e5e7eb; padding:8px 4px;">Time (min)</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      quoteItems.forEach((item, idx) => {
+        totalMinutes += Number(item.totalMinutes) || 0;
+
+        const details = item.selections
+          .map(sel => `${sel.category}: ${sel.option} (${sel.minutes} min)`)
+          .join("<br/>");
+
+        html += `
+          <tr>
+            <td valign="top" style="padding:8px 4px; border-bottom:1px solid #f3f4f6;">
+              ${idx + 1}. ${item.service}
+            </td>
+            <td valign="top" style="padding:8px 4px; border-bottom:1px solid #f3f4f6; color:#4b5563;">
+              ${details}
+            </td>
+            <td valign="top" align="right" style="padding:8px 4px; border-bottom:1px solid #f3f4f6;">
+              ${item.totalMinutes}
+            </td>
+          </tr>
+        `;
+      });
+
+      html += `
+          </tbody>
+        </table>
+      `;
+
+      const totalAmount = (totalMinutes / 60) * rate;
+
+      html += `
+        <div style="font-size:14px; color:#111827;">
+          <p style="margin:0 0 4px 0;"><strong>Summary</strong></p>
+          <p style="margin:0; color:#4b5563;">
+            Hourly rate: $${rate.toFixed(2)}<br/>
+            Total time: ${totalMinutes} min<br/>
+            Estimated total: <strong>$${totalAmount.toFixed(2)}</strong>
+          </p>
+        </div>
+      `;
+
+      return html;
     }
 
     /***********************
@@ -940,16 +1039,17 @@
 
       const quoteId = generateQuoteId();
       const serviceSummary = buildServiceSummary();
-      const quoteText = buildQuoteText(quoteId);
+      const quoteText = buildQuoteText(quoteId);   // plain text
+      const quoteHtml = buildQuoteHtml(quoteId);   // HTML table
       const subject = `AnyFix Quote #${quoteId} – ${serviceSummary}`;
 
       const templateParams = {
-        from_email: "abordon@anyfixservices.com",
-        email: toEmail,
-        customer_name: "Customer",
-        quote_text: quoteText,
         quote_id: quoteId,
         service_summary: serviceSummary,
+        customer_name: "Customer",
+        quote_text: quoteText,
+        quote_html: quoteHtml,
+        email: toEmail,
         subject: subject
       };
 
@@ -963,7 +1063,7 @@
         })
         .catch(err => {
           console.error("EmailJS error:", err);
-          alert("There was a problem sending the email. Check EmailJS config.");
+          alert("EmailJS error: " + JSON.stringify(err));
         })
         .finally(() => {
           emailQuoteBtn.disabled = false;
@@ -985,6 +1085,3 @@
   </script>
 </body>
 </html>
-
-
-
