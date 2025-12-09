@@ -1,0 +1,258 @@
+service,category,option,minutes
+Artwork and picture,# of,1,10
+Artwork and picture,# of,2,18
+Artwork and picture,# of,3,26
+Artwork and picture,# of,4,34
+Artwork and picture,# of,5,42
+Artwork and picture,# of,6+,50
+Artwork and picture,Job,Install,0
+Artwork and picture,Job,Uninstall,0
+Artwork and picture,Ladder required,No,0
+Artwork and picture,Ladder required,Yes,8
+Artwork and picture,Timeline,Not in hurry (within 7 days),0
+Artwork and picture,Timeline,Still searching (no timeline defined),0
+Artwork and picture,Timeline,Urgent (within 48hrs),0
+Artwork and picture,Wall type,Brick / concrete,10
+Artwork and picture,Wall type,Drywall,0
+Artwork and picture,Wall type,Metal,8
+Artwork and picture,Wall type,Other,5
+Artwork and picture,Wall type,Tile,12
+Bathroom,# of,1,0
+Bathroom,# of,2,15
+Bathroom,# of,3,30
+Bathroom,# of,4,45
+Bathroom,# of,5,60
+Bathroom,# of,6+,75
+Bathroom,Fixture,"Accessories (hooks, handles, mirror)",10
+Bathroom,Fixture,Faucet,35
+Bathroom,Fixture,Shower head,15
+Bathroom,Fixture,Toilet valves / flapper,20
+Bathroom,Fixture,Water valve cartridge,45
+Bathroom,Job,Install,0
+Bathroom,Job,Replace,0
+Bathroom,Job,Uninstall,10
+Bathroom,Timeline,Not in hurry (within 7 days),0
+Bathroom,Timeline,Still searching (no timeline defined),0
+Bathroom,Timeline,Urgent (within 48hrs),0
+Cabinet,# of,1 to 5,60
+Cabinet,# of,10 to 20,240
+Cabinet,# of,20+,360
+Cabinet,# of,6 to 10,120
+Cabinet,Job,Paint,0
+Cabinet,Job,Refinish damaged areas,90
+Cabinet,Job,"Repair doors, drawers, shelves",45
+Cabinet,Timeline,Not in hurry (within 7 days),0
+Cabinet,Timeline,Still searching (no timeline defined),0
+Cabinet,Timeline,Urgent (within 48hrs),0
+Caulk,Accesibility,Easy (standing height),0
+Caulk,Accesibility,"Hard (behind sink, tight spots, ladders)",15
+Caulk,Linear footage,11 to 20ft,20
+Caulk,Linear footage,6 to 10 ft,10
+Caulk,Linear footage,< 5ft,0
+Caulk,Linear footage,> 20ft,35
+Caulk,Location,Backsplash edge,10
+Caulk,Location,Baseboards,20
+Caulk,Location,Bathroom sink,15
+Caulk,Location,Kitchen sink,20
+Caulk,Location,Shower / tub,35
+Caulk,Mold removal,No,0
+Caulk,Mold removal,Yes,15
+Caulk,Old caulk removal,No (new),0
+Caulk,Old caulk removal,Yes,20
+Caulk,Timeline,Not in hurry (within 7 days),0
+Caulk,Timeline,Still searching (no timeline defined),0
+Caulk,Timeline,Urgent (within 48hrs),0
+Door,Door Material,Glass,15
+Door,Door Material,Metal,10
+Door,Door Material,Other,10
+Door,Door Material,Wood,0
+Door,Job,Dents,30
+Door,Job,Paint,60
+Door,Job,Patch damage,90
+Door,Location,Exterior,15
+Door,Location,Interior,0
+Door,Timeline,Not in hurry (within 7 days),0
+Door,Timeline,Still searching (no timeline defined),0
+Door,Timeline,Urgent (within 48hrs),0
+Drywall repair,# of patches,1,0
+Drywall repair,# of patches,2,10
+Drywall repair,# of patches,3,20
+Drywall repair,# of patches,4+,35
+Drywall repair,Damage size,Extra large: >12? (recommend decline or full quote),100
+Drywall repair,Damage size,Large: >6? but ó12?,55
+Drywall repair,Damage size,Medium: ó6?,35
+Drywall repair,Damage size,Small: ó3?,20
+Drywall repair,Damage size,"Tiny: ó1? (nail pops, dents)",10
+Drywall repair,Finishing level,Patch + texture + paint,35
+Drywall repair,Finishing level,Patch + texture match,20
+Drywall repair,Finishing level,Patch only,0
+Drywall repair,Location,Ceiling,15
+Drywall repair,Location,Wall,0
+Drywall repair,Timeline,Not in hurry (within 7 days),0
+Drywall repair,Timeline,Still searching (no timeline defined),0
+Drywall repair,Timeline,Urgent (within 48hrs),0
+Floating shelves,# of,1,25
+Floating shelves,# of,2,40
+Floating shelves,# of,3,55
+Floating shelves,# of,4,70
+Floating shelves,# of,5,85
+Floating shelves,# of,6+,100
+Floating shelves,Job,Install,0
+Floating shelves,Job,Replace,0
+Floating shelves,Timeline,Not in hurry (within 7 days),0
+Floating shelves,Timeline,Still searching (no timeline defined),0
+Floating shelves,Timeline,Urgent (within 48hrs),0
+Floating shelves,Wall type,Brick / concrete,20
+Floating shelves,Wall type,Drywall,0
+Floating shelves,Wall type,Metal,15
+Floating shelves,Wall type,Other,10
+Floating shelves,Wall type,Tile,25
+Furniture,# of,1,20
+Furniture,# of,2,35
+Furniture,# of,3,50
+Furniture,# of,4,65
+Furniture,# of,5,80
+Furniture,# of,6+,95
+Furniture,Instructions or Make/model info,No,15
+Furniture,Instructions or Make/model info,Yes,0
+Furniture,Job,Assemble,0
+Furniture,Job,Dismantle,15
+Furniture,Timeline,Not in hurry (within 7 days),0
+Furniture,Timeline,Still searching (no timeline defined),0
+Furniture,Timeline,Urgent (within 48hrs),0
+Handyman,Job,Assembly,0
+Handyman,Job,Cleaning,0
+Handyman,Job,Installation,0
+Handyman,Job,Maintenance,0
+Handyman,Job,Other,0
+Handyman,Job,Painting,0
+Handyman,Job,Repairs,0
+Handyman,Time,2 to 5 hr,240
+Handyman,Time,<2hr,90
+Handyman,Time,Full day,480
+Handyman,Timeline,Not in hurry (within 7 days),0
+Handyman,Timeline,Still searching (no timeline defined),0
+Handyman,Timeline,Urgent (within 48hrs),0
+Kitchen,Access,Standard,0
+Kitchen,Access,Tight (rear wall proximity),15
+Kitchen,Fixture,Faucet,35
+Kitchen,Fixture,Garbage disposal,30
+Kitchen,Job,Install,0
+Kitchen,Job,Replace,0
+Kitchen,Job,Uninstall,10
+Kitchen,Timeline,Not in hurry (within 7 days),0
+Kitchen,Timeline,Still searching (no timeline defined),0
+Kitchen,Timeline,Urgent (within 48hrs),0
+Light fixture,# of,1,0
+Light fixture,# of,11 to 20,150
+Light fixture,# of,2 to 4,30
+Light fixture,# of,20+,240
+Light fixture,# of,5 to 10,75
+Light fixture,Ceiling height,10 - 14 ft,15
+Light fixture,Ceiling height,8 - 10 ft (standard),0
+Light fixture,Ceiling height,<8 ft,0
+Light fixture,Ceiling height,> 14ft,25
+Light fixture,Ceiling height,Not in ceiling,0
+Light fixture,Fixture type,Chandelier (20 to 40lb),60
+Light fixture,Fixture type,Chandelier (< 20lb),40
+Light fixture,Fixture type,Flush mount,20
+Light fixture,Fixture type,Pendant,25
+Light fixture,Job,Install,0
+Light fixture,Job,Replace,0
+Light fixture,Job,Uninstall,0
+Light fixture,Timeline,Not in hurry (within 7 days),0
+Light fixture,Timeline,Still searching (no timeline defined),0
+Light fixture,Timeline,Urgent (within 48hrs),0
+Lock / handle,# of,1,20
+Lock / handle,# of,2,35
+Lock / handle,# of,3,50
+Lock / handle,# of,4,65
+Lock / handle,# of,5,80
+Lock / handle,# of,6+,92
+Lock / handle,Job,Install,0
+Lock / handle,Job,Replace,0
+Lock / handle,Timeline,Not in hurry (within 7 days),0
+Lock / handle,Timeline,Still searching (no timeline defined),0
+Lock / handle,Timeline,Urgent (within 48hrs),0
+Outlet/switch,# of,1,15
+Outlet/switch,# of,2,25
+Outlet/switch,# of,3,35
+Outlet/switch,# of,4,45
+Outlet/switch,# of,5,55
+Outlet/switch,# of,6+,65
+Outlet/switch,Job,New (declined),0
+Outlet/switch,Job,Replace,0
+Outlet/switch,Timeline,Not in hurry (within 7 days),0
+Outlet/switch,Timeline,Still searching (no timeline defined),0
+Outlet/switch,Timeline,Urgent (within 48hrs),0
+Smart home devices,# of,1,20
+Smart home devices,# of,2,35
+Smart home devices,# of,3,50
+Smart home devices,# of,4,65
+Smart home devices,# of,5,80
+Smart home devices,# of,6+,95
+Smart home devices,Device,Camera,25
+Smart home devices,Device,Doorbell,25
+Smart home devices,Device,Lighting,20
+Smart home devices,Device,Lock,20
+Smart home devices,Device,Router,20
+Smart home devices,Device,Switch,20
+Smart home devices,Device,Thermostat,45
+Smart home devices,Device,Voice assistant (i.e. Alexa),15
+Smart home devices,Height,10 - 14 ft,15
+Smart home devices,Height,8 - 10 ft (standard),0
+Smart home devices,Height,<8 ft,0
+Smart home devices,Height,> 14ft,25
+Smart home devices,Job,Install,0
+Smart home devices,Job,Replace,5
+Smart home devices,Job,Uninstall,10
+Smart home devices,Power,Existing transformer OK,0
+Smart home devices,Power,Transformer upgrade needed (decline full rewiring),0
+Smart home devices,Setup,Mount + Wi-Fi configuration,15
+Smart home devices,Setup,Mount only,0
+Smart home devices,Timeline,Not in hurry (within 7 days),0
+Smart home devices,Timeline,Still searching (no timeline defined),0
+Smart home devices,Timeline,Urgent (within 48hrs),0
+Smoke detector,# switches,1,10
+Smoke detector,# switches,2,18
+Smoke detector,# switches,3,25
+Smoke detector,# switches,4,32
+Smoke detector,# switches,5,40
+Smoke detector,# switches,6+,47
+Smoke detector,Job,Replace battery,0
+Smoke detector,Timeline,Not in hurry (within 7 days),0
+Smoke detector,Timeline,Still searching (no timeline defined),0
+Smoke detector,Timeline,Urgent (within 48hrs),0
+TV Mounting,Conceal cables,No,0
+TV Mounting,Conceal cables,Yes,35
+TV Mounting,Sound system setup,No,0
+TV Mounting,Sound system setup,Yes,15
+TV Mounting,TV size,Large,45
+TV Mounting,TV size,Medium,30
+TV Mounting,TV size,Small,20
+TV Mounting,Timeline,Not in hurry (within 7 days),0
+TV Mounting,Timeline,Still searching (no timeline defined),0
+TV Mounting,Timeline,Urgent (within 48hrs),0
+TV Mounting,Wall type,Brick / concrete,25
+TV Mounting,Wall type,Drywall,0
+TV Mounting,Wall type,Metal,10
+TV Mounting,Wall type,Other,10
+TV Mounting,Wall type,Tile,30
+Window,# of,1 to 5,60
+Window,# of,10 to 20,200
+Window,# of,20+,300
+Window,# of,6 to 10,110
+Window,Job,Install,0
+Window,Job,Replace,0
+Window,Job,Uninstall,20
+Window,Timeline,Not in hurry (within 7 days),0
+Window,Timeline,Still searching (no timeline defined),0
+Window,Timeline,Urgent (within 48hrs),0
+Window,Treatment,Blinds,25
+Window,Treatment,Drapery,35
+Window,Treatment,Shades,30
+Window,Wall type,Brick / concrete,20
+Window,Wall type,Drywall,0
+Window,Wall type,Metal,15
+Window,Wall type,Other,10
+Window,Wall type,Tile,20

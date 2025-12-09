@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AnyFix – Quote Builder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Optional: Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root {
+      --primary: #f97316;
+      --primary-soft: #ffedd5;
+      --primary-border: #fed7aa;
+      --bg: #f9fafb;
+      --card-bg: #ffffff;
+      --border: #e5e7eb;
+      --text: #111827;
+      --muted: #6b7280;
+      --danger: #dc2626;
+      --success: #16a34a;
+      --success-soft: #dcfce7;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --shadow-soft: 0 10px 25px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .page {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #fb923c, #f97316);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-family: "Poppins", system-ui;
+      box-shadow: 0 8px 18px rgba(248, 113, 113, 0.3);
+    }
+
+    .header-title {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .header-title h1 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .header-title span {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .hero {
+      margin-bottom: 20px;
+    }
+    .hero h2 {
+      margin: 0 0 4px;
+      font-size: 1.8rem;
+      font-family: "Poppins", system-ui;
+      letter-spacing: -0.02em;
+    }
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 520px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      padding: 18px 18px 20px;
+    }
+
+    .section-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 6px;
+    }
+
+    .section-subtitle {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    label {
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+      display: inline-block;
+      font-weight: 500;
+    }
+
+    select,
+    input[type="number"],
+    input[type="text"] {
+      width: 100%;
+      padding: 9px 11px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      font-size: 0.9rem;
+      outline: none;
+      background: #fdfdfd;
+      transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+    }
+
+    select:focus,
+    input[type="number"]:focus,
+    input[type="text"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px var(--primary-soft);
+      background: #ffffff;
+    }
+
+    .top-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .top-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+
+    .top-row-main {
+      flex: 1;
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: none;
+      padding: 9px 18px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s, box-shadow 0.15s, transform 0.05s,
+        opacity 0.15s;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 6px 14px rgba(248, 113, 22, 0.35);
+    }
+    .btn-primary:hover {
+      background: #ea580c;
+      transform: translateY(-1px);
+    }
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      padding-inline: 4px;
+      box-shadow: none;
+    }
+    .btn-ghost:hover {
+      color: var(--danger);
+      background: #fee2e2;
+    }
+
+    .options-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+      margin-bottom: 10px;
+      font-size: 0.85rem;
+    }
+    .badge-counter {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .options-grid:
+      grid-template-columns: 1fr;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .option-group {
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: #fdfdfd;
+      padding: 12px 12px 10px;
+    }
+
+    .option-group-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .option-group-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .option-group-meta {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .option-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .option-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 4px 6px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.12s;
+      font-size: 0.87rem;
+    }
+    .option-row:hover {
+      background: #f3f4f6;
+    }
+
+    .option-main {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .option-row input[type="radio"] {
+      cursor: pointer;
+    }
+
+    .option-time {
+      font-size: 0.8rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .quote-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .quote-meta {
+      font-size: 0.8rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pill {
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      font-size: 0.75rem;
+      color: var(--muted);
+      background: #f9fafb;
+    }
+
+    .quote-items {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+
+    .quote-item {
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: #fdfdfd;
+      padding: 10px 10px 9px;
+      font-size: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      position: relative;
+    }
+
+    .quote-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .quote-item-title {
+      font-weight: 600;
+    }
+
+    .quote-item-time {
+      font-size: 0.8rem;
+      color: var(--danger);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .quote-item-body {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 2px 12px;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 480px) {
+      .quote-item-body {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .quote-item-remove {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 0.9rem;
+      padding: 0;
+    }
+    .quote-item-remove:hover {
+      color: var(--danger);
+    }
+
+    .field-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+
+    .totals-block {
+      border-radius: 14px;
+      border: 1px dashed var(--border);
+      padding: 10px 10px 10px;
+      background: #f9fafb;
+      font-size: 0.88rem;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+
+    .totals-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .totals-label {
+      color: var(--muted);
+    }
+
+    .amount-chip {
+      background: var(--success-soft);
+      color: var(--success);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .empty-state {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-align: center;
+      padding: 12px 8px;
+      border-radius: 10px;
+      background: #f9fafb;
+      border: 1px dashed var(--border);
+    }
+
+    .text-danger {
+      color: var(--danger);
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- Top brand header -->
+    <div class="header">
+      <div class="logo">A</div>
+      <div class="header-title">
+        <h1>AnyFix</h1>
+        <span>Quote Builder</span>
+      </div>
+    </div>
+
+    <!-- Hero text -->
+    <div class="hero">
+      <h2>Build Your Quote</h2>
+      <p>
+        Select a service type, configure the options that match your project, and
+        get an instant time and price estimate for the job.
+      </p>
+    </div>
+
+    <div class="layout">
+      <!-- LEFT: service & options -->
+      <div class="card">
+        <!-- Service selector + Add button -->
+        <div class="top-row">
+          <div class="top-row-main">
+            <label for="serviceSelect">Select Service</label>
+            <select id="serviceSelect">
+              <option value="">Select a service…</option>
+            </select>
+          </div>
+          <div>
+            <button id="addToQuoteBtn" class="btn btn-primary" disabled>
+              <span>＋</span> Add to Quote
+            </button>
+          </div>
+        </div>
+
+        <!-- Options header -->
+        <div class="options-header">
+          <div class="badge-counter">
+            Configure Options
+            <span id="selectedCount">(0/0 selected)</span>
+          </div>
+          <div class="muted" id="serviceHint">Choose a service to see options.</div>
+        </div>
+
+        <!-- Category cards -->
+        <div id="optionsGrid" class="options-grid"></div>
+      </div>
+
+      <!-- RIGHT: quote summary -->
+      <div class="card">
+        <div class="quote-card-header">
+          <div>
+            <div class="section-title">Quote Summary</div>
+            <div class="quote-meta">
+              <span id="quoteItemsCount">0 items in quote</span>
+            </div>
+          </div>
+          <button id="clearQuoteBtn" class="btn btn-ghost" type="button">
+            Clear All
+          </button>
+        </div>
+
+        <div class="quote-items" id="quoteItemsContainer">
+          <div class="empty-state">
+            No items yet. Select a service, pick options, and click
+            <strong>Add to Quote</strong>.
+          </div>
+        </div>
+
+        <!-- Hourly rate -->
+        <div class="field-row">
+          <label for="hourlyRate">Hourly Rate ($)</label>
+          <input
+            type="number"
+            id="hourlyRate"
+            min="0"
+            step="1"
+            value="75"
+          />
+        </div>
+
+        <!-- Totals -->
+        <div class="totals-block">
+          <div class="totals-row">
+            <span class="totals-label">Total Time</span>
+            <span id="totalTimeLabel">0 min</span>
+          </div>
+          <div class="totals-row">
+            <span class="totals-label">Total Amount</span>
+            <span class="amount-chip">
+              <span>$</span><span id="totalAmountLabel">0.00</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="muted" style="font-size: 0.78rem;">
+          Amounts are estimates based on your hourly rate and the configured time
+          for each option.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PapaParse for CSV -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+  <!-- App script -->
+  <script>
+    /************************************************************
+     * 1) LOAD DATABASE FROM CSV
+     * CSV file: database.csv (same folder as index.html)
+     * Required columns: service, category, option, minutes
+     ************************************************************/
+    let databaseRows = [];
+
+    function loadDatabaseFromCSV() {
+      Papa.parse("database.csv", {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: function (results) {
+          databaseRows = results.data.map(row => ({
+            service: row.service,
+            category: row.category,
+            option: row.option,
+            minutes: Number(row.minutes) || 0
+          }));
+
+          initServices();
+          renderQuoteItems();
+        },
+        error: function (err) {
+          console.error("Error loading CSV", err);
+          alert("Could not load database.csv. Check the file name/location.");
+        }
+      });
+    }
+
+    /************************************************************
+     * 2) ELEMENT REFS & STATE
+     ************************************************************/
+    const serviceSelect = document.getElementById("serviceSelect");
+    const addToQuoteBtn = document.getElementById("addToQuoteBtn");
+    const clearQuoteBtn = document.getElementById("clearQuoteBtn");
+    const optionsGrid = document.getElementById("optionsGrid");
+    const selectedCountLabel = document.getElementById("selectedCount");
+    const serviceHint = document.getElementById("serviceHint");
+    const quoteItemsContainer = document.getElementById("quoteItemsContainer");
+    const quoteItemsCount = document.getElementById("quoteItemsCount");
+    const hourlyRateInput = document.getElementById("hourlyRate");
+    const totalTimeLabel = document.getElementById("totalTimeLabel");
+    const totalAmountLabel = document.getElementById("totalAmountLabel");
+
+    let currentService = "";
+    let currentCategories = []; // [{name, options: [{label, minutes}], inputName}]
+    let quoteItems = []; // [{id, service, selections:[{category, option, minutes}], totalMinutes}]
+
+    /************************************************************
+     * 3) INIT SERVICE DROPDOWN
+     ************************************************************/
+    function initServices() {
+      serviceSelect.innerHTML = '<option value="">Select a service…</option>';
+
+      const services = Array.from(new Set(databaseRows.map(r => r.service))).sort();
+      services.forEach(service => {
+        const opt = document.createElement("option");
+        opt.value = service;
+        opt.textContent = service;
+        serviceSelect.appendChild(opt);
+      });
+    }
+
+    /************************************************************
+     * 4) RENDER CATEGORY CARDS FOR SELECTED SERVICE
+     ************************************************************/
+    function onServiceChange() {
+      currentService = serviceSelect.value;
+      optionsGrid.innerHTML = "";
+      currentCategories = [];
+      addToQuoteBtn.disabled = true;
+      updateSelectedCount();
+
+      if (!currentService) {
+        serviceHint.textContent = "Choose a service to see options.";
+        return;
+      }
+
+      serviceHint.textContent = currentService;
+      const rows = databaseRows.filter(r => r.service === currentService);
+
+      const categoryNames = Array.from(
+        new Set(rows.map(r => r.category))
+      ).sort();
+
+      categoryNames.forEach((cat, index) => {
+        const options = rows
+          .filter(r => r.category === cat)
+          .map(r => ({
+            label: r.option,
+            minutes: Number(r.minutes) || 0
+          }));
+
+        const inputName = `cat-${index}`;
+
+        currentCategories.push({
+          name: cat,
+          options,
+          inputName
+        });
+
+        const groupEl = document.createElement("div");
+        groupEl.className = "option-group";
+        groupEl.dataset.category = cat;
+
+        const header = document.createElement("div");
+        header.className = "option-group-header";
+
+        const title = document.createElement("div");
+        title.className = "option-group-title";
+        title.textContent = cat;
+
+        const meta = document.createElement("div");
+        meta.className = "option-group-meta";
+        meta.textContent = "Select one";
+
+        header.appendChild(title);
+        header.appendChild(meta);
+
+        const list = document.createElement("div");
+        list.className = "option-list";
+
+        options.forEach(opt => {
+          const row = document.createElement("label");
+          row.className = "option-row";
+
+          const main = document.createElement("div");
+          main.className = "option-main";
+
+          const input = document.createElement("input");
+          input.type = "radio";
+          input.name = inputName;
+          input.value = opt.label;
+
+          input.addEventListener("change", () => {
+            updateSelectedCount();
+            updateAddButtonState();
+          });
+
+          const text = document.createElement("span");
+          text.textContent = opt.label;
+
+          main.appendChild(input);
+          main.appendChild(text);
+
+          const time = document.createElement("span");
+          time.className = "option-time";
+          const minutes = opt.minutes;
+          time.textContent = minutes ? `${minutes} min` : "0 min";
+
+          row.appendChild(main);
+          row.appendChild(time);
+          list.appendChild(row);
+        });
+
+        groupEl.appendChild(header);
+        groupEl.appendChild(list);
+        optionsGrid.appendChild(groupEl);
+      });
+
+      updateSelectedCount();
+      updateAddButtonState();
+    }
+
+    function updateSelectedCount() {
+      if (!currentCategories.length) {
+        selectedCountLabel.textContent = "(0/0 selected)";
+        return;
+      }
+      let selected = 0;
+      currentCategories.forEach(cat => {
+        const checked = document.querySelector(
+          `input[name="${cat.inputName}"]:checked`
+        );
+        if (checked) selected += 1;
+      });
+      selectedCountLabel.textContent = `(${selected}/${currentCategories.length} selected)`;
+    }
+
+    function updateAddButtonState() {
+      let hasAnySelection = false;
+      currentCategories.forEach(cat => {
+        const checked = document.querySelector(
+          `input[name="${cat.inputName}"]:checked`
+        );
+        if (checked) hasAnySelection = true;
+      });
+      addToQuoteBtn.disabled = !hasAnySelection || !currentService;
+    }
+
+    /************************************************************
+     * 5) BUILD QUOTE ITEM FROM CURRENT SELECTIONS
+     ************************************************************/
+    function addToQuote() {
+      if (!currentService) return;
+
+      const selections = [];
+      currentCategories.forEach(cat => {
+        const checked = document.querySelector(
+          `input[name="${cat.inputName}"]:checked`
+        );
+        if (!checked) return;
+
+        const label = checked.value;
+        const row = databaseRows.find(
+          r =>
+            r.service === currentService &&
+            r.category === cat.name &&
+            r.option === label
+        );
+        const minutes = row ? Number(row.minutes) || 0 : 0;
+
+        selections.push({
+          category: cat.name,
+          option: label,
+          minutes
+        });
+      });
+
+      if (!selections.length) {
+        alert("Please select at least one option.");
+        return;
+      }
+
+      const totalMinutes = selections.reduce(
+        (sum, s) => sum + (Number(s.minutes) || 0),
+        0
+      );
+
+      const item = {
+        id: Date.now() + Math.random(),
+        service: currentService,
+        selections,
+        totalMinutes
+      };
+
+      quoteItems.push(item);
+      renderQuoteItems();
+    }
+
+    /************************************************************
+     * 6) RENDER QUOTE SUMMARY
+     ************************************************************/
+    function renderQuoteItems() {
+      quoteItemsContainer.innerHTML = "";
+      if (!quoteItems.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        empty.textContent =
+          "No items yet. Select a service, pick options, and click Add to Quote.";
+        quoteItemsContainer.appendChild(empty);
+      } else {
+        quoteItems.forEach(item => {
+          const wrap = document.createElement("div");
+          wrap.className = "quote-item";
+
+          const header = document.createElement("div");
+          header.className = "quote-item-header";
+
+          const title = document.createElement("div");
+          title.className = "quote-item-title";
+          title.textContent = item.service;
+
+          const time = document.createElement("div");
+          time.className = "quote-item-time";
+          time.innerHTML = `<span>⏱</span><span>${item.totalMinutes} min</span>`;
+
+          const removeBtn = document.createElement("button");
+          removeBtn.className = "quote-item-remove";
+          removeBtn.type = "button";
+          removeBtn.textContent = "🗑";
+          removeBtn.title = "Remove from quote";
+          removeBtn.addEventListener("click", () => {
+            quoteItems = quoteItems.filter(q => q.id !== item.id);
+            renderQuoteItems();
+          });
+
+          time.appendChild(removeBtn);
+
+          header.appendChild(title);
+          header.appendChild(time);
+
+          const body = document.createElement("div");
+          body.className = "quote-item-body";
+          item.selections.forEach(sel => {
+            const line = document.createElement("div");
+            line.textContent = `${sel.category}: ${sel.option}`;
+            body.appendChild(line);
+          });
+
+          wrap.appendChild(header);
+          wrap.appendChild(body);
+          quoteItemsContainer.appendChild(wrap);
+        });
+      }
+
+      quoteItemsCount.textContent =
+        quoteItems.length === 1
+          ? "1 item in quote"
+          : `${quoteItems.length} items in quote`;
+
+      updateTotals();
+    }
+
+    function updateTotals() {
+      const totalMinutes = quoteItems.reduce(
+        (sum, item) => sum + (Number(item.totalMinutes) || 0),
+        0
+      );
+      const rate = Number(hourlyRateInput.value) || 0;
+      const totalAmount = (totalMinutes / 60) * rate;
+
+      totalTimeLabel.textContent = `${totalMinutes} min`;
+      totalAmountLabel.textContent = totalAmount.toFixed(2);
+    }
+
+    function clearQuote() {
+      if (!quoteItems.length) return;
+      if (!confirm("Clear all items in the quote?")) return;
+      quoteItems = [];
+      renderQuoteItems();
+    }
+
+    /************************************************************
+     * 7) EVENT WIRING & INIT
+     ************************************************************/
+    serviceSelect.addEventListener("change", onServiceChange);
+    addToQuoteBtn.addEventListener("click", addToQuote);
+    clearQuoteBtn.addEventListener("click", clearQuote);
+    hourlyRateInput.addEventListener("input", updateTotals);
+
+    // Start by loading the CSV, then init services & quote
+    loadDatabaseFromCSV();
+  </script>
+</body>
+</html>
