@@ -5,7 +5,7 @@
   <title>AnyFix – Quote Builder</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Optional: Google Fonts -->
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -376,23 +376,32 @@
       gap: 4px;
       margin-bottom: 10px;
     }
-    .totals-row {
+    .totals-row,
+    .totals-row-sub,
+    .totals-row-total {
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
+    .totals-row-sub {
+      font-size: 0.86rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .totals-row-total {
+      margin-top: 4px;
+      font-size: 0.97rem;
+      font-weight: 600;
+      color: #111827;
+    }
     .totals-label { color: var(--muted); }
 
-    .amount-chip {
-      background: var(--success-soft);
-      color: var(--success);
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+    .actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+      margin-bottom: 4px;
     }
 
     .empty-state {
@@ -403,14 +412,6 @@
       border-radius: 10px;
       background: #f9fafb;
       border: 1px dashed var(--border);
-    }
-
-    .actions-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 4px;
-      margin-bottom: 4px;
     }
   </style>
 </head>
@@ -482,28 +483,36 @@
         </div>
 
         <div class="field-row">
-          <label for="hourlyRate">Hourly Rate ($)</label>
-          <input type="number" id="hourlyRate" min="0" step="1" value="75" />
+          <label for="customerName">Customer name</label>
+          <input type="text" id="customerName" placeholder="Customer name" />
         </div>
 
         <div class="field-row">
           <label for="customerEmail">Customer email</label>
           <input type="email" id="customerEmail" placeholder="name@example.com" />
-          <span class="muted">
-            Quote will be sent from <strong>abordon@anyfixservices.com</strong>.
-          </span>
+        </div>
+
+        <div class="field-row">
+          <label for="hourlyRate">Hourly Rate ($)</label>
+          <input type="number" id="hourlyRate" min="0" step="1" value="75" />
         </div>
 
         <div class="totals-block">
           <div class="totals-row">
-            <span class="totals-label">Total Time</span>
+            <span class="totals-label">Labor time</span>
             <span id="totalTimeLabel">0 min</span>
           </div>
           <div class="totals-row">
-            <span class="totals-label">Total Amount</span>
-            <span class="amount-chip">
-              <span>$</span><span id="totalAmountLabel">0.00</span>
-            </span>
+            <span class="totals-label">Subtotal</span>
+            <span id="subtotalLabel">$0.00</span>
+          </div>
+          <div class="totals-row-sub">
+            <span>Sales tax (10.2%)</span>
+            <span id="taxLabel">$0.00</span>
+          </div>
+          <div class="totals-row-total">
+            <span>Total after tax</span>
+            <span id="totalAfterTaxLabel">$0.00</span>
           </div>
         </div>
 
@@ -517,31 +526,49 @@
         </div>
 
         <div class="muted">
-          Amounts are estimates based on your hourly rate and the configured time
-          for each option. You can manually override minutes per item if needed.
+          Amounts are estimates based on your hourly rate and configured time. You
+          can manually override minutes per item if needed.
         </div>
       </div>
     </div>
   </div>
 
-  <!-- PapaParse for CSV -->
+  <!-- Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <!-- EmailJS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
   <script>
-    /***********************
-     * 1) EmailJS init
-     ***********************/
+    /* EmailJS init */
     emailjs.init("UmuPL_Uw9bxoJunoI");
     const EMAILJS_SERVICE_ID = "service_anyfix";
     const EMAILJS_TEMPLATE_ID = "anyfix_quote_505050";
 
-    /***********************
-     * 2) Load database.csv
-     ***********************/
+    /* State */
     let databaseRows = [];
+    let currentService = "";
+    let currentCategories = [];
+    let quoteItems = [];
 
+    /* Elements */
+    const serviceSelect = document.getElementById("serviceSelect");
+    const addToQuoteBtn = document.getElementById("addToQuoteBtn");
+    const clearQuoteBtn = document.getElementById("clearQuoteBtn");
+    const optionsGrid = document.getElementById("optionsGrid");
+    const selectedCountLabel = document.getElementById("selectedCount");
+    const serviceHint = document.getElementById("serviceHint");
+    const quoteItemsContainer = document.getElementById("quoteItemsContainer");
+    const quoteItemsCount = document.getElementById("quoteItemsCount");
+    const hourlyRateInput = document.getElementById("hourlyRate");
+    const totalTimeLabel = document.getElementById("totalTimeLabel");
+    const subtotalLabel = document.getElementById("subtotalLabel");
+    const taxLabel = document.getElementById("taxLabel");
+    const totalAfterTaxLabel = document.getElementById("totalAfterTaxLabel");
+    const downloadQuoteBtn = document.getElementById("downloadQuoteBtn");
+    const emailQuoteBtn = document.getElementById("emailQuoteBtn");
+    const customerNameInput = document.getElementById("customerName");
+    const customerEmailInput = document.getElementById("customerEmail");
+
+    /* Load CSV */
     function loadDatabaseFromCSV() {
       Papa.parse("database.csv", {
         download: true,
@@ -555,7 +582,6 @@
             minutes: Number(row.minutes) || 0
           }));
           initServices();
-          renderQuoteItems();
         },
         error: function (err) {
           console.error("Error loading CSV", err);
@@ -564,63 +590,7 @@
       });
     }
 
-    /***********************
-     * 3) Elements & state
-     ***********************/
-    const serviceSelect = document.getElementById("serviceSelect");
-    const addToQuoteBtn = document.getElementById("addToQuoteBtn");
-    const clearQuoteBtn = document.getElementById("clearQuoteBtn");
-    const optionsGrid = document.getElementById("optionsGrid");
-    const selectedCountLabel = document.getElementById("selectedCount");
-    const serviceHint = document.getElementById("serviceHint");
-    const quoteItemsContainer = document.getElementById("quoteItemsContainer");
-    const quoteItemsCount = document.getElementById("quoteItemsCount");
-    const hourlyRateInput = document.getElementById("hourlyRate");
-    const totalTimeLabel = document.getElementById("totalTimeLabel");
-    const totalAmountLabel = document.getElementById("totalAmountLabel");
-    const downloadQuoteBtn = document.getElementById("downloadQuoteBtn");
-    const emailQuoteBtn = document.getElementById("emailQuoteBtn");
-    const customerEmailInput = document.getElementById("customerEmail");
-
-    let currentService = "";
-    let currentCategories = []; // [{name, options, inputName}]
-    let quoteItems = []; // [{id, service, selections, totalMinutes}]
-
-    /***********************
-     * 4) Helper: quote ID & summary
-     ***********************/
-    function generateQuoteId() {
-      const now = new Date();
-      return (
-        "AFQ-" +
-        now.getFullYear().toString() +
-        String(now.getMonth() + 1).padStart(2, "0") +
-        String(now.getDate()).padStart(2, "0") +
-        "-" +
-        String(now.getHours()).padStart(2, "0") +
-        String(now.getMinutes()).padStart(2, "0") +
-        String(now.getSeconds()).padStart(2, "0")
-      );
-    }
-
-    function buildServiceSummary() {
-      const services = Array.from(new Set(quoteItems.map(i => i.service)));
-      if (services.length === 0) return "No services";
-      if (services.length === 1) return services[0];
-      if (services.length === 2) return services[0] + " & " + services[1];
-      return (
-        services[0] +
-        ", " +
-        services[1] +
-        " + " +
-        (services.length - 2) +
-        " more"
-      );
-    }
-
-    /***********************
-     * 5) Init services
-     ***********************/
+    /* Init services dropdown */
     function initServices() {
       serviceSelect.innerHTML = '<option value="">Select a service…</option>';
       const services = Array.from(new Set(databaseRows.map(r => r.service))).sort();
@@ -632,9 +602,7 @@
       });
     }
 
-    /***********************
-     * 6) Options for service
-     ***********************/
+    /* Service change → build option groups */
     function onServiceChange() {
       currentService = serviceSelect.value;
       optionsGrid.innerHTML = "";
@@ -649,10 +617,7 @@
 
       serviceHint.textContent = currentService;
       const rows = databaseRows.filter(r => r.service === currentService);
-
-      const categoryNames = Array.from(
-        new Set(rows.map(r => r.category))
-      ).sort();
+      const categoryNames = Array.from(new Set(rows.map(r => r.category))).sort();
 
       categoryNames.forEach((cat, index) => {
         const options = rows
@@ -663,7 +628,6 @@
           }));
 
         const inputName = `cat-${index}`;
-
         currentCategories.push({ name: cat, options, inputName });
 
         const groupEl = document.createElement("div");
@@ -754,9 +718,7 @@
       addToQuoteBtn.disabled = !hasAnySelection || !currentService;
     }
 
-    /***********************
-     * 7) Add quote item
-     ***********************/
+    /* Add to quote */
     function addToQuote() {
       if (!currentService) return;
 
@@ -800,9 +762,7 @@
       renderQuoteItems();
     }
 
-    /***********************
-     * 8) Render quote
-     ***********************/
+    /* Render quote list */
     function renderQuoteItems() {
       quoteItemsContainer.innerHTML = "";
       if (!quoteItems.length) {
@@ -881,18 +841,6 @@
       updateTotals();
     }
 
-    function updateTotals() {
-      const totalMinutes = quoteItems.reduce(
-        (sum, item) => sum + (Number(item.totalMinutes) || 0),
-        0
-      );
-      const rate = Number(hourlyRateInput.value) || 0;
-      const totalAmount = (totalMinutes / 60) * rate;
-
-      totalTimeLabel.textContent = `${totalMinutes} min`;
-      totalAmountLabel.textContent = totalAmount.toFixed(2);
-    }
-
     function clearQuote() {
       if (!quoteItems.length) return;
       if (!confirm("Clear all items in the quote?")) return;
@@ -900,39 +848,61 @@
       renderQuoteItems();
     }
 
-    /***********************
-     * 9) Quote text & HTML
-     ***********************/
+    /* Totals with tax */
+    function updateTotals() {
+      const totalMinutes = quoteItems.reduce(
+        (sum, item) => sum + (Number(item.totalMinutes) || 0),
+        0
+      );
+      const rate = Number(hourlyRateInput.value) || 0;
+      const subtotal = (totalMinutes / 60) * rate;
+      const tax = subtotal * 0.102;
+      const totalAfterTax = subtotal + tax;
+
+      totalTimeLabel.textContent = `${totalMinutes} min`;
+      subtotalLabel.textContent = `$${subtotal.toFixed(2)}`;
+      taxLabel.textContent = `$${tax.toFixed(2)}`;
+      totalAfterTaxLabel.textContent = `$${totalAfterTax.toFixed(2)}`;
+    }
+
+    /* Helpers for email/text */
     function buildQuoteText(quoteId) {
-      const lines = [];
       const now = new Date();
       const rate = Number(hourlyRateInput.value) || 0;
-      let totalMinutes = 0;
+      const name = customerNameInput.value.trim() || "Customer";
+      const totalMinutes = quoteItems.reduce(
+        (sum, item) => sum + (Number(item.totalMinutes) || 0),
+        0
+      );
+      const subtotal = (totalMinutes / 60) * rate;
+      const tax = subtotal * 0.102;
+      const totalAfterTax = subtotal + tax;
 
+      const lines = [];
       lines.push(`AnyFix Quote #${quoteId}`);
+      lines.push(`For: ${name}`);
       lines.push("====================");
       lines.push(`Generated: ${now.toLocaleString()}`);
       lines.push("");
 
       quoteItems.forEach((item, idx) => {
-        totalMinutes += Number(item.totalMinutes) || 0;
         lines.push(`Item ${idx + 1}: ${item.service}`);
         item.selections.forEach(sel => {
           lines.push(
             `  - ${sel.category}: ${sel.option} (${sel.minutes} min)`
           );
         });
-        lines.push(`  Total time for this item (overridable): ${item.totalMinutes} min`);
+        lines.push(`  Total time for this item: ${item.totalMinutes} min`);
         lines.push("");
       });
-
-      const totalAmount = (totalMinutes / 60) * rate;
 
       lines.push("Summary");
       lines.push("-------");
       lines.push(`Hourly rate: $${rate.toFixed(2)}`);
-      lines.push(`Total time: ${totalMinutes} min`);
-      lines.push(`Total amount: $${totalAmount.toFixed(2)}`);
+      lines.push(`Labor time: ${totalMinutes} min`);
+      lines.push(`Subtotal: $${subtotal.toFixed(2)}`);
+      lines.push(`Tax (10.2%): $${tax.toFixed(2)}`);
+      lines.push(`Total after tax: $${totalAfterTax.toFixed(2)}`);
 
       return lines.join("\n");
     }
@@ -940,16 +910,20 @@
     function buildQuoteHtml(quoteId) {
       const now = new Date();
       const rate = Number(hourlyRateInput.value) || 0;
-      let totalMinutes = 0;
+      const name = customerNameInput.value.trim() || "Customer";
+      const totalMinutes = quoteItems.reduce(
+        (sum, item) => sum + (Number(item.totalMinutes) || 0),
+        0
+      );
+      const subtotal = (totalMinutes / 60) * rate;
+      const tax = subtotal * 0.102;
+      const totalAfterTax = subtotal + tax;
 
       let html = `
         <p style="margin:0 0 12px 0; color:#374151; font-size:14px;">
-          AnyFix Quote <strong>#${quoteId}</strong><br/>
+          Quote for: <strong>${name}</strong><br/>
           Generated: ${now.toLocaleString()}
         </p>
-      `;
-
-      html += `
         <table cellpadding="0" cellspacing="0" border="0"
           style="width:100%; border-collapse:collapse; font-size:14px; margin-bottom:16px;">
           <thead>
@@ -963,8 +937,6 @@
       `;
 
       quoteItems.forEach((item, idx) => {
-        totalMinutes += Number(item.totalMinutes) || 0;
-
         const details = item.selections
           .map(sel => `${sel.category}: ${sel.option} (${sel.minutes} min)`)
           .join("<br/>");
@@ -987,27 +959,43 @@
       html += `
           </tbody>
         </table>
-      `;
-
-      const totalAmount = (totalMinutes / 60) * rate;
-
-      html += `
-        <div style="font-size:14px; color:#111827;">
-          <p style="margin:0 0 4px 0;"><strong>Summary</strong></p>
-          <p style="margin:0; color:#4b5563;">
-            Hourly rate: $${rate.toFixed(2)}<br/>
-            Total time: ${totalMinutes} min<br/>
-            Estimated total: <strong>$${totalAmount.toFixed(2)}</strong>
-          </p>
-        </div>
+        <p style="font-size:14px; color:#111827;">
+          <strong>Hourly rate:</strong> $${rate.toFixed(2)}<br/>
+          <strong>Labor time:</strong> ${totalMinutes} min<br/>
+          <strong>Subtotal:</strong> $${subtotal.toFixed(2)}<br/>
+          <strong>Tax (10.2%):</strong> $${tax.toFixed(2)}<br/>
+          <strong>Total after tax:</strong> $${totalAfterTax.toFixed(2)}
+        </p>
       `;
 
       return html;
     }
 
-    /***********************
-     * 10) Download / Email
-     ***********************/
+    function generateQuoteId() {
+      const now = new Date();
+      return (
+        "AFQ-" +
+        now.getFullYear().toString() +
+        String(now.getMonth() + 1).padStart(2, "0") +
+        String(now.getDate()).padStart(2, "0") +
+        "-" +
+        String(now.getHours()).padStart(2, "0") +
+        String(now.getMinutes()).padStart(2, "0") +
+        String(now.getSeconds()).padStart(2, "0")
+      );
+    }
+
+    function buildServiceSummary() {
+      const services = Array.from(new Set(quoteItems.map(i => i.service)));
+      if (services.length === 0) return "No services";
+      if (services.length === 1) return services[0];
+      if (services.length === 2) return services[0] + " & " + services[1];
+      return (
+        services[0] + ", " + services[1] + " + " + (services.length - 2) + " more"
+      );
+    }
+
+    /* Download quote */
     function downloadQuote() {
       if (!quoteItems.length) {
         alert("No items in the quote yet.");
@@ -1026,6 +1014,7 @@
       URL.revokeObjectURL(url);
     }
 
+    /* Send email via EmailJS */
     function sendQuoteByEmail() {
       if (!quoteItems.length) {
         alert("No items in the quote yet.");
@@ -1039,14 +1028,15 @@
 
       const quoteId = generateQuoteId();
       const serviceSummary = buildServiceSummary();
-      const quoteText = buildQuoteText(quoteId);   // plain text
-      const quoteHtml = buildQuoteHtml(quoteId);   // HTML table
+      const quoteText = buildQuoteText(quoteId);
+      const quoteHtml = buildQuoteHtml(quoteId);
       const subject = `AnyFix Quote #${quoteId} – ${serviceSummary}`;
+      const customerName = customerNameInput.value.trim() || "Customer";
 
       const templateParams = {
         quote_id: quoteId,
         service_summary: serviceSummary,
-        customer_name: "Customer",
+        customer_name: customerName,
         quote_text: quoteText,
         quote_html: quoteHtml,
         email: toEmail,
@@ -1071,9 +1061,7 @@
         });
     }
 
-    /***********************
-     * 11) Events & init
-     ***********************/
+    /* Event bindings */
     serviceSelect.addEventListener("change", onServiceChange);
     addToQuoteBtn.addEventListener("click", addToQuote);
     clearQuoteBtn.addEventListener("click", clearQuote);
