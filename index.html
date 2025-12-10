@@ -386,7 +386,7 @@
     .totals-row-sub {
       font-size: 0.86rem;
       color: var(--muted);
-      margin-top: 4px;
+      margin-top: 2px;
     }
     .totals-row-total {
       margin-top: 4px;
@@ -412,6 +412,24 @@
       border-radius: 10px;
       background: #f9fafb;
       border: 1px dashed var(--border);
+    }
+
+    .materials-list {
+      margin-top: 6px;
+      font-size: 0.8rem;
+    }
+    .material-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .material-remove-btn {
+      border: none;
+      background: transparent;
+      color: #b91c1c;
+      font-size: 0.8rem;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -497,14 +515,66 @@
           <input type="number" id="hourlyRate" min="0" step="1" value="75" />
         </div>
 
+        <div class="field-row">
+          <label for="discountPercent">Labor discount (%)</label>
+          <input
+            type="number"
+            id="discountPercent"
+            min="0"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <span class="muted">Applies to labor subtotal before tax. 0–100.</span>
+        </div>
+
+        <!-- Materials -->
+        <div class="field-row">
+          <label>Materials</label>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <input
+              type="text"
+              id="materialDesc"
+              placeholder="Description"
+              style="flex:2; min-width:140px;"
+            />
+            <input
+              type="number"
+              id="materialCost"
+              placeholder="Cost"
+              min="0"
+              step="0.01"
+              style="flex:1; min-width:110px;"
+            />
+            <button id="addMaterialBtn" class="btn btn-secondary" type="button">
+              Add
+            </button>
+          </div>
+          <div id="materialsList" class="materials-list muted">
+            No materials added.
+          </div>
+        </div>
+
         <div class="totals-block">
           <div class="totals-row">
             <span class="totals-label">Labor time</span>
             <span id="totalTimeLabel">0 min</span>
           </div>
           <div class="totals-row">
-            <span class="totals-label">Subtotal</span>
-            <span id="subtotalLabel">$0.00</span>
+            <span class="totals-label">Labor subtotal</span>
+            <span id="laborSubtotalLabel">$0.00</span>
+          </div>
+          <div class="totals-row-sub">
+            <span>Discount on labor</span>
+            <span id="discountAmountLabel">-$0.00</span>
+          </div>
+          <div class="totals-row-sub">
+            <span>Labor after discount</span>
+            <span id="laborAfterDiscountLabel">$0.00</span>
+          </div>
+          <div class="totals-row-sub">
+            <span>Materials</span>
+            <span id="materialsTotalLabel">$0.00</span>
           </div>
           <div class="totals-row-sub">
             <span>Sales tax (10.2%)</span>
@@ -526,8 +596,8 @@
         </div>
 
         <div class="muted">
-          Amounts are estimates based on your hourly rate and configured time. You
-          can manually override minutes per item if needed.
+          Amounts are estimates based on your hourly rate, discount, and
+          configured time. You can manually override minutes per item if needed.
         </div>
       </div>
     </div>
@@ -538,18 +608,18 @@
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
   <script>
-    /* EmailJS init */
+    const SALES_TAX_RATE = 0.102;
+
     emailjs.init("UmuPL_Uw9bxoJunoI");
     const EMAILJS_SERVICE_ID = "service_anyfix";
     const EMAILJS_TEMPLATE_ID = "anyfix_quote_505050";
 
-    /* State */
     let databaseRows = [];
     let currentService = "";
     let currentCategories = [];
     let quoteItems = [];
+    let materials = [];
 
-    /* Elements */
     const serviceSelect = document.getElementById("serviceSelect");
     const addToQuoteBtn = document.getElementById("addToQuoteBtn");
     const clearQuoteBtn = document.getElementById("clearQuoteBtn");
@@ -559,16 +629,23 @@
     const quoteItemsContainer = document.getElementById("quoteItemsContainer");
     const quoteItemsCount = document.getElementById("quoteItemsCount");
     const hourlyRateInput = document.getElementById("hourlyRate");
+    const discountPercentInput = document.getElementById("discountPercent");
     const totalTimeLabel = document.getElementById("totalTimeLabel");
-    const subtotalLabel = document.getElementById("subtotalLabel");
+    const laborSubtotalLabel = document.getElementById("laborSubtotalLabel");
+    const discountAmountLabel = document.getElementById("discountAmountLabel");
+    const laborAfterDiscountLabel = document.getElementById("laborAfterDiscountLabel");
+    const materialsTotalLabel = document.getElementById("materialsTotalLabel");
     const taxLabel = document.getElementById("taxLabel");
     const totalAfterTaxLabel = document.getElementById("totalAfterTaxLabel");
     const downloadQuoteBtn = document.getElementById("downloadQuoteBtn");
     const emailQuoteBtn = document.getElementById("emailQuoteBtn");
     const customerNameInput = document.getElementById("customerName");
     const customerEmailInput = document.getElementById("customerEmail");
+    const materialDescInput = document.getElementById("materialDesc");
+    const materialCostInput = document.getElementById("materialCost");
+    const addMaterialBtn = document.getElementById("addMaterialBtn");
+    const materialsList = document.getElementById("materialsList");
 
-    /* Load CSV */
     function loadDatabaseFromCSV() {
       Papa.parse("database.csv", {
         download: true,
@@ -590,7 +667,6 @@
       });
     }
 
-    /* Init services dropdown */
     function initServices() {
       serviceSelect.innerHTML = '<option value="">Select a service…</option>';
       const services = Array.from(new Set(databaseRows.map(r => r.service))).sort();
@@ -602,7 +678,6 @@
       });
     }
 
-    /* Service change → build option groups */
     function onServiceChange() {
       currentService = serviceSelect.value;
       optionsGrid.innerHTML = "";
@@ -617,7 +692,10 @@
 
       serviceHint.textContent = currentService;
       const rows = databaseRows.filter(r => r.service === currentService);
-      const categoryNames = Array.from(new Set(rows.map(r => r.category))).sort();
+
+      const categoryNames = Array.from(
+        new Set(rows.map(r => r.category))
+      ).sort();
 
       categoryNames.forEach((cat, index) => {
         const options = rows
@@ -628,6 +706,7 @@
           }));
 
         const inputName = `cat-${index}`;
+
         currentCategories.push({ name: cat, options, inputName });
 
         const groupEl = document.createElement("div");
@@ -718,7 +797,6 @@
       addToQuoteBtn.disabled = !hasAnySelection || !currentService;
     }
 
-    /* Add to quote */
     function addToQuote() {
       if (!currentService) return;
 
@@ -762,7 +840,6 @@
       renderQuoteItems();
     }
 
-    /* Render quote list */
     function renderQuoteItems() {
       quoteItemsContainer.innerHTML = "";
       if (!quoteItems.length) {
@@ -842,30 +919,96 @@
     }
 
     function clearQuote() {
-      if (!quoteItems.length) return;
-      if (!confirm("Clear all items in the quote?")) return;
+      if (!quoteItems.length && !materials.length) return;
+      if (!confirm("Clear all items and materials in the quote?")) return;
       quoteItems = [];
+      materials = [];
       renderQuoteItems();
+      renderMaterials();
+      updateTotals();
     }
 
-    /* Totals with tax */
+    function addMaterial() {
+      const desc = materialDescInput.value.trim();
+      const cost = Number(materialCostInput.value);
+      if (!desc || !isFinite(cost) || cost < 0) {
+        alert("Enter a valid description and cost for the material.");
+        return;
+      }
+
+      materials.push({
+        id: Date.now() + Math.random(),
+        description: desc,
+        cost
+      });
+
+      materialDescInput.value = "";
+      materialCostInput.value = "";
+
+      renderMaterials();
+      updateTotals();
+    }
+
+    function renderMaterials() {
+      materialsList.innerHTML = "";
+
+      if (!materials.length) {
+        materialsList.textContent = "No materials added.";
+        materialsList.classList.add("muted");
+        return;
+      }
+
+      materialsList.classList.remove("muted");
+      materials.forEach(mat => {
+        const row = document.createElement("div");
+        row.className = "material-item";
+        row.innerHTML = `
+          <span>${mat.description}</span>
+          <span>
+            $${mat.cost.toFixed(2)}
+            <button class="material-remove-btn" type="button">Remove</button>
+          </span>
+        `;
+        row.querySelector("button").addEventListener("click", () => {
+          materials = materials.filter(m => m.id !== mat.id);
+          renderMaterials();
+          updateTotals();
+        });
+        materialsList.appendChild(row);
+      });
+    }
+
     function updateTotals() {
       const totalMinutes = quoteItems.reduce(
         (sum, item) => sum + (Number(item.totalMinutes) || 0),
         0
       );
       const rate = Number(hourlyRateInput.value) || 0;
-      const subtotal = (totalMinutes / 60) * rate;
-      const tax = subtotal * 0.102;
-      const totalAfterTax = subtotal + tax;
+      let discountPercent = Number(discountPercentInput.value) || 0;
+      if (discountPercent < 0) discountPercent = 0;
+      if (discountPercent > 100) discountPercent = 100;
+      discountPercentInput.value = discountPercent;
+
+      const laborSubtotal = (totalMinutes / 60) * rate;
+      const discountAmount = laborSubtotal * (discountPercent / 100);
+      const laborAfterDiscount = laborSubtotal - discountAmount;
+      const materialsTotal = materials.reduce(
+        (sum, m) => sum + (Number(m.cost) || 0),
+        0
+      );
+      const taxBase = laborAfterDiscount + materialsTotal;
+      const tax = taxBase * SALES_TAX_RATE;
+      const totalAfterTax = taxBase + tax;
 
       totalTimeLabel.textContent = `${totalMinutes} min`;
-      subtotalLabel.textContent = `$${subtotal.toFixed(2)}`;
+      laborSubtotalLabel.textContent = `$${laborSubtotal.toFixed(2)}`;
+      discountAmountLabel.textContent = `-$${discountAmount.toFixed(2)}`;
+      laborAfterDiscountLabel.textContent = `$${laborAfterDiscount.toFixed(2)}`;
+      materialsTotalLabel.textContent = `$${materialsTotal.toFixed(2)}`;
       taxLabel.textContent = `$${tax.toFixed(2)}`;
       totalAfterTaxLabel.textContent = `$${totalAfterTax.toFixed(2)}`;
     }
 
-    /* Helpers for email/text */
     function buildQuoteText(quoteId) {
       const now = new Date();
       const rate = Number(hourlyRateInput.value) || 0;
@@ -874,9 +1017,17 @@
         (sum, item) => sum + (Number(item.totalMinutes) || 0),
         0
       );
-      const subtotal = (totalMinutes / 60) * rate;
-      const tax = subtotal * 0.102;
-      const totalAfterTax = subtotal + tax;
+      const discountPercent = Number(discountPercentInput.value) || 0;
+      const laborSubtotal = (totalMinutes / 60) * rate;
+      const discountAmount = laborSubtotal * (discountPercent / 100);
+      const laborAfterDiscount = laborSubtotal - discountAmount;
+      const materialsTotal = materials.reduce(
+        (sum, m) => sum + (Number(m.cost) || 0),
+        0
+      );
+      const taxBase = laborAfterDiscount + materialsTotal;
+      const tax = taxBase * SALES_TAX_RATE;
+      const totalAfterTax = taxBase + tax;
 
       const lines = [];
       lines.push(`AnyFix Quote #${quoteId}`);
@@ -896,11 +1047,24 @@
         lines.push("");
       });
 
+      if (materials.length) {
+        lines.push("Materials:");
+        materials.forEach(m => {
+          lines.push(`  - ${m.description}: $${m.cost.toFixed(2)}`);
+        });
+        lines.push("");
+      }
+
       lines.push("Summary");
       lines.push("-------");
       lines.push(`Hourly rate: $${rate.toFixed(2)}`);
       lines.push(`Labor time: ${totalMinutes} min`);
-      lines.push(`Subtotal: $${subtotal.toFixed(2)}`);
+      lines.push(`Labor subtotal: $${laborSubtotal.toFixed(2)}`);
+      lines.push(
+        `Discount (${discountPercent.toFixed(0)}%): -$${discountAmount.toFixed(2)}`
+      );
+      lines.push(`Labor after discount: $${laborAfterDiscount.toFixed(2)}`);
+      lines.push(`Materials: $${materialsTotal.toFixed(2)}`);
       lines.push(`Tax (10.2%): $${tax.toFixed(2)}`);
       lines.push(`Total after tax: $${totalAfterTax.toFixed(2)}`);
 
@@ -915,9 +1079,17 @@
         (sum, item) => sum + (Number(item.totalMinutes) || 0),
         0
       );
-      const subtotal = (totalMinutes / 60) * rate;
-      const tax = subtotal * 0.102;
-      const totalAfterTax = subtotal + tax;
+      const discountPercent = Number(discountPercentInput.value) || 0;
+      const laborSubtotal = (totalMinutes / 60) * rate;
+      const discountAmount = laborSubtotal * (discountPercent / 100);
+      const laborAfterDiscount = laborSubtotal - discountAmount;
+      const materialsTotal = materials.reduce(
+        (sum, m) => sum + (Number(m.cost) || 0),
+        0
+      );
+      const taxBase = laborAfterDiscount + materialsTotal;
+      const tax = taxBase * SALES_TAX_RATE;
+      const totalAfterTax = taxBase + tax;
 
       let html = `
         <p style="margin:0 0 12px 0; color:#374151; font-size:14px;">
@@ -959,10 +1131,45 @@
       html += `
           </tbody>
         </table>
-        <p style="font-size:14px; color:#111827;">
+      `;
+
+      if (materials.length) {
+        html += `
+          <p style="margin:0 0 6px 0; font-size:14px; color:#111827;"><strong>Materials</strong></p>
+          <table cellpadding="0" cellspacing="0" border="0"
+            style="width:100%; border-collapse:collapse; font-size:14px; margin-bottom:12px;">
+            <thead>
+              <tr>
+                <th align="left" style="border-bottom:1px solid #e5e7eb; padding:6px 4px;">Description</th>
+                <th align="right" style="border-bottom:1px solid #e5e7eb; padding:6px 4px;">Cost</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+        materials.forEach(m => {
+          html += `
+            <tr>
+              <td style="padding:6px 4px; border-bottom:1px solid #f3f4f6;">${m.description}</td>
+              <td align="right" style="padding:6px 4px; border-bottom:1px solid #f3f4f6;">
+                $${m.cost.toFixed(2)}
+              </td>
+            </tr>
+          `;
+        });
+        html += `
+            </tbody>
+          </table>
+        `;
+      }
+
+      html += `
+        <p style="font-size:14px; color:#111827; margin:0;">
           <strong>Hourly rate:</strong> $${rate.toFixed(2)}<br/>
           <strong>Labor time:</strong> ${totalMinutes} min<br/>
-          <strong>Subtotal:</strong> $${subtotal.toFixed(2)}<br/>
+          <strong>Labor subtotal:</strong> $${laborSubtotal.toFixed(2)}<br/>
+          <strong>Discount (${discountPercent.toFixed(0)}%):</strong> -$${discountAmount.toFixed(2)}<br/>
+          <strong>Labor after discount:</strong> $${laborAfterDiscount.toFixed(2)}<br/>
+          <strong>Materials:</strong> $${materialsTotal.toFixed(2)}<br/>
           <strong>Tax (10.2%):</strong> $${tax.toFixed(2)}<br/>
           <strong>Total after tax:</strong> $${totalAfterTax.toFixed(2)}
         </p>
@@ -995,7 +1202,6 @@
       );
     }
 
-    /* Download quote */
     function downloadQuote() {
       if (!quoteItems.length) {
         alert("No items in the quote yet.");
@@ -1014,7 +1220,6 @@
       URL.revokeObjectURL(url);
     }
 
-    /* Send email via EmailJS */
     function sendQuoteByEmail() {
       if (!quoteItems.length) {
         alert("No items in the quote yet.");
@@ -1061,13 +1266,14 @@
         });
     }
 
-    /* Event bindings */
     serviceSelect.addEventListener("change", onServiceChange);
     addToQuoteBtn.addEventListener("click", addToQuote);
     clearQuoteBtn.addEventListener("click", clearQuote);
     hourlyRateInput.addEventListener("input", updateTotals);
+    discountPercentInput.addEventListener("input", updateTotals);
     downloadQuoteBtn.addEventListener("click", downloadQuote);
     emailQuoteBtn.addEventListener("click", sendQuoteByEmail);
+    addMaterialBtn.addEventListener("click", addMaterial);
 
     loadDatabaseFromCSV();
   </script>
