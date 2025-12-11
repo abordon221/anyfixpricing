@@ -23,8 +23,6 @@
       --text: #111827;
       --muted: #6b7280;
       --danger: #dc2626;
-      --success: #16a34a;
-      --success-soft: #dcfce7;
       --radius-lg: 16px;
       --radius-md: 12px;
       --shadow-soft: 0 10px 25px rgba(15, 23, 42, 0.08);
@@ -432,6 +430,18 @@
       font-size: 0.8rem;
       cursor: pointer;
     }
+
+    .saved-search-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .saved-search-row input {
+      flex: 1;
+    }
+    .saved-search-row select {
+      flex: 1;
+    }
   </style>
 </head>
 <body>
@@ -496,12 +506,19 @@
           </button>
         </div>
 
-        <!-- Saved quotes dropdown -->
+        <!-- Saved quotes + search -->
         <div class="field-row">
           <label for="savedQuotesSelect">Saved quotes</label>
-          <select id="savedQuotesSelect">
-            <option value="">Select a saved quote…</option>
-          </select>
+          <div class="saved-search-row">
+            <input
+              type="text"
+              id="quoteSearch"
+              placeholder="Search by ID or name"
+            />
+            <select id="savedQuotesSelect">
+              <option value="">Select a saved quote…</option>
+            </select>
+          </div>
         </div>
 
         <div class="quote-items" id="quoteItemsContainer">
@@ -620,10 +637,19 @@
   <!-- Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
   <script>
+    /* ===== CONFIGURE THESE TWO CONSTANTS WITH YOUR SUPABASE PROJECT ===== */
+    const SUPABASE_URL = "https://YOUR-PROJECT-REF.supabase.co";  // TODO: replace
+    const SUPABASE_ANON_KEY = "YOUR_ANON_PUBLIC_KEY";             // TODO: replace
+
+    const supabase = window.supabase.createClient(
+      https://krphfybgsyupjvacpeao.supabase.co,
+      eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtycGhmeWJnc3l1cGp2YWNwZWFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUzOTUwODYsImV4cCI6MjA4MDk3MTA4Nn0.fgNSoyaLJCW4MwoYz18y2a6zyuqcCluTmEmgZMpUkyA
+    );
+
     const SALES_TAX_RATE = 0.102;
-    const STORAGE_KEY = "anyfix_saved_quotes_v1";
 
     emailjs.init("UmuPL_Uw9bxoJunoI");
     const EMAILJS_SERVICE_ID = "service_anyfix";
@@ -635,6 +661,7 @@
     let quoteItems = [];
     let materials = [];
     let currentQuoteId = null;
+    let savedQuotes = []; // cache from backend
 
     const serviceSelect = document.getElementById("serviceSelect");
     const addToQuoteBtn = document.getElementById("addToQuoteBtn");
@@ -646,6 +673,7 @@
     const quoteItemsCount = document.getElementById("quoteItemsCount");
     const currentQuoteIdLabel = document.getElementById("currentQuoteIdLabel");
     const savedQuotesSelect = document.getElementById("savedQuotesSelect");
+    const quoteSearchInput = document.getElementById("quoteSearch");
 
     const hourlyRateInput = document.getElementById("hourlyRate");
     const discountPercentInput = document.getElementById("discountPercent");
@@ -670,33 +698,60 @@
     const downloadQuoteBtn = document.getElementById("downloadQuoteBtn");
     const emailQuoteBtn = document.getElementById("emailQuoteBtn");
 
-    /* ---- LocalStorage helpers ---- */
-    function getSavedQuotes() {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return [];
-      try {
-        const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? parsed : [];
-      } catch {
-        return [];
+    /* ---------- Supabase helpers ---------- */
+    async function fetchSavedQuotesFromBackend() {
+      const { data, error } = await supabase
+        .from("quotes")
+        .select("*")
+        .order("timestamp", { ascending: false });
+
+      if (error) {
+        console.error("Supabase fetch error:", error);
+        return;
+      }
+      savedQuotes = data || [];
+      refreshSavedQuotesDropdown();
+    }
+
+    async function upsertQuoteToBackend(quoteObj) {
+      const { error } = await supabase.from("quotes").upsert({
+        quote_id: quoteObj.id,
+        timestamp: quoteObj.timestamp,
+        customer_name: quoteObj.customerName,
+        customer_email: quoteObj.customerEmail,
+        hourly_rate: quoteObj.hourlyRate,
+        discount_percent: quoteObj.discountPercent,
+        quote_items: quoteObj.quoteItems,
+        materials: quoteObj.materials
+      });
+      if (error) {
+        console.error("Supabase upsert error:", error);
+        throw error;
       }
     }
 
-    function setSavedQuotes(quotes) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(quotes));
-    }
-
-    function refreshSavedQuotesDropdown() {
-      const quotes = getSavedQuotes().sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+    function refreshSavedQuotesDropdown(filterText = "") {
+      const filter = filterText.toLowerCase();
       savedQuotesSelect.innerHTML =
         '<option value="">Select a saved quote…</option>';
-      quotes.forEach(q => {
+
+      savedQuotes.forEach(q => {
         const d = q.timestamp ? new Date(q.timestamp) : new Date();
         const dateStr = d.toLocaleDateString();
-        const name = q.customerName || "Customer";
+        const id = q.quote_id;
+        const name = q.customer_name || "Customer";
+        const label = `${id} – ${name} – ${dateStr}`;
+
+        if (
+          filter &&
+          !label.toLowerCase().includes(filter)
+        ) {
+          return;
+        }
+
         const opt = document.createElement("option");
-        opt.value = q.id;
-        opt.textContent = `${q.id} – ${name} – ${dateStr}`;
+        opt.value = id;
+        opt.textContent = label;
         savedQuotesSelect.appendChild(opt);
       });
     }
@@ -727,47 +782,43 @@
       };
     }
 
-    function internalSaveQuote(silent = false) {
+    async function internalSaveQuote(silent = false) {
       if (!quoteItems.length && !materials.length) {
         if (!silent) alert("Cannot save an empty quote.");
         return null;
       }
       const id = ensureCurrentQuoteId();
-      const quotes = getSavedQuotes();
-      const idx = quotes.findIndex(q => q.id === id);
       const quoteData = buildQuoteObjectForSave(id);
 
-      if (idx >= 0) quotes[idx] = quoteData;
-      else quotes.push(quoteData);
-
-      setSavedQuotes(quotes);
-      refreshSavedQuotesDropdown();
-      if (!silent) alert("Quote saved.");
-      return id;
-    }
-
-    function saveCurrentQuote() {
-      internalSaveQuote(false);
-    }
-
-    function loadQuoteById(id) {
-      if (!id) return;
-      const quotes = getSavedQuotes();
-      const q = quotes.find(x => x.id === id);
-      if (!q) {
-        alert("Saved quote not found.");
-        return;
+      try {
+        await upsertQuoteToBackend(quoteData);
+        await fetchSavedQuotesFromBackend();
+        if (!silent) alert("Quote saved.");
+        return id;
+      } catch (err) {
+        if (!silent) alert("Error saving quote: " + err.message);
+        return null;
       }
+    }
 
-      currentQuoteId = q.id;
-      customerNameInput.value = q.customerName || "";
-      customerEmailInput.value = q.customerEmail || "";
+    async function saveCurrentQuote() {
+      await internalSaveQuote(false);
+    }
+
+    function getSavedQuoteById(id) {
+      return savedQuotes.find(q => q.quote_id === id) || null;
+    }
+
+    function loadQuoteFromSupabaseRow(row) {
+      currentQuoteId = row.quote_id;
+      customerNameInput.value = row.customer_name || "";
+      customerEmailInput.value = row.customer_email || "";
       hourlyRateInput.value =
-        typeof q.hourlyRate === "number" ? q.hourlyRate : 75;
+        typeof row.hourly_rate === "number" ? row.hourly_rate : 75;
       discountPercentInput.value =
-        typeof q.discountPercent === "number" ? q.discountPercent : 0;
-      quoteItems = Array.isArray(q.quoteItems) ? q.quoteItems : [];
-      materials = Array.isArray(q.materials) ? q.materials : [];
+        typeof row.discount_percent === "number" ? row.discount_percent : 0;
+      quoteItems = Array.isArray(row.quote_items) ? row.quote_items : [];
+      materials = Array.isArray(row.materials) ? row.materials : [];
 
       renderQuoteItems();
       renderMaterials();
@@ -775,7 +826,17 @@
       updateCurrentQuoteIdLabel();
     }
 
-    /* ---- CSV load ---- */
+    function loadQuoteById(id) {
+      if (!id) return;
+      const row = getSavedQuoteById(id);
+      if (!row) {
+        alert("Saved quote not found.");
+        return;
+      }
+      loadQuoteFromSupabaseRow(row);
+    }
+
+    /* ---------- CSV / services ---------- */
     function loadDatabaseFromCSV() {
       Papa.parse("database.csv", {
         download: true,
@@ -808,7 +869,7 @@
       });
     }
 
-    /* ---- Service / options ---- */
+    /* ---------- Service / options UI ---------- */
     function onServiceChange() {
       currentService = serviceSelect.value;
       optionsGrid.innerHTML = "";
@@ -1059,7 +1120,7 @@
       }
       if (
         !confirm(
-          "Clear the current quote? This does not delete any saved quotes."
+          "Clear the current quote? This does not delete any saved quotes in the backend."
         )
       )
         return;
@@ -1078,7 +1139,7 @@
       updateTotals();
     }
 
-    /* ---- Materials ---- */
+    /* ---------- Materials ---------- */
     function addMaterial() {
       const desc = materialDescInput.value.trim();
       const cost = Number(materialCostInput.value);
@@ -1129,7 +1190,7 @@
       });
     }
 
-    /* ---- Totals ---- */
+    /* ---------- Totals ---------- */
     function updateTotals() {
       const totalMinutes = quoteItems.reduce(
         (sum, item) => sum + (Number(item.totalMinutes) || 0),
@@ -1161,7 +1222,7 @@
       totalAfterTaxLabel.textContent = `$${totalAfterTax.toFixed(2)}`;
     }
 
-    /* ---- Quote text/HTML ---- */
+    /* ---------- Quote text/HTML ---------- */
     function buildQuoteText(quoteId) {
       const now = new Date();
       const rate = Number(hourlyRateInput.value) || 0;
@@ -1355,13 +1416,13 @@
       );
     }
 
-    /* ---- Download & email ---- */
-    function downloadQuote() {
+    /* ---------- Download & email ---------- */
+    async function downloadQuote() {
       if (!quoteItems.length && !materials.length) {
         alert("No items or materials in the quote yet.");
         return;
       }
-      const quoteId = internalSaveQuote(true) || ensureCurrentQuoteId();
+      const quoteId = (await internalSaveQuote(true)) || ensureCurrentQuoteId();
       const text = buildQuoteText(quoteId);
       const blob = new Blob([text], { type: "text/plain" });
       const url = URL.createObjectURL(blob);
@@ -1374,7 +1435,7 @@
       URL.revokeObjectURL(url);
     }
 
-    function sendQuoteByEmail() {
+    async function sendQuoteByEmail() {
       if (!quoteItems.length && !materials.length) {
         alert("No items or materials in the quote yet.");
         return;
@@ -1385,7 +1446,7 @@
         return;
       }
 
-      const quoteId = internalSaveQuote(true) || ensureCurrentQuoteId();
+      const quoteId = (await internalSaveQuote(true)) || ensureCurrentQuoteId();
       const serviceSummary = buildServiceSummary();
       const quoteText = buildQuoteText(quoteId);
       const quoteHtml = buildQuoteHtml(quoteId);
@@ -1420,24 +1481,35 @@
         });
     }
 
-    /* ---- Events & init ---- */
-    serviceSelect.addEventListener("change", onServiceChange);
-    addToQuoteBtn.addEventListener("click", addToQuote);
-    clearQuoteBtn.addEventListener("click", clearQuote);
-    hourlyRateInput.addEventListener("input", updateTotals);
-    discountPercentInput.addEventListener("input", updateTotals);
-    downloadQuoteBtn.addEventListener("click", downloadQuote);
-    emailQuoteBtn.addEventListener("click", sendQuoteByEmail);
-    addMaterialBtn.addEventListener("click", addMaterial);
-    saveQuoteBtn.addEventListener("click", saveCurrentQuote);
-    savedQuotesSelect.addEventListener("change", () => {
-      const id = savedQuotesSelect.value;
-      if (id) loadQuoteById(id);
-    });
+    /* ---------- Events & init ---------- */
+    function attachEvents() {
+      serviceSelect.addEventListener("change", onServiceChange);
+      addToQuoteBtn.addEventListener("click", addToQuote);
+      clearQuoteBtn.addEventListener("click", clearQuote);
+      hourlyRateInput.addEventListener("input", updateTotals);
+      discountPercentInput.addEventListener("input", updateTotals);
+      downloadQuoteBtn.addEventListener("click", () => { downloadQuote(); });
+      emailQuoteBtn.addEventListener("click", () => { sendQuoteByEmail(); });
+      addMaterialBtn.addEventListener("click", addMaterial);
+      saveQuoteBtn.addEventListener("click", () => { saveCurrentQuote(); });
+      savedQuotesSelect.addEventListener("change", () => {
+        const id = savedQuotesSelect.value;
+        if (id) loadQuoteById(id);
+      });
+      quoteSearchInput.addEventListener("input", () => {
+        const val = quoteSearchInput.value;
+        refreshSavedQuotesDropdown(val);
+      });
+    }
 
-    updateCurrentQuoteIdLabel();
-    refreshSavedQuotesDropdown();
-    loadDatabaseFromCSV();
+    async function init() {
+      attachEvents();
+      updateCurrentQuoteIdLabel();
+      loadDatabaseFromCSV();
+      await fetchSavedQuotesFromBackend();
+    }
+
+    init();
   </script>
 </body>
 </html>
