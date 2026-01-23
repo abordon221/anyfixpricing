@@ -838,7 +838,7 @@
 
     /* ---------- CSV / services ---------- */
     function loadDatabaseFromCSV() {
-      Papa.parse("database.csv", {
+      Papa.parse("/database.csv", {
         download: true,
         header: true,
         skipEmptyLines: true,
@@ -1513,4 +1513,5 @@
   </script>
 </body>
 </html>
+
 
