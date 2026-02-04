@@ -50,6 +50,7 @@
       align-items: center;
       gap: 12px;
       margin-bottom: 24px;
+      flex-wrap: wrap;
     }
 
     .logo {
@@ -64,12 +65,14 @@
       font-weight: 700;
       font-family: "Poppins", system-ui;
       box-shadow: 0 8px 18px rgba(248, 113, 113, 0.3);
+      flex: 0 0 auto;
     }
 
     .header-title {
       display: flex;
       flex-direction: column;
       gap: 2px;
+      flex: 0 0 auto;
     }
     .header-title h1 {
       margin: 0;
@@ -80,6 +83,27 @@
       font-size: 0.8rem;
       color: var(--muted);
     }
+
+    /* NEW: status pill */
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--muted);
+      margin-left: 8px;
+      flex: 1 1 auto;
+      min-width: 260px;
+      max-width: 520px;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #d1d5db; }
+    .dot.ok { background: #10b981; }
+    .dot.bad { background: #ef4444; }
+    .dot.warn { background: #f59e0b; }
 
     .hero { margin-bottom: 20px; }
     .hero h2 {
@@ -155,10 +179,7 @@
       margin-bottom: 10px;
     }
     @media (max-width: 600px) {
-      .top-row {
-        flex-direction: column;
-        align-items: stretch;
-      }
+      .top-row { flex-direction: column; align-items: stretch; }
     }
     .top-row-main { flex: 1; }
 
@@ -172,8 +193,7 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: background 0.15s, box-shadow 0.15s, transform 0.05s,
-        opacity 0.15s;
+      transition: background 0.15s, box-shadow 0.15s, transform 0.05s, opacity 0.15s;
       white-space: nowrap;
     }
     .btn-primary {
@@ -436,32 +456,10 @@
       gap: 8px;
       align-items: center;
     }
-    .saved-search-row input {
-      flex: 1;
-    }
-    .saved-search-row select {
-      flex: 1;
-    }
+    .saved-search-row input { flex: 1; }
+    .saved-search-row select { flex: 1; }
 
-    /* ------- NEW: small connection/status pill ------- */
-    .status-pill {
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 0.78rem;
-      border: 1px solid var(--border);
-      background:#fff;
-      color: var(--muted);
-      margin-left: 8px;
-    }
-    .dot { width:8px; height:8px; border-radius:50%; background:#d1d5db; }
-    .dot.ok { background:#10b981; }
-    .dot.bad { background:#ef4444; }
-    .dot.warn { background:#f59e0b; }
-
-    /* ------- NEW: csv/supabase settings mini panel ------- */
+    /* NEW: connectivity panel */
     .mini-panel {
       border: 1px dashed var(--border);
       border-radius: 14px;
@@ -470,10 +468,10 @@
       margin-bottom: 12px;
     }
     .mini-panel .row {
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      align-items:center;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
     }
     .mini-panel input[type="text"]{
       border-radius: 999px;
@@ -490,6 +488,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="page">
     <div class="header">
@@ -499,7 +498,7 @@
         <span>Quote Builder</span>
       </div>
 
-      <!-- NEW: connection status -->
+      <!-- NEW: status pill -->
       <div class="status-pill" title="CSV + Supabase status">
         <span class="dot warn" id="csvDot"></span>
         <span id="csvStatusText">CSV: loading…</span>
@@ -561,7 +560,7 @@
           </button>
         </div>
 
-        <!-- NEW: CSV + Supabase settings to avoid disconnects -->
+        <!-- NEW: Connectivity panel -->
         <div class="mini-panel">
           <div class="section-title" style="margin-bottom:6px;">Connectivity</div>
 
@@ -573,16 +572,13 @@
               <button id="reloadCsvBtn" class="btn btn-secondary" type="button">Reload</button>
             </div>
             <div class="hint">
-              If your app “randomly stops” seeing the CSV on Vercel, this reload uses cache-busting + no-store.
-              Make sure <strong>database.csv is at the repo root</strong> so it resolves as <strong>/database.csv</strong>.
+              Uses timeout + no-store + cache-busting and tries common CSV paths.
+              If you use a framework, make sure database.csv is actually served at /database.csv.
             </div>
           </div>
 
           <div class="field-row" style="margin-bottom:0;">
             <label>Supabase</label>
-            <div class="hint">
-              Using your hardcoded keys below. If you rotate keys, update the constants. “Test” checks the <span style="font-family:ui-monospace, Menlo, Consolas;">quotes</span> table.
-            </div>
             <div class="row" style="margin-top:8px;">
               <button id="testSupabaseBtn" class="btn btn-secondary" type="button">Test Supabase</button>
             </div>
@@ -593,11 +589,7 @@
         <div class="field-row">
           <label for="savedQuotesSelect">Saved quotes</label>
           <div class="saved-search-row">
-            <input
-              type="text"
-              id="quoteSearch"
-              placeholder="Search by ID or name"
-            />
+            <input type="text" id="quoteSearch" placeholder="Search by ID or name" />
             <select id="savedQuotesSelect">
               <option value="">Select a saved quote…</option>
             </select>
@@ -628,14 +620,7 @@
 
         <div class="field-row">
           <label for="discountPercent">Labor discount (%)</label>
-          <input
-            type="number"
-            id="discountPercent"
-            min="0"
-            max="100"
-            step="1"
-            value="0"
-          />
+          <input type="number" id="discountPercent" min="0" max="100" step="1" value="0" />
           <span class="muted">Applies to labor subtotal before tax. 0–100.</span>
         </div>
 
@@ -643,27 +628,11 @@
         <div class="field-row">
           <label>Materials</label>
           <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <input
-              type="text"
-              id="materialDesc"
-              placeholder="Description"
-              style="flex:2; min-width:140px;"
-            />
-            <input
-              type="number"
-              id="materialCost"
-              placeholder="Cost"
-              min="0"
-              step="0.01"
-              style="flex:1; min-width:110px;"
-            />
-            <button id="addMaterialBtn" class="btn btn-secondary" type="button">
-              Add
-            </button>
+            <input type="text" id="materialDesc" placeholder="Description" style="flex:2; min-width:140px;" />
+            <input type="number" id="materialCost" placeholder="Cost" min="0" step="0.01" style="flex:1; min-width:110px;" />
+            <button id="addMaterialBtn" class="btn btn-secondary" type="button">Add</button>
           </div>
-          <div id="materialsList" class="materials-list muted">
-            No materials added.
-          </div>
+          <div id="materialsList" class="materials-list muted">No materials added.</div>
         </div>
 
         <div class="totals-block">
@@ -698,20 +667,14 @@
         </div>
 
         <div class="actions-row">
-          <button id="saveQuoteBtn" class="btn btn-secondary" type="button">
-            Save quote
-          </button>
-          <button id="downloadQuoteBtn" class="btn btn-secondary" type="button">
-            Download quote
-          </button>
-          <button id="emailQuoteBtn" class="btn btn-primary" type="button">
-            Send quote by email
-          </button>
+          <button id="saveQuoteBtn" class="btn btn-secondary" type="button">Save quote</button>
+          <button id="downloadQuoteBtn" class="btn btn-secondary" type="button">Download quote</button>
+          <button id="emailQuoteBtn" class="btn btn-primary" type="button">Send quote by email</button>
         </div>
 
         <div class="muted">
-          Amounts are estimates based on your hourly rate, discount, and
-          configured time. You can manually override minutes per item if needed.
+          Amounts are estimates based on your hourly rate, discount, and configured time.
+          You can manually override minutes per item if needed.
         </div>
       </div>
     </div>
@@ -724,17 +687,10 @@
 
   <script>
     /* ===== CONFIGURE THESE TWO CONSTANTS WITH YOUR SUPABASE PROJECT ===== */
-    const SUPABASE_URL = "https://krphfybgsyupjvacpeao.supabase.co";  // TODO: replace
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtycGhmeWJnc3l1cGp2YWNwZWFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUzOTUwODYsImV4cCI6MjA4MDk3MTA4Nn0.fgNSoyaLJCW4MwoYz18y2a6zyuqcCluTmEmgZMpUkyA"; // TODO: replace
+    const SUPABASE_URL = "https://krphfybgsyupjvacpeao.supabase.co";  // TODO: replace if needed
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtycGhmeWJnc3l1cGp2YWNwZWFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUzOTUwODYsImV4cCI6MjA4MDk3MTA4Nn0.fgNSoyaLJCW4MwoYz18y2a6zyuqcCluTmEmgZMpUkyA"; // TODO: replace if needed
 
-    // NEW: resilient CSV URL + cache-busting helpers
-    const DEFAULT_CSV_URL = "/database.csv";
-    const LS_CSV_URL_KEY = "anyfix_csv_url_v3";
-
-    const supabase = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY
-    );
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const SALES_TAX_RATE = 0.102;
 
@@ -742,14 +698,16 @@
     const EMAILJS_SERVICE_ID = "service_anyfix";
     const EMAILJS_TEMPLATE_ID = "anyfix_quote_505050";
 
+    // ===== State =====
     let databaseRows = [];
     let currentService = "";
     let currentCategories = [];
     let quoteItems = [];
     let materials = [];
     let currentQuoteId = null;
-    let savedQuotes = []; // cache from backend
+    let savedQuotes = [];
 
+    // ===== DOM =====
     const serviceSelect = document.getElementById("serviceSelect");
     const addToQuoteBtn = document.getElementById("addToQuoteBtn");
     const clearQuoteBtn = document.getElementById("clearQuoteBtn");
@@ -767,8 +725,7 @@
     const totalTimeLabel = document.getElementById("totalTimeLabel");
     const laborSubtotalLabel = document.getElementById("laborSubtotalLabel");
     const discountAmountLabel = document.getElementById("discountAmountLabel");
-    const laborAfterDiscountLabel =
-      document.getElementById("laborAfterDiscountLabel");
+    const laborAfterDiscountLabel = document.getElementById("laborAfterDiscountLabel");
     const materialsTotalLabel = document.getElementById("materialsTotalLabel");
     const taxLabel = document.getElementById("taxLabel");
     const totalAfterTaxLabel = document.getElementById("totalAfterTaxLabel");
@@ -785,7 +742,7 @@
     const downloadQuoteBtn = document.getElementById("downloadQuoteBtn");
     const emailQuoteBtn = document.getElementById("emailQuoteBtn");
 
-    // NEW: connectivity UI
+    // Connectivity UI
     const csvDot = document.getElementById("csvDot");
     const csvStatusText = document.getElementById("csvStatusText");
     const sbDot = document.getElementById("sbDot");
@@ -796,7 +753,7 @@
     const reloadCsvBtn = document.getElementById("reloadCsvBtn");
     const testSupabaseBtn = document.getElementById("testSupabaseBtn");
 
-    /* ---------- NEW: small status helpers ---------- */
+    // ===== NEW: Status helpers =====
     function setCsvStatus(kind, text) {
       csvDot.classList.remove("ok","bad","warn");
       csvDot.classList.add(kind);
@@ -808,30 +765,106 @@
       sbStatusText.textContent = text;
     }
 
-    function getCsvUrl() {
-      const saved = localStorage.getItem(LS_CSV_URL_KEY) || "";
-      return (saved.trim() || DEFAULT_CSV_URL);
-    }
+    // ===== NEW (A): Resilient CSV config + loader =====
+    const DEFAULT_CSV_URL = "/database.csv";
+    const LS_CSV_URL_KEY = "anyfix_csv_url_v4";
 
+    function getCsvUrl() {
+      const saved = (localStorage.getItem(LS_CSV_URL_KEY) || "").trim();
+      return saved || DEFAULT_CSV_URL;
+    }
     function setCsvUrl(url) {
       const cleaned = (url || "").trim();
-      if (!cleaned) {
-        localStorage.removeItem(LS_CSV_URL_KEY);
-        csvUrlInput.value = "";
-      } else {
-        localStorage.setItem(LS_CSV_URL_KEY, cleaned);
-        csvUrlInput.value = cleaned;
-      }
+      if (!cleaned) localStorage.removeItem(LS_CSV_URL_KEY);
+      else localStorage.setItem(LS_CSV_URL_KEY, cleaned);
     }
-
     function withCacheBust(url) {
-      // Avoid Vercel edge caching issues
       const u = new URL(url, window.location.origin);
       u.searchParams.set("v", String(Date.now()));
       return u.toString();
     }
+    function fetchWithTimeout(url, ms = 9000) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), ms);
+      return fetch(url, { cache: "no-store", signal: controller.signal })
+        .finally(() => clearTimeout(timer));
+    }
 
-    /* ---------- Supabase helpers ---------- */
+    async function loadDatabaseFromCSV() {
+      const userUrl = getCsvUrl();
+
+      const candidates = [
+        userUrl,
+        "/database.csv",
+        "./database.csv",
+        "database.csv",
+        "/public/database.csv"
+      ];
+
+      setCsvStatus("warn", "CSV: loading…");
+      let lastErr = null;
+
+      for (const c of candidates) {
+        try {
+          const url = withCacheBust(c);
+          const res = await fetchWithTimeout(url, 9000);
+          if (!res.ok) throw new Error(`HTTP ${res.status} for ${c}`);
+
+          const text = await res.text();
+          const results = Papa.parse(text, { header: true, skipEmptyLines: true });
+
+          if (results.errors && results.errors.length) {
+            console.warn("CSV parse warnings:", results.errors);
+          }
+
+          databaseRows = (results.data || [])
+            .map(row => ({
+              service: row.service,
+              category: row.category,
+              option: row.option,
+              minutes: Number(row.minutes) || 0
+            }))
+            .filter(r => r.service && r.category && r.option);
+
+          if (!databaseRows.length) {
+            throw new Error(`Loaded ${c} but got 0 valid rows. Check headers: service, category, option, minutes`);
+          }
+
+          setCsvStatus("ok", `CSV: ${databaseRows.length} rows`);
+          initServices();
+
+          // keep current selection if still valid
+          if (currentService) {
+            const exists = databaseRows.some(r => r.service === currentService);
+            if (exists) onServiceChange();
+          }
+          return;
+        } catch (e) {
+          lastErr = e;
+          console.warn("CSV load failed for:", c, e);
+        }
+      }
+
+      setCsvStatus("bad", "CSV: failed");
+      alert(
+        "CSV could not be loaded.\n\n" +
+        "Most common cause: database.csv is not being served at /database.csv.\n\n" +
+        "Last error: " + (lastErr?.message || "unknown")
+      );
+    }
+
+    function initServices() {
+      serviceSelect.innerHTML = '<option value="">Select a service…</option>';
+      const services = Array.from(new Set(databaseRows.map(r => r.service))).sort();
+      services.forEach(service => {
+        const opt = document.createElement("option");
+        opt.value = service;
+        opt.textContent = service;
+        serviceSelect.appendChild(opt);
+      });
+    }
+
+    // ===== Supabase helpers =====
     async function fetchSavedQuotesFromBackend() {
       const { data, error } = await supabase
         .from("quotes")
@@ -845,11 +878,11 @@
       }
       savedQuotes = data || [];
       refreshSavedQuotesDropdown();
+      // Don't overwrite "connected" if already set; just show useful info
       setSbStatus("ok", `SB: ${savedQuotes.length} quotes`);
     }
 
     async function upsertQuoteToBackend(quoteObj) {
-      // Keep your schema EXACTLY the same to avoid breaking saved quotes
       const { error } = await supabase.from("quotes").upsert({
         quote_id: quoteObj.id,
         timestamp: quoteObj.timestamp,
@@ -866,29 +899,9 @@
       }
     }
 
-    async function testSupabase() {
-      setSbStatus("warn", "SB: testing…");
-      try {
-        const { error } = await supabase.from("quotes").select("quote_id").limit(1);
-        if (error) {
-          console.error("Supabase test error:", error);
-          setSbStatus("bad", "SB: check table/keys");
-          alert("Supabase test failed: " + error.message);
-          return;
-        }
-        setSbStatus("ok", "SB: connected");
-        alert("Supabase looks OK (connected to quotes table).");
-      } catch (e) {
-        console.error(e);
-        setSbStatus("bad", "SB: error");
-        alert("Supabase test error: " + e.message);
-      }
-    }
-
     function refreshSavedQuotesDropdown(filterText = "") {
-      const filter = filterText.toLowerCase();
-      savedQuotesSelect.innerHTML =
-        '<option value="">Select a saved quote…</option>';
+      const filter = (filterText || "").toLowerCase();
+      savedQuotesSelect.innerHTML = '<option value="">Select a saved quote…</option>';
 
       savedQuotes.forEach(q => {
         const d = q.timestamp ? new Date(q.timestamp) : new Date();
@@ -907,8 +920,7 @@
     }
 
     function updateCurrentQuoteIdLabel() {
-      currentQuoteIdLabel.textContent =
-        "Quote: " + (currentQuoteId ? currentQuoteId : "New");
+      currentQuoteIdLabel.textContent = "Quote: " + (currentQuoteId ? currentQuoteId : "New");
     }
 
     function ensureCurrentQuoteId() {
@@ -946,7 +958,8 @@
         if (!silent) alert("Quote saved.");
         return id;
       } catch (err) {
-        if (!silent) alert("Error saving quote: " + err.message);
+        console.error(err);
+        if (!silent) alert("Error saving quote: " + (err?.message || String(err)));
         setSbStatus("bad", "SB: save failed");
         return null;
       }
@@ -964,10 +977,8 @@
       currentQuoteId = row.quote_id;
       customerNameInput.value = row.customer_name || "";
       customerEmailInput.value = row.customer_email || "";
-      hourlyRateInput.value =
-        typeof row.hourly_rate === "number" ? row.hourly_rate : 75;
-      discountPercentInput.value =
-        typeof row.discount_percent === "number" ? row.discount_percent : 0;
+      hourlyRateInput.value = typeof row.hourly_rate === "number" ? row.hourly_rate : 75;
+      discountPercentInput.value = typeof row.discount_percent === "number" ? row.discount_percent : 0;
       quoteItems = Array.isArray(row.quote_items) ? row.quote_items : [];
       materials = Array.isArray(row.materials) ? row.materials : [];
 
@@ -987,75 +998,7 @@
       loadQuoteFromSupabaseRow(row);
     }
 
-    /* ---------- CSV / services (UPDATED to be resilient) ---------- */
-    function loadDatabaseFromCSV() {
-      const csvUrl = getCsvUrl();
-      setCsvStatus("warn", "CSV: loading…");
-
-      // NOTE: Papa's download sometimes caches; we avoid by using cache-busted URL + fetch ourselves.
-      fetch(withCacheBust(csvUrl), { cache: "no-store" })
-        .then(res => {
-          if (!res.ok) throw new Error("HTTP " + res.status);
-          return res.text();
-        })
-        .then(text => {
-          const results = Papa.parse(text, { header: true, skipEmptyLines: true });
-          if (results.errors && results.errors.length) {
-            console.warn("CSV parse warnings:", results.errors);
-          }
-
-          databaseRows = (results.data || []).map(row => ({
-            service: row.service,
-            category: row.category,
-            option: row.option,
-            minutes: Number(row.minutes) || 0
-          }));
-
-          if (!databaseRows.length) {
-            setCsvStatus("bad", "CSV: empty/invalid");
-            alert("CSV loaded but no rows found. Check headers: service, category, option, minutes");
-            initServices(); // clear dropdown safely
-            return;
-          }
-
-          setCsvStatus("ok", `CSV: ${databaseRows.length} rows`);
-          initServices();
-
-          // If current service was selected, re-render options safely
-          if (currentService) {
-            const stillExists = databaseRows.some(r => r.service === currentService);
-            if (!stillExists) {
-              currentService = "";
-              serviceSelect.value = "";
-              optionsGrid.innerHTML = "";
-              currentCategories = [];
-              addToQuoteBtn.disabled = true;
-              updateSelectedCount();
-              serviceHint.textContent = "Choose a service to see options.";
-            } else {
-              onServiceChange();
-            }
-          }
-        })
-        .catch(err => {
-          console.error("Error loading CSV", err);
-          setCsvStatus("bad", "CSV: failed");
-          alert("Could not load database.csv. Check file name/location.\n\n" + err.message);
-        });
-    }
-
-    function initServices() {
-      serviceSelect.innerHTML = '<option value="">Select a service…</option>';
-      const services = Array.from(new Set(databaseRows.map(r => r.service))).sort();
-      services.forEach(service => {
-        const opt = document.createElement("option");
-        opt.value = service;
-        opt.textContent = service;
-        serviceSelect.appendChild(opt);
-      });
-    }
-
-    /* ---------- Service / options UI ---------- */
+    // ===== Service / options UI =====
     function onServiceChange() {
       currentService = serviceSelect.value;
       optionsGrid.innerHTML = "";
@@ -1070,20 +1013,14 @@
 
       serviceHint.textContent = currentService;
       const rows = databaseRows.filter(r => r.service === currentService);
-      const categoryNames = Array.from(
-        new Set(rows.map(r => r.category))
-      ).sort();
+      const categoryNames = Array.from(new Set(rows.map(r => r.category))).sort();
 
       categoryNames.forEach((cat, index) => {
         const options = rows
           .filter(r => r.category === cat)
-          .map(r => ({
-            label: r.option,
-            minutes: Number(r.minutes) || 0
-          }));
+          .map(r => ({ label: r.option, minutes: Number(r.minutes) || 0 }));
 
         const inputName = `cat-${index}`;
-
         currentCategories.push({ name: cat, options, inputName });
 
         const groupEl = document.createElement("div");
@@ -1155,9 +1092,7 @@
       }
       let selected = 0;
       currentCategories.forEach(cat => {
-        const checked = document.querySelector(
-          `input[name="${cat.inputName}"]:checked`
-        );
+        const checked = document.querySelector(`input[name="${cat.inputName}"]:checked`);
         if (checked) selected += 1;
       });
       selectedCountLabel.textContent = `(${selected}/${currentCategories.length} selected)`;
@@ -1166,9 +1101,7 @@
     function updateAddButtonState() {
       let hasAnySelection = false;
       currentCategories.forEach(cat => {
-        const checked = document.querySelector(
-          `input[name="${cat.inputName}"]:checked`
-        );
+        const checked = document.querySelector(`input[name="${cat.inputName}"]:checked`);
         if (checked) hasAnySelection = true;
       });
       addToQuoteBtn.disabled = !hasAnySelection || !currentService;
@@ -1179,19 +1112,16 @@
 
       const selections = [];
       currentCategories.forEach(cat => {
-        const checked = document.querySelector(
-          `input[name="${cat.inputName}"]:checked`
-        );
+        const checked = document.querySelector(`input[name="${cat.inputName}"]:checked`);
         if (!checked) return;
 
         const label = checked.value;
-        const row = databaseRows.find(
-          r =>
-            r.service === currentService &&
-            r.category === cat.name &&
-            r.option === label
+        const row = databaseRows.find(r =>
+          r.service === currentService &&
+          r.category === cat.name &&
+          r.option === label
         );
-        const minutes = row ? Number(row.minutes) || 0 : 0;
+        const minutes = row ? (Number(row.minutes) || 0) : 0;
 
         selections.push({ category: cat.name, option: label, minutes });
       });
@@ -1201,10 +1131,7 @@
         return;
       }
 
-      const totalMinutes = selections.reduce(
-        (sum, s) => sum + (Number(s.minutes) || 0),
-        0
-      );
+      const totalMinutes = selections.reduce((sum, s) => sum + (Number(s.minutes) || 0), 0);
 
       const item = {
         id: Date.now() + Math.random(),
@@ -1222,8 +1149,7 @@
       if (!quoteItems.length) {
         const empty = document.createElement("div");
         empty.className = "empty-state";
-        empty.textContent =
-          "No items yet. Select a service, pick options, and click Add to Quote.";
+        empty.textContent = "No items yet. Select a service, pick options, and click Add to Quote.";
         quoteItemsContainer.appendChild(empty);
       } else {
         quoteItems.forEach(item => {
@@ -1287,29 +1213,13 @@
         });
       }
 
-      quoteItemsCount.textContent =
-        quoteItems.length === 1
-          ? "1 item in quote"
-          : `${quoteItems.length} items in quote`;
-
+      quoteItemsCount.textContent = (quoteItems.length === 1) ? "1 item in quote" : `${quoteItems.length} items in quote`;
       updateTotals();
     }
 
     function clearQuote() {
-      if (
-        !quoteItems.length &&
-        !materials.length &&
-        !customerNameInput.value &&
-        !customerEmailInput.value
-      ) {
-        return;
-      }
-      if (
-        !confirm(
-          "Clear the current quote? This does not delete any saved quotes in the backend."
-        )
-      )
-        return;
+      if (!quoteItems.length && !materials.length && !customerNameInput.value && !customerEmailInput.value) return;
+      if (!confirm("Clear the current quote? This does not delete any saved quotes in the backend.")) return;
 
       quoteItems = [];
       materials = [];
@@ -1325,7 +1235,7 @@
       updateTotals();
     }
 
-    /* ---------- Materials ---------- */
+    // ===== Materials =====
     function addMaterial() {
       const desc = materialDescInput.value.trim();
       const cost = Number(materialCostInput.value);
@@ -1334,15 +1244,9 @@
         return;
       }
 
-      materials.push({
-        id: Date.now() + Math.random(),
-        description: desc,
-        cost
-      });
-
+      materials.push({ id: Date.now() + Math.random(), description: desc, cost });
       materialDescInput.value = "";
       materialCostInput.value = "";
-
       renderMaterials();
       updateTotals();
     }
@@ -1376,13 +1280,11 @@
       });
     }
 
-    /* ---------- Totals ---------- */
+    // ===== Totals =====
     function updateTotals() {
-      const totalMinutes = quoteItems.reduce(
-        (sum, item) => sum + (Number(item.totalMinutes) || 0),
-        0
-      );
+      const totalMinutes = quoteItems.reduce((sum, item) => sum + (Number(item.totalMinutes) || 0), 0);
       const rate = Number(hourlyRateInput.value) || 0;
+
       let discountPercent = Number(discountPercentInput.value) || 0;
       if (discountPercent < 0) discountPercent = 0;
       if (discountPercent > 100) discountPercent = 100;
@@ -1391,10 +1293,9 @@
       const laborSubtotal = (totalMinutes / 60) * rate;
       const discountAmount = laborSubtotal * (discountPercent / 100);
       const laborAfterDiscount = laborSubtotal - discountAmount;
-      const materialsTotal = materials.reduce(
-        (sum, m) => sum + (Number(m.cost) || 0),
-        0
-      );
+
+      const materialsTotal = materials.reduce((sum, m) => sum + (Number(m.cost) || 0), 0);
+
       const taxBase = laborAfterDiscount + materialsTotal;
       const tax = taxBase * SALES_TAX_RATE;
       const totalAfterTax = taxBase + tax;
@@ -1408,23 +1309,19 @@
       totalAfterTaxLabel.textContent = `$${totalAfterTax.toFixed(2)}`;
     }
 
-    /* ---------- Quote text/HTML ---------- */
+    // ===== Quote text/HTML =====
     function buildQuoteText(quoteId) {
       const now = new Date();
       const rate = Number(hourlyRateInput.value) || 0;
       const name = customerNameInput.value.trim() || "Customer";
-      const totalMinutes = quoteItems.reduce(
-        (sum, item) => sum + (Number(item.totalMinutes) || 0),
-        0
-      );
+      const totalMinutes = quoteItems.reduce((sum, item) => sum + (Number(item.totalMinutes) || 0), 0);
       const discountPercent = Number(discountPercentInput.value) || 0;
+
       const laborSubtotal = (totalMinutes / 60) * rate;
       const discountAmount = laborSubtotal * (discountPercent / 100);
       const laborAfterDiscount = laborSubtotal - discountAmount;
-      const materialsTotal = materials.reduce(
-        (sum, m) => sum + (Number(m.cost) || 0),
-        0
-      );
+
+      const materialsTotal = materials.reduce((sum, m) => sum + (Number(m.cost) || 0), 0);
       const taxBase = laborAfterDiscount + materialsTotal;
       const tax = taxBase * SALES_TAX_RATE;
       const totalAfterTax = taxBase + tax;
@@ -1439,9 +1336,7 @@
       quoteItems.forEach((item, idx) => {
         lines.push(`Item ${idx + 1}: ${item.service}`);
         item.selections.forEach(sel => {
-          lines.push(
-            `  - ${sel.category}: ${sel.option} (${sel.minutes} min)`
-          );
+          lines.push(`  - ${sel.category}: ${sel.option} (${sel.minutes} min)`);
         });
         lines.push(`  Total time for this item: ${item.totalMinutes} min`);
         lines.push("");
@@ -1449,9 +1344,7 @@
 
       if (materials.length) {
         lines.push("Materials:");
-        materials.forEach(m => {
-          lines.push(`  - ${m.description}: $${m.cost.toFixed(2)}`);
-        });
+        materials.forEach(m => lines.push(`  - ${m.description}: $${m.cost.toFixed(2)}`));
         lines.push("");
       }
 
@@ -1460,9 +1353,7 @@
       lines.push(`Hourly rate: $${rate.toFixed(2)}`);
       lines.push(`Labor time: ${totalMinutes} min`);
       lines.push(`Labor subtotal: $${laborSubtotal.toFixed(2)}`);
-      lines.push(
-        `Discount (${discountPercent.toFixed(0)}%): -$${discountAmount.toFixed(2)}`
-      );
+      lines.push(`Discount (${discountPercent.toFixed(0)}%): -$${discountAmount.toFixed(2)}`);
       lines.push(`Labor after discount: $${laborAfterDiscount.toFixed(2)}`);
       lines.push(`Materials: $${materialsTotal.toFixed(2)}`);
       lines.push(`Tax (10.2%): $${tax.toFixed(2)}`);
@@ -1475,18 +1366,14 @@
       const now = new Date();
       const rate = Number(hourlyRateInput.value) || 0;
       const name = customerNameInput.value.trim() || "Customer";
-      const totalMinutes = quoteItems.reduce(
-        (sum, item) => sum + (Number(item.totalMinutes) || 0),
-        0
-      );
+      const totalMinutes = quoteItems.reduce((sum, item) => sum + (Number(item.totalMinutes) || 0), 0);
       const discountPercent = Number(discountPercentInput.value) || 0;
+
       const laborSubtotal = (totalMinutes / 60) * rate;
       const discountAmount = laborSubtotal * (discountPercent / 100);
       const laborAfterDiscount = laborSubtotal - discountAmount;
-      const materialsTotal = materials.reduce(
-        (sum, m) => sum + (Number(m.cost) || 0),
-        0
-      );
+
+      const materialsTotal = materials.reduce((sum, m) => sum + (Number(m.cost) || 0), 0);
       const taxBase = laborAfterDiscount + materialsTotal;
       const tax = taxBase * SALES_TAX_RATE;
       const totalAfterTax = taxBase + tax;
@@ -1528,10 +1415,7 @@
         `;
       });
 
-      html += `
-          </tbody>
-        </table>
-      `;
+      html += `</tbody></table>`;
 
       if (materials.length) {
         html += `
@@ -1556,10 +1440,7 @@
             </tr>
           `;
         });
-        html += `
-            </tbody>
-          </table>
-        `;
+        html += `</tbody></table>`;
       }
 
       html += `
@@ -1597,12 +1478,10 @@
       if (services.length === 0) return "No services";
       if (services.length === 1) return services[0];
       if (services.length === 2) return services[0] + " & " + services[1];
-      return (
-        services[0] + ", " + services[1] + " + " + (services.length - 2) + " more"
-      );
+      return services[0] + ", " + services[1] + " + " + (services.length - 2) + " more";
     }
 
-    /* ---------- Download & email ---------- */
+    // ===== Download & email =====
     async function downloadQuote() {
       if (!quoteItems.length && !materials.length) {
         alert("No items or materials in the quote yet.");
@@ -1654,9 +1533,7 @@
 
       emailjs
         .send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
-        .then(() => {
-          alert("Quote sent successfully.");
-        })
+        .then(() => alert("Quote sent successfully."))
         .catch(err => {
           console.error("EmailJS error:", err);
           alert("EmailJS error: " + JSON.stringify(err));
@@ -1667,65 +1544,81 @@
         });
     }
 
-    /* ---------- Events & init ---------- */
+    // ===== NEW (B): Supabase check with timeout =====
+    async function supabaseSelectWithTimeout(ms = 9000) {
+      return await Promise.race([
+        supabase.from("quotes").select("quote_id").limit(1),
+        new Promise((_, reject) => setTimeout(() => reject(new Error("Supabase timeout")), ms))
+      ]);
+    }
+
+    async function checkSupabaseQuick() {
+      setSbStatus("warn", "SB: checking…");
+      try {
+        const { error } = await supabaseSelectWithTimeout(9000);
+        if (error) {
+          console.warn("Supabase check error:", error);
+          setSbStatus("bad", "SB: check table/keys");
+          return;
+        }
+        setSbStatus("ok", "SB: connected");
+      } catch (e) {
+        console.warn("Supabase check failed:", e);
+        setSbStatus("bad", "SB: failed");
+      }
+    }
+
+    async function testSupabase() {
+      await checkSupabaseQuick();
+      alert(sbStatusText.textContent);
+    }
+
+    // ===== Events & init =====
     function attachEvents() {
       serviceSelect.addEventListener("change", onServiceChange);
       addToQuoteBtn.addEventListener("click", addToQuote);
       clearQuoteBtn.addEventListener("click", clearQuote);
+
       hourlyRateInput.addEventListener("input", updateTotals);
       discountPercentInput.addEventListener("input", updateTotals);
-      downloadQuoteBtn.addEventListener("click", () => { downloadQuote(); });
-      emailQuoteBtn.addEventListener("click", () => { sendQuoteByEmail(); });
+
+      downloadQuoteBtn.addEventListener("click", downloadQuote);
+      emailQuoteBtn.addEventListener("click", sendQuoteByEmail);
+
       addMaterialBtn.addEventListener("click", addMaterial);
-      saveQuoteBtn.addEventListener("click", () => { saveCurrentQuote(); });
+      saveQuoteBtn.addEventListener("click", saveCurrentQuote);
+
       savedQuotesSelect.addEventListener("change", () => {
         const id = savedQuotesSelect.value;
         if (id) loadQuoteById(id);
       });
+
       quoteSearchInput.addEventListener("input", () => {
-        const val = quoteSearchInput.value;
-        refreshSavedQuotesDropdown(val);
+        refreshSavedQuotesDropdown(quoteSearchInput.value);
       });
 
-      // NEW: CSV controls
+      // connectivity panel
       saveCsvUrlBtn.addEventListener("click", () => {
         setCsvUrl(csvUrlInput.value);
         loadDatabaseFromCSV();
-        alert("CSV URL saved. Reloading CSV…");
-      });
-      reloadCsvBtn.addEventListener("click", () => {
-        loadDatabaseFromCSV();
+        alert("CSV URL saved. Reloading…");
       });
 
-      // NEW: Supabase test button
-      testSupabaseBtn.addEventListener("click", () => { testSupabase(); });
+      reloadCsvBtn.addEventListener("click", () => loadDatabaseFromCSV());
+      testSupabaseBtn.addEventListener("click", () => testSupabase());
     }
 
     async function init() {
       attachEvents();
       updateCurrentQuoteIdLabel();
 
-      // NEW: load CSV URL from localStorage into UI
-      const savedCsv = localStorage.getItem(LS_CSV_URL_KEY) || "";
-      csvUrlInput.value = savedCsv;
+      // fill CSV URL field from storage
+      csvUrlInput.value = (localStorage.getItem(LS_CSV_URL_KEY) || "").trim();
 
-      // NEW: do a quick Supabase check label (non-blocking)
-      try {
-        setSbStatus("warn", "SB: checking…");
-        const { error } = await supabase.from("quotes").select("quote_id").limit(1);
-        if (error) {
-          console.warn("Supabase check:", error);
-          setSbStatus("bad", "SB: check table/keys");
-        } else {
-          setSbStatus("ok", "SB: connected");
-        }
-      } catch (e) {
-        console.warn(e);
-        setSbStatus("bad", "SB: error");
-      }
-
-      loadDatabaseFromCSV();
+      // checks + loads
+      await checkSupabaseQuick();
       await fetchSavedQuotesFromBackend();
+      await loadDatabaseFromCSV();
     }
 
     init();
