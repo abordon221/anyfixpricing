@@ -8,1510 +8,1247 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600&display=swap" rel="stylesheet" />
 
   <style>
-    :root {
-      --primary: #f97316;
-      --primary-soft: #ffedd5;
-      --bg: #f9fafb;
-      --card-bg: #ffffff;
-      --border: #e5e7eb;
-      --text: #111827;
-      --muted: #6b7280;
-      --danger: #dc2626;
-      --radius-lg: 16px;
-      --radius-md: 12px;
-      --shadow-soft: 0 10px 25px rgba(15, 23, 42, 0.08);
+    :root{
+      --bg:#0b1220;
+      --card:#0f1b33;
+      --card2:#0c1730;
+      --text:#e8eefc;
+      --muted:#a9b7d6;
+      --line: rgba(255,255,255,.10);
+      --accent:#6ea8ff;
+      --accent2:#7cffa7;
+      --danger:#ff6b6b;
+      --warn:#ffd166;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+      --radius2: 12px;
     }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
-        "Segoe UI", sans-serif;
-      background: var(--bg);
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(110,168,255,.25), transparent 60%),
+        radial-gradient(1200px 600px at 90% -10%, rgba(124,255,167,.14), transparent 60%),
+        radial-gradient(900px 500px at 50% 110%, rgba(255,209,102,.10), transparent 60%),
+        var(--bg);
       color: var(--text);
+      line-height: 1.35;
     }
-
-    .page {
-      max-width: 1220px;
+    a{color:inherit}
+    header{
+      padding: 26px 18px 10px;
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 24px 16px 40px;
     }
-
-    .header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 24px;
+    .topbar{
+      display:flex;
+      gap:14px;
+      justify-content:space-between;
+      align-items:flex-start;
+      flex-wrap:wrap;
     }
-
-    .logo {
-      width: 36px;
-      height: 36px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, #fb923c, #f97316);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-weight: 700;
-      font-family: "Poppins", system-ui;
-      box-shadow: 0 8px 18px rgba(248, 113, 113, 0.3);
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
     }
-
-    .header-title {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
+    .logo{
+      width:40px;height:40px;border-radius:14px;
+      background: linear-gradient(135deg, rgba(110,168,255,.95), rgba(124,255,167,.70));
+      box-shadow: var(--shadow);
+      position:relative;
     }
-    .header-title h1 {
-      margin: 0;
-      font-size: 1.1rem;
+    .logo:after{
+      content:"";
+      position:absolute;
+      inset:10px;
+      border-radius:10px;
+      background: rgba(11,18,32,.55);
+    }
+    .title h1{
+      margin:0;
+      font-family:Poppins, Inter, sans-serif;
+      font-size: 20px;
       font-weight: 600;
+      letter-spacing:.2px;
     }
-    .header-title span {
-      font-size: 0.8rem;
+    .title .sub{
+      margin-top:2px;
+      color: var(--muted);
+      font-size: 12.5px;
+    }
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      align-items:center;
+    }
+    button, .btn{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight: 600;
+      font-size: 13px;
+      transition: .15s ease;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      text-decoration:none;
+      user-select:none;
+    }
+    button:hover, .btn:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.18)}
+    button.primary{
+      background: linear-gradient(135deg, rgba(110,168,255,.95), rgba(110,168,255,.55));
+      border-color: rgba(110,168,255,.50);
+      box-shadow: 0 10px 22px rgba(110,168,255,.12);
+    }
+    button.good{
+      background: linear-gradient(135deg, rgba(124,255,167,.75), rgba(124,255,167,.28));
+      border-color: rgba(124,255,167,.35);
+      box-shadow: 0 10px 22px rgba(124,255,167,.10);
+    }
+    button.danger{
+      background: linear-gradient(135deg, rgba(255,107,107,.75), rgba(255,107,107,.22));
+      border-color: rgba(255,107,107,.35);
+    }
+    main{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 14px 18px 40px;
+      display:grid;
+      grid-template-columns: 1.25fr .85fr;
+      gap: 16px;
+    }
+    @media (max-width: 980px){
+      main{grid-template-columns:1fr}
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding: 14px 14px 12px;
+      border-bottom: 1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .card .hd h2{
+      margin:0;
+      font-size: 14px;
+      letter-spacing:.2px;
+    }
+    .card .hd .meta{
+      color: var(--muted);
+      font-size: 12px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .card .bd{ padding: 14px; }
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 620px){
+      .grid{grid-template-columns:1fr}
+    }
+    label{
+      display:block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    input, select, textarea{
+      width:100%;
+      border-radius: 12px;
+      border:1px solid var(--line);
+      background: rgba(11,18,32,.55);
+      color: var(--text);
+      padding: 11px 11px;
+      outline:none;
+      font-size: 13px;
+    }
+    input:focus, select:focus, textarea:focus{
+      border-color: rgba(110,168,255,.6);
+      box-shadow: 0 0 0 3px rgba(110,168,255,.18);
+    }
+    textarea{ min-height: 90px; resize: vertical; }
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .pill{
+      padding: 6px 10px;
+      border-radius: 999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      font-size: 12px;
       color: var(--muted);
     }
-
-    .hero { margin-bottom: 20px; }
-    .hero h2 {
-      margin: 0 0 4px;
-      font-size: 1.8rem;
-      font-family: "Poppins", system-ui;
-      letter-spacing: -0.02em;
+    .pill.ok{color: rgba(124,255,167,.95); border-color: rgba(124,255,167,.25); background: rgba(124,255,167,.08)}
+    .pill.bad{color: rgba(255,107,107,.95); border-color: rgba(255,107,107,.25); background: rgba(255,107,107,.08)}
+    .pill.warn{color: rgba(255,209,102,.95); border-color: rgba(255,209,102,.25); background: rgba(255,209,102,.08)}
+    .muted{color: var(--muted)}
+    .small{font-size:12px}
+    .hr{height:1px;background:var(--line);margin:12px 0}
+    table{
+      width:100%;
+      border-collapse: collapse;
+      overflow:hidden;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: rgba(11,18,32,.35);
     }
-    .hero p {
-      margin: 0;
+    th, td{
+      text-align:left;
+      padding: 10px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      font-size: 12.5px;
+      vertical-align: top;
+    }
+    th{color: var(--muted); font-weight:600; font-size: 12px; background: rgba(255,255,255,.03)}
+    tr:last-child td{border-bottom:none}
+    .totals{
+      display:grid;
+      gap:10px;
+    }
+    .kv{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: rgba(11,18,32,.35);
+      font-size: 13px;
+    }
+    .kv b{font-weight:700}
+    .kv .v{font-variant-numeric: tabular-nums}
+    .footnote{
       color: var(--muted);
-      font-size: 0.95rem;
+      font-size: 12px;
+      margin-top: 10px;
+    }
+    .toast{
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
       max-width: 520px;
-    }
-
-    .layout {
-      display: grid;
-      grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
-      gap: 20px;
-      align-items: flex-start;
-    }
-    @media (max-width: 900px) {
-      .layout { grid-template-columns: 1fr; }
-    }
-
-    .card {
-      background: var(--card-bg);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-soft);
-      padding: 18px;
-    }
-
-    .section-title {
-      font-weight: 600;
-      font-size: 0.95rem;
-      margin-bottom: 6px;
-    }
-
-    label {
-      font-size: 0.85rem;
-      margin-bottom: 4px;
-      display: inline-block;
-      font-weight: 500;
-    }
-
-    select,
-    input[type="number"],
-    input[type="text"],
-    input[type="email"] {
-      width: 100%;
-      padding: 9px 11px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      font-size: 0.9rem;
-      outline: none;
-      background: #fdfdfd;
-      transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
-    }
-    select:focus,
-    input[type="number"]:focus,
-    input[type="text"]:focus,
-    input[type="email"]:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 1px var(--primary-soft);
-      background: #ffffff;
-    }
-
-    .top-row {
-      display: flex;
-      gap: 12px;
-      align-items: flex-end;
-      margin-bottom: 10px;
-    }
-    @media (max-width: 600px) {
-      .top-row {
-        flex-direction: column;
-        align-items: stretch;
-      }
-    }
-    .top-row-main { flex: 1; }
-
-    .btn {
-      border-radius: 999px;
-      border: none;
-      padding: 9px 18px;
-      font-weight: 600;
-      font-size: 0.9rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: background 0.15s, box-shadow 0.15s, transform 0.05s,
-        opacity 0.15s;
-      white-space: nowrap;
-    }
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-      box-shadow: 0 6px 14px rgba(248, 113, 22, 0.35);
-    }
-    .btn-primary:hover {
-      background: #ea580c;
-      transform: translateY(-1px);
-    }
-    .btn-primary:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      box-shadow: none;
-      transform: none;
-    }
-    .btn-ghost {
-      background: transparent;
-      color: var(--muted);
-      padding-inline: 4px;
-      box-shadow: none;
-    }
-    .btn-ghost:hover {
-      color: var(--danger);
-      background: #fee2e2;
-    }
-    .btn-secondary {
-      background: #e5e7eb;
-      color: #111827;
-      box-shadow: none;
-    }
-    .btn-secondary:hover { background: #d1d5db; }
-
-    .options-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 4px;
-      margin-bottom: 10px;
-      font-size: 0.85rem;
-    }
-    .badge-counter { font-size: 0.8rem; color: var(--muted); }
-    .muted { color: var(--muted); font-size: 0.82rem; }
-
-    .options-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-    @media (max-width: 900px) {
-      .options-grid { grid-template-columns: 1fr; }
-    }
-
-    .option-group {
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border);
-      background: #fdfdfd;
-      padding: 12px 12px 10px;
-    }
-    .option-group-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 6px;
-    }
-    .option-group-title {
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-    .option-group-meta {
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-
-    .option-list {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .option-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-      padding: 4px 6px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.12s;
-      font-size: 0.87rem;
-    }
-    .option-row:hover { background: #f3f4f6; }
-    .option-main { display: flex; align-items: center; gap: 6px; }
-    .option-row input[type="radio"] { cursor: pointer; }
-    .option-time {
-      font-size: 0.8rem;
-      color: var(--muted);
-      white-space: nowrap;
-    }
-
-    .quote-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    .quote-meta {
-      font-size: 0.8rem;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .quote-items {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 12px;
-      max-height: 260px;
-      overflow-y: auto;
-    }
-    .quote-item {
+      padding: 12px 12px;
       border-radius: 14px;
-      border: 1px solid var(--border);
-      background: #fdfdfd;
-      padding: 10px 10px 9px;
-      font-size: 0.85rem;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+      border:1px solid var(--line);
+      background: rgba(15,27,51,.95);
+      box-shadow: var(--shadow);
+      display:none;
+      z-index: 9999;
     }
-    .quote-item-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 4px;
-      gap: 8px;
-    }
-    .quote-item-title { font-weight: 600; }
-
-    .quote-item-time {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-    .quote-item-time input {
-      width: 72px;
-      padding: 3px 6px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      font-size: 0.8rem;
-      text-align: right;
-      background: #ffffff;
-    }
-
-    .quote-item-body {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 2px 12px;
-      color: var(--muted);
-      font-size: 0.8rem;
-    }
-    @media (max-width: 480px) {
-      .quote-item-body { grid-template-columns: 1fr; }
-    }
-
-    .quote-item-remove-btn {
-      border-radius: 999px;
-      border: none;
-      padding: 3px 10px;
-      font-size: 0.75rem;
-      cursor: pointer;
-      background: #fee2e2;
-      color: #b91c1c;
-      align-self: flex-start;
-      margin-top: 4px;
-    }
-    .quote-item-remove-btn:hover { background: #fecaca; }
-
-    .field-row {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      margin-bottom: 10px;
-    }
-
-    .totals-block {
-      border-radius: 14px;
-      border: 1px dashed var(--border);
-      padding: 10px;
-      background: #f9fafb;
-      font-size: 0.88rem;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      margin-bottom: 10px;
-    }
-    .totals-row,
-    .totals-row-sub,
-    .totals-row-total {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .totals-row-sub {
-      font-size: 0.86rem;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-    .totals-row-total {
-      margin-top: 4px;
-      font-size: 0.97rem;
-      font-weight: 600;
-      color: #111827;
-    }
-    .totals-label { color: var(--muted); }
-
-    .actions-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 4px;
-      margin-bottom: 4px;
-    }
-
-    .empty-state {
-      font-size: 0.85rem;
-      color: var(--muted);
-      text-align: center;
-      padding: 12px 8px;
-      border-radius: 10px;
-      background: #f9fafb;
-      border: 1px dashed var(--border);
-    }
-
-    .materials-list {
-      margin-top: 6px;
-      font-size: 0.8rem;
-    }
-    .material-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 4px;
-    }
-    .material-remove-btn {
-      border: none;
-      background: transparent;
-      color: #b91c1c;
-      font-size: 0.8rem;
-      cursor: pointer;
-    }
-
-    .saved-search-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-    .saved-search-row input {
-      flex: 1;
-    }
-    .saved-search-row select {
-      flex: 1;
-    }
+    .toast.show{display:block}
+    .toast .t{font-weight:700; font-size: 13px; margin:0 0 2px}
+    .toast .d{margin:0; color:var(--muted); font-size:12.5px}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;}
   </style>
+
+  <!-- CSV parser -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+  <!-- Supabase (optional). Works if you set keys in the UI -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
+
 <body>
-  <div class="page">
-    <div class="header">
-      <div class="logo">A</div>
-      <div class="header-title">
-        <h1>AnyFix</h1>
-        <span>Quote Builder</span>
-      </div>
-    </div>
-
-    <div class="hero">
-      <h2>Build Your Quote</h2>
-      <p>
-        Select a service type, configure the options that match your project, and
-        get an instant time and price estimate for the job.
-      </p>
-    </div>
-
-    <div class="layout">
-      <!-- LEFT: service & options -->
-      <div class="card">
-        <div class="top-row">
-          <div class="top-row-main">
-            <label for="serviceSelect">Select Service</label>
-            <select id="serviceSelect">
-              <option value="">Select a service…</option>
-            </select>
-          </div>
-          <div>
-            <button id="addToQuoteBtn" class="btn btn-primary" disabled>
-              <span>＋</span> Add to Quote
-            </button>
-          </div>
+  <header>
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div class="title">
+          <h1>AnyFix – Quote Builder</h1>
+          <div class="sub">Client-friendly quotes from a simple service database (CSV) + optional Supabase save</div>
         </div>
-
-        <div class="options-header">
-          <div class="badge-counter">
-            Configure Options
-            <span id="selectedCount">(0/0 selected)</span>
-          </div>
-          <div class="muted" id="serviceHint">Choose a service to see options.</div>
-        </div>
-
-        <div id="optionsGrid" class="options-grid"></div>
       </div>
 
-      <!-- RIGHT: quote summary -->
-      <div class="card">
-        <div class="quote-card-header">
+      <div class="actions">
+        <button id="btnReload" class="primary" type="button">↻ Reload database</button>
+        <button id="btnAdd" class="good" type="button">＋ Add line item</button>
+        <button id="btnClear" class="danger" type="button">✕ Clear quote</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Left: Builder -->
+    <section class="card">
+      <div class="hd">
+        <h2>Build quote</h2>
+        <div class="meta">
+          <span id="dbStatus" class="pill warn">DB: not loaded</span>
+          <span id="dbSource" class="pill">Source: (auto)</span>
+          <span id="itemsCount" class="pill">Items: 0</span>
+        </div>
+      </div>
+
+      <div class="bd">
+        <div class="grid">
           <div>
-            <div class="section-title">Quote Summary</div>
-            <div class="quote-meta">
-              <span id="quoteItemsCount">0 items in quote</span>
-              <span>•</span>
-              <span id="currentQuoteIdLabel">Quote: New</span>
+            <label>Customer name</label>
+            <input id="customerName" type="text" placeholder="e.g., John Smith" />
+          </div>
+          <div>
+            <label>Customer phone / email</label>
+            <input id="customerContact" type="text" placeholder="e.g., (206) 555-0123 or name@email.com" />
+          </div>
+
+          <div>
+            <label>Job address</label>
+            <input id="jobAddress" type="text" placeholder="e.g., 123 Main St, Sammamish, WA" />
+          </div>
+
+          <div>
+            <label>Quote date</label>
+            <input id="quoteDate" type="date" />
+          </div>
+
+          <div>
+            <label>Tax rate</label>
+            <input id="taxRate" type="number" step="0.01" min="0" value="10.10" />
+            <div class="small muted" style="margin-top:6px;">Percent (example: 10.10 for WA sales tax). Adjust as needed.</div>
+          </div>
+
+          <div>
+            <label>Discount</label>
+            <div class="row">
+              <input id="discountValue" type="number" step="0.01" min="0" value="0" style="flex:1;" />
+              <select id="discountType" style="max-width:140px;">
+                <option value="flat">$ off</option>
+                <option value="percent">% off</option>
+              </select>
             </div>
           </div>
-          <button id="clearQuoteBtn" class="btn btn-ghost" type="button">
-            Clear Current
-          </button>
-        </div>
 
-        <!-- Saved quotes + search -->
-        <div class="field-row">
-          <label for="savedQuotesSelect">Saved quotes</label>
-          <div class="saved-search-row">
-            <input
-              type="text"
-              id="quoteSearch"
-              placeholder="Search by ID or name"
-            />
-            <select id="savedQuotesSelect">
-              <option value="">Select a saved quote…</option>
-            </select>
+          <div style="grid-column:1 / -1;">
+            <label>Notes (shown to customer)</label>
+            <textarea id="quoteNotes" placeholder="e.g., Includes basic materials. Customer to provide parking access."></textarea>
           </div>
         </div>
 
-        <div class="quote-items" id="quoteItemsContainer">
-          <div class="empty-state">
-            No items yet. Select a service, pick options, and click
-            <strong>Add to Quote</strong>.
+        <div class="hr"></div>
+
+        <!-- Line item adder -->
+        <div class="card" style="background: rgba(255,255,255,.03); box-shadow:none;">
+          <div class="hd">
+            <h2 style="font-size:13px;">Add / edit line item</h2>
+            <div class="meta">
+              <span class="pill">Tip: pick a service then adjust quantity/hours</span>
+            </div>
+          </div>
+          <div class="bd">
+            <div class="grid">
+              <div>
+                <label>Service category</label>
+                <select id="categorySelect"></select>
+              </div>
+              <div>
+                <label>Service</label>
+                <select id="serviceSelect"></select>
+              </div>
+
+              <div>
+                <label>Quantity</label>
+                <input id="qtyInput" type="number" min="1" step="1" value="1" />
+              </div>
+              <div>
+                <label>Override unit price (optional)</label>
+                <input id="priceOverride" type="number" min="0" step="0.01" placeholder="leave blank to use DB price" />
+              </div>
+
+              <div>
+                <label>Override labor hours (optional)</label>
+                <input id="hoursOverride" type="number" min="0" step="0.25" placeholder="leave blank to use DB hours" />
+              </div>
+              <div>
+                <label>Line notes (optional)</label>
+                <input id="lineNotes" type="text" placeholder="e.g., second floor, tight space" />
+              </div>
+            </div>
+
+            <div class="row" style="margin-top:12px;">
+              <button id="btnAddLine" class="good" type="button">Add to quote</button>
+              <button id="btnUpdateLine" class="primary" type="button" style="display:none;">Update line</button>
+              <button id="btnCancelEdit" type="button" style="display:none;">Cancel</button>
+              <span class="muted small" id="linePreview"></span>
+            </div>
           </div>
         </div>
 
-        <div class="field-row">
-          <label for="customerName">Customer name</label>
-          <input type="text" id="customerName" placeholder="Customer name" />
-        </div>
+        <div class="hr"></div>
 
-        <div class="field-row">
-          <label for="customerEmail">Customer email</label>
-          <input type="email" id="customerEmail" placeholder="name@example.com" />
-        </div>
-
-        <div class="field-row">
-          <label for="hourlyRate">Hourly Rate ($)</label>
-          <input type="number" id="hourlyRate" min="0" step="1" value="75" />
-        </div>
-
-        <div class="field-row">
-          <label for="discountPercent">Labor discount (%)</label>
-          <input
-            type="number"
-            id="discountPercent"
-            min="0"
-            max="100"
-            step="1"
-            value="0"
-          />
-          <span class="muted">Applies to labor subtotal before tax. 0–100.</span>
-        </div>
-
-        <!-- Materials -->
-        <div class="field-row">
-          <label>Materials</label>
-          <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <input
-              type="text"
-              id="materialDesc"
-              placeholder="Description"
-              style="flex:2; min-width:140px;"
-            />
-            <input
-              type="number"
-              id="materialCost"
-              placeholder="Cost"
-              min="0"
-              step="0.01"
-              style="flex:1; min-width:110px;"
-            />
-            <button id="addMaterialBtn" class="btn btn-secondary" type="button">
-              Add
-            </button>
+        <!-- Items table -->
+        <div class="row" style="justify-content:space-between;">
+          <div class="row" style="gap:8px;">
+            <span class="pill">Quote lines</span>
+            <span class="small muted">Click a line to edit</span>
           </div>
-          <div id="materialsList" class="materials-list muted">
-            No materials added.
+          <div class="row" style="gap:8px;">
+            <button id="btnExportJSON" type="button">Export JSON</button>
+            <button id="btnExportCSV" type="button">Export CSV</button>
+            <button id="btnPrint" class="primary" type="button">Print</button>
           </div>
         </div>
 
-        <div class="totals-block">
-          <div class="totals-row">
-            <span class="totals-label">Labor time</span>
-            <span id="totalTimeLabel">0 min</span>
-          </div>
-          <div class="totals-row">
-            <span class="totals-label">Labor subtotal</span>
-            <span id="laborSubtotalLabel">$0.00</span>
-          </div>
-          <div class="totals-row-sub">
-            <span>Discount on labor</span>
-            <span id="discountAmountLabel">-$0.00</span>
-          </div>
-          <div class="totals-row-sub">
-            <span>Labor after discount</span>
-            <span id="laborAfterDiscountLabel">$0.00</span>
-          </div>
-          <div class="totals-row-sub">
-            <span>Materials</span>
-            <span id="materialsTotalLabel">$0.00</span>
-          </div>
-          <div class="totals-row-sub">
-            <span>Sales tax (10.2%)</span>
-            <span id="taxLabel">$0.00</span>
-          </div>
-          <div class="totals-row-total">
-            <span>Total after tax</span>
-            <span id="totalAfterTaxLabel">$0.00</span>
-          </div>
+        <div style="margin-top:10px; overflow:auto;">
+          <table id="itemsTable">
+            <thead>
+              <tr>
+                <th style="min-width:180px;">Service</th>
+                <th>Qty</th>
+                <th>Unit</th>
+                <th>Hours</th>
+                <th>Line total</th>
+                <th style="min-width:120px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
 
-        <div class="actions-row">
-          <button id="saveQuoteBtn" class="btn btn-secondary" type="button">
-            Save quote
-          </button>
-          <button id="downloadQuoteBtn" class="btn btn-secondary" type="button">
-            Download quote
-          </button>
-          <button id="emailQuoteBtn" class="btn btn-primary" type="button">
-            Send quote by email
-          </button>
-        </div>
-
-        <div class="muted">
-          Amounts are estimates based on your hourly rate, discount, and
-          configured time. You can manually override minutes per item if needed.
+        <div class="footnote">
+          Database loading fix: this page uses <span class="mono">fetch()</span> with cache-busting so Vercel/GitHub caching doesn’t “randomly” serve an old or missing CSV.
+          Also, export buttons now generate files (Blob download) instead of navigating to the CSV URL.
         </div>
       </div>
-    </div>
+    </section>
+
+    <!-- Right: Summary + Supabase -->
+    <aside class="card">
+      <div class="hd">
+        <h2>Summary</h2>
+        <div class="meta">
+          <span class="pill">Currency: USD</span>
+        </div>
+      </div>
+      <div class="bd">
+        <div class="totals">
+          <div class="kv"><span>Subtotal</span><b class="v" id="subtotal">$0.00</b></div>
+          <div class="kv"><span>Discount</span><b class="v" id="discountAmt">$0.00</b></div>
+          <div class="kv"><span>Tax</span><b class="v" id="taxAmt">$0.00</b></div>
+          <div class="kv" style="border-color: rgba(110,168,255,.35); background: rgba(110,168,255,.08);">
+            <span><b>Total</b></span><b class="v" id="total">$0.00</b>
+          </div>
+          <div class="kv"><span>Estimated labor hours</span><b class="v" id="totalHours">0.00</b></div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="card" style="background: rgba(255,255,255,.03); box-shadow:none;">
+          <div class="hd">
+            <h2 style="font-size:13px;">Database settings</h2>
+            <div class="meta">
+              <span class="pill">Default: /database.csv</span>
+            </div>
+          </div>
+          <div class="bd">
+            <label>CSV URL (optional override)</label>
+            <input id="csvUrl" type="text" placeholder="Leave blank to use /database.csv" />
+            <div class="row" style="margin-top:10px;">
+              <button id="btnSaveCsvUrl" type="button">Save</button>
+              <button id="btnUseDefaultCsv" type="button">Use default</button>
+            </div>
+            <div class="small muted" style="margin-top:10px;">
+              Put <span class="mono">database.csv</span> in the same folder as this <span class="mono">index.html</span> (repo root) so it resolves as <span class="mono">/database.csv</span> on Vercel.
+            </div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="card" style="background: rgba(255,255,255,.03); box-shadow:none;">
+          <div class="hd">
+            <h2 style="font-size:13px;">Supabase (optional)</h2>
+            <div class="meta">
+              <span id="sbStatus" class="pill warn">Not configured</span>
+            </div>
+          </div>
+          <div class="bd">
+            <label>Supabase URL</label>
+            <input id="sbUrl" type="text" placeholder="https://xxxx.supabase.co" />
+            <label style="margin-top:10px;">Supabase anon key</label>
+            <input id="sbKey" type="password" placeholder="anon key" />
+
+            <div class="row" style="margin-top:10px;">
+              <button id="btnSaveSupabase" type="button">Save</button>
+              <button id="btnTestSupabase" class="primary" type="button">Test</button>
+            </div>
+
+            <div class="hr"></div>
+
+            <div class="row" style="justify-content:space-between;">
+              <span class="pill">Save quote to DB</span>
+              <button id="btnSaveQuote" class="good" type="button">Save quote</button>
+            </div>
+
+            <div class="small muted" style="margin-top:10px;">
+              This expects a table named <span class="mono">quotes</span> with columns:
+              <span class="mono">id (uuid, default)</span>, <span class="mono">created_at</span>,
+              <span class="mono">customer_name</span>, <span class="mono">customer_contact</span>, <span class="mono">job_address</span>,
+              <span class="mono">quote_date</span>, <span class="mono">tax_rate</span>, <span class="mono">discount_type</span>, <span class="mono">discount_value</span>,
+              <span class="mono">notes</span>, <span class="mono">items (jsonb)</span>, <span class="mono">totals (jsonb)</span>.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+  </main>
+
+  <div class="toast" id="toast">
+    <p class="t" id="toastTitle">Notice</p>
+    <p class="d" id="toastDesc">...</p>
   </div>
 
-  <!-- Libraries -->
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script>
+/**
+ * AnyFix Quote Builder (single-file)
+ *
+ * CSV expectations (recommended columns):
+ *  - category
+ *  - service
+ *  - unit_price  (number)
+ *  - labor_hours (number)
+ * Optional columns:
+ *  - unit (e.g., "job", "hour", "item")
+ *  - description
+ *
+ * IMPORTANT DEPLOY FIXES:
+ *  1) Put database.csv in your repo root (same level as index.html) so it serves at /database.csv
+ *  2) Vercel can cache aggressively. This code cache-busts: /database.csv?v=<timestamp>
+ *  3) Export buttons generate files (Blob) so you don't "navigate to CSV and download it" by accident.
+ */
 
-  <script>
-    /* ===== CONFIGURE THESE TWO CONSTANTS WITH YOUR SUPABASE PROJECT ===== */
-    const SUPABASE_URL = "https://krphfybgsyupjvacpeao.supabase.co";  // TODO: replace
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtycGhmeWJnc3l1cGp2YWNwZWFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUzOTUwODYsImV4cCI6MjA4MDk3MTA4Nn0.fgNSoyaLJCW4MwoYz18y2a6zyuqcCluTmEmgZMpUkyA";             // TODO: replace
+const state = {
+  db: [],                 // normalized rows
+  categories: [],         // strings
+  servicesByCategory: {}, // map category -> rows
+  quote: {
+    customerName: "",
+    customerContact: "",
+    jobAddress: "",
+    quoteDate: "",
+    taxRate: 10.10,
+    discountType: "flat",
+    discountValue: 0,
+    notes: "",
+    items: [] // {id, category, service, unit, unitPrice, laborHours, qty, notes}
+  },
+  editLineId: null,
+  supabase: {
+    url: "",
+    key: "",
+    client: null
+  },
+  csvUrlOverride: ""
+};
 
-    const supabase = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY
-    );
+// ---------- Utilities ----------
+const $ = (id) => document.getElementById(id);
+const fmtMoney = (n) => {
+  const x = Number(n || 0);
+  return x.toLocaleString(undefined, { style: "currency", currency: "USD" });
+};
+const round2 = (n) => Math.round((Number(n || 0) + Number.EPSILON) * 100) / 100;
+const uid = () => (crypto?.randomUUID ? crypto.randomUUID() : String(Date.now()) + "_" + Math.random().toString(16).slice(2));
 
-    const SALES_TAX_RATE = 0.102;
+function toast(title, desc, kind="info"){
+  const el = $("toast");
+  $("toastTitle").textContent = title;
+  $("toastDesc").textContent = desc;
+  el.style.borderColor =
+    kind === "ok" ? "rgba(124,255,167,.35)" :
+    kind === "bad" ? "rgba(255,107,107,.35)" :
+    kind === "warn" ? "rgba(255,209,102,.35)" :
+    "rgba(255,255,255,.18)";
+  el.classList.add("show");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(()=> el.classList.remove("show"), 3800);
+}
 
-    emailjs.init("UmuPL_Uw9bxoJunoI");
-    const EMAILJS_SERVICE_ID = "service_anyfix";
-    const EMAILJS_TEMPLATE_ID = "anyfix_quote_505050";
+// ---------- LocalStorage ----------
+const LS_KEYS = {
+  QUOTE: "anyfix_quote_v2",
+  CSVURL: "anyfix_csv_url_v2",
+  SBURL: "anyfix_sb_url_v2",
+  SBKEY: "anyfix_sb_key_v2"
+};
 
-    let databaseRows = [];
-    let currentService = "";
-    let currentCategories = [];
-    let quoteItems = [];
-    let materials = [];
-    let currentQuoteId = null;
-    let savedQuotes = []; // cache from backend
+function loadLocal(){
+  try{
+    const q = JSON.parse(localStorage.getItem(LS_KEYS.QUOTE) || "null");
+    if(q && typeof q === "object") state.quote = { ...state.quote, ...q, items: Array.isArray(q.items) ? q.items : [] };
+  }catch{}
+  state.csvUrlOverride = localStorage.getItem(LS_KEYS.CSVURL) || "";
+  state.supabase.url = localStorage.getItem(LS_KEYS.SBURL) || "";
+  state.supabase.key = localStorage.getItem(LS_KEYS.SBKEY) || "";
+}
 
-    const serviceSelect = document.getElementById("serviceSelect");
-    const addToQuoteBtn = document.getElementById("addToQuoteBtn");
-    const clearQuoteBtn = document.getElementById("clearQuoteBtn");
-    const optionsGrid = document.getElementById("optionsGrid");
-    const selectedCountLabel = document.getElementById("selectedCount");
-    const serviceHint = document.getElementById("serviceHint");
-    const quoteItemsContainer = document.getElementById("quoteItemsContainer");
-    const quoteItemsCount = document.getElementById("quoteItemsCount");
-    const currentQuoteIdLabel = document.getElementById("currentQuoteIdLabel");
-    const savedQuotesSelect = document.getElementById("savedQuotesSelect");
-    const quoteSearchInput = document.getElementById("quoteSearch");
+function saveLocal(){
+  localStorage.setItem(LS_KEYS.QUOTE, JSON.stringify(state.quote));
+  localStorage.setItem(LS_KEYS.CSVURL, state.csvUrlOverride || "");
+  localStorage.setItem(LS_KEYS.SBURL, state.supabase.url || "");
+  localStorage.setItem(LS_KEYS.SBKEY, state.supabase.key || "");
+}
 
-    const hourlyRateInput = document.getElementById("hourlyRate");
-    const discountPercentInput = document.getElementById("discountPercent");
-    const totalTimeLabel = document.getElementById("totalTimeLabel");
-    const laborSubtotalLabel = document.getElementById("laborSubtotalLabel");
-    const discountAmountLabel = document.getElementById("discountAmountLabel");
-    const laborAfterDiscountLabel =
-      document.getElementById("laborAfterDiscountLabel");
-    const materialsTotalLabel = document.getElementById("materialsTotalLabel");
-    const taxLabel = document.getElementById("taxLabel");
-    const totalAfterTaxLabel = document.getElementById("totalAfterTaxLabel");
+// ---------- CSV Loading ----------
+async function fetchText(url){
+  // cache-bust to avoid stale/missing CSV when Vercel edge cache behaves unexpectedly
+  const u = new URL(url, window.location.origin);
+  u.searchParams.set("v", String(Date.now()));
+  const res = await fetch(u.toString(), { cache: "no-store" });
+  if(!res.ok) throw new Error(`HTTP ${res.status} for ${u.pathname}`);
+  return await res.text();
+}
 
-    const customerNameInput = document.getElementById("customerName");
-    const customerEmailInput = document.getElementById("customerEmail");
-
-    const materialDescInput = document.getElementById("materialDesc");
-    const materialCostInput = document.getElementById("materialCost");
-    const addMaterialBtn = document.getElementById("addMaterialBtn");
-    const materialsList = document.getElementById("materialsList");
-
-    const saveQuoteBtn = document.getElementById("saveQuoteBtn");
-    const downloadQuoteBtn = document.getElementById("downloadQuoteBtn");
-    const emailQuoteBtn = document.getElementById("emailQuoteBtn");
-
-    /* ---------- Supabase helpers ---------- */
-    async function fetchSavedQuotesFromBackend() {
-      const { data, error } = await supabase
-        .from("quotes")
-        .select("*")
-        .order("timestamp", { ascending: false });
-
-      if (error) {
-        console.error("Supabase fetch error:", error);
-        return;
-      }
-      savedQuotes = data || [];
-      refreshSavedQuotesDropdown();
+function normalizeRow(r){
+  // allow flexible headers
+  const get = (...keys) => {
+    for(const k of keys){
+      if(r[k] != null && String(r[k]).trim() !== "") return String(r[k]).trim();
     }
+    return "";
+  };
+  const category = get("category", "Category", "service_category", "Service Category");
+  const service  = get("service", "Service", "name", "Name", "service_name", "Service Name");
+  const unit = get("unit", "Unit") || "job";
+  const unitPrice = Number(get("unit_price", "Unit Price", "price", "Price", "base_price")) || 0;
+  const laborHours = Number(get("labor_hours", "Labor Hours", "hours", "Hours", "labor_time_hours")) || 0;
+  const description = get("description", "Description");
 
-    async function upsertQuoteToBackend(quoteObj) {
-      const { error } = await supabase.from("quotes").upsert({
-        quote_id: quoteObj.id,
-        timestamp: quoteObj.timestamp,
-        customer_name: quoteObj.customerName,
-        customer_email: quoteObj.customerEmail,
-        hourly_rate: quoteObj.hourlyRate,
-        discount_percent: quoteObj.discountPercent,
-        quote_items: quoteObj.quoteItems,
-        materials: quoteObj.materials
-      });
-      if (error) {
-        console.error("Supabase upsert error:", error);
-        throw error;
-      }
+  return { category, service, unit, unitPrice, laborHours, description };
+}
+
+function buildIndexes(rows){
+  const clean = rows
+    .map(normalizeRow)
+    .filter(x => x.category && x.service);
+
+  const cats = Array.from(new Set(clean.map(x => x.category))).sort((a,b)=>a.localeCompare(b));
+  const map = {};
+  for(const c of cats){
+    map[c] = clean.filter(x => x.category === c).sort((a,b)=>a.service.localeCompare(b.service));
+  }
+  state.db = clean;
+  state.categories = cats;
+  state.servicesByCategory = map;
+}
+
+async function loadDatabase(){
+  const defaultUrl = "/database.csv";
+  const src = (state.csvUrlOverride || "").trim() || defaultUrl;
+
+  $("dbStatus").textContent = "DB: loading…";
+  $("dbStatus").className = "pill warn";
+  $("dbSource").textContent = `Source: ${src}`;
+
+  try{
+    const csv = await fetchText(src);
+
+    const parsed = Papa.parse(csv, {
+      header: true,
+      skipEmptyLines: true,
+      dynamicTyping: false
+    });
+
+    if(parsed.errors?.length){
+      console.warn("CSV parse errors", parsed.errors);
+      toast("CSV loaded with warnings", "Some rows/headers may be off. Check your database.csv formatting.", "warn");
     }
-
-    function refreshSavedQuotesDropdown(filterText = "") {
-      const filter = filterText.toLowerCase();
-      savedQuotesSelect.innerHTML =
-        '<option value="">Select a saved quote…</option>';
-
-      savedQuotes.forEach(q => {
-        const d = q.timestamp ? new Date(q.timestamp) : new Date();
-        const dateStr = d.toLocaleDateString();
-        const id = q.quote_id;
-        const name = q.customer_name || "Customer";
-        const label = `${id} – ${name} – ${dateStr}`;
-
-        if (
-          filter &&
-          !label.toLowerCase().includes(filter)
-        ) {
-          return;
-        }
-
-        const opt = document.createElement("option");
-        opt.value = id;
-        opt.textContent = label;
-        savedQuotesSelect.appendChild(opt);
-      });
-    }
-
-    function updateCurrentQuoteIdLabel() {
-      currentQuoteIdLabel.textContent =
-        "Quote: " + (currentQuoteId ? currentQuoteId : "New");
-    }
-
-    function ensureCurrentQuoteId() {
-      if (!currentQuoteId) {
-        currentQuoteId = generateQuoteId();
-        updateCurrentQuoteIdLabel();
-      }
-      return currentQuoteId;
-    }
-
-    function buildQuoteObjectForSave(id) {
-      return {
-        id,
-        timestamp: Date.now(),
-        customerName: customerNameInput.value.trim(),
-        customerEmail: customerEmailInput.value.trim(),
-        hourlyRate: Number(hourlyRateInput.value) || 0,
-        discountPercent: Number(discountPercentInput.value) || 0,
-        quoteItems: quoteItems,
-        materials: materials
-      };
-    }
-
-    async function internalSaveQuote(silent = false) {
-      if (!quoteItems.length && !materials.length) {
-        if (!silent) alert("Cannot save an empty quote.");
-        return null;
-      }
-      const id = ensureCurrentQuoteId();
-      const quoteData = buildQuoteObjectForSave(id);
-
-      try {
-        await upsertQuoteToBackend(quoteData);
-        await fetchSavedQuotesFromBackend();
-        if (!silent) alert("Quote saved.");
-        return id;
-      } catch (err) {
-        if (!silent) alert("Error saving quote: " + err.message);
-        return null;
-      }
-    }
-
-    async function saveCurrentQuote() {
-      await internalSaveQuote(false);
-    }
-
-    function getSavedQuoteById(id) {
-      return savedQuotes.find(q => q.quote_id === id) || null;
-    }
-
-    function loadQuoteFromSupabaseRow(row) {
-      currentQuoteId = row.quote_id;
-      customerNameInput.value = row.customer_name || "";
-      customerEmailInput.value = row.customer_email || "";
-      hourlyRateInput.value =
-        typeof row.hourly_rate === "number" ? row.hourly_rate : 75;
-      discountPercentInput.value =
-        typeof row.discount_percent === "number" ? row.discount_percent : 0;
-      quoteItems = Array.isArray(row.quote_items) ? row.quote_items : [];
-      materials = Array.isArray(row.materials) ? row.materials : [];
-
-      renderQuoteItems();
-      renderMaterials();
-      updateTotals();
-      updateCurrentQuoteIdLabel();
-    }
-
-    function loadQuoteById(id) {
-      if (!id) return;
-      const row = getSavedQuoteById(id);
-      if (!row) {
-        alert("Saved quote not found.");
-        return;
-      }
-      loadQuoteFromSupabaseRow(row);
-    }
-
-    /* ---------- CSV / services ---------- */
-    function loadDatabaseFromCSV() {
-      Papa.parse("/database.csv", {
-        download: true,
-        header: true,
-        skipEmptyLines: true,
-        complete: function (results) {
-          databaseRows = results.data.map(row => ({
-            service: row.service,
-            category: row.category,
-            option: row.option,
-            minutes: Number(row.minutes) || 0
-          }));
-          initServices();
-        },
-        error: function (err) {
-          console.error("Error loading CSV", err);
-          alert("Could not load database.csv. Check the file name/location.");
-        }
-      });
-    }
-
-    function initServices() {
-      serviceSelect.innerHTML = '<option value="">Select a service…</option>';
-      const services = Array.from(new Set(databaseRows.map(r => r.service))).sort();
-      services.forEach(service => {
-        const opt = document.createElement("option");
-        opt.value = service;
-        opt.textContent = service;
-        serviceSelect.appendChild(opt);
-      });
-    }
-
-    /* ---------- Service / options UI ---------- */
-    function onServiceChange() {
-      currentService = serviceSelect.value;
-      optionsGrid.innerHTML = "";
-      currentCategories = [];
-      addToQuoteBtn.disabled = true;
-      updateSelectedCount();
-
-      if (!currentService) {
-        serviceHint.textContent = "Choose a service to see options.";
-        return;
-      }
-
-      serviceHint.textContent = currentService;
-      const rows = databaseRows.filter(r => r.service === currentService);
-      const categoryNames = Array.from(
-        new Set(rows.map(r => r.category))
-      ).sort();
-
-      categoryNames.forEach((cat, index) => {
-        const options = rows
-          .filter(r => r.category === cat)
-          .map(r => ({
-            label: r.option,
-            minutes: Number(r.minutes) || 0
-          }));
-
-        const inputName = `cat-${index}`;
-
-        currentCategories.push({ name: cat, options, inputName });
-
-        const groupEl = document.createElement("div");
-        groupEl.className = "option-group";
-        groupEl.dataset.category = cat;
-
-        const header = document.createElement("div");
-        header.className = "option-group-header";
-
-        const title = document.createElement("div");
-        title.className = "option-group-title";
-        title.textContent = cat;
-
-        const meta = document.createElement("div");
-        meta.className = "option-group-meta";
-        meta.textContent = "Select one";
-
-        header.appendChild(title);
-        header.appendChild(meta);
-
-        const list = document.createElement("div");
-        list.className = "option-list";
-
-        options.forEach(opt => {
-          const row = document.createElement("label");
-          row.className = "option-row";
-
-          const main = document.createElement("div");
-          main.className = "option-main";
-
-          const input = document.createElement("input");
-          input.type = "radio";
-          input.name = inputName;
-          input.value = opt.label;
-
-          input.addEventListener("change", () => {
-            updateSelectedCount();
-            updateAddButtonState();
-          });
-
-          const text = document.createElement("span");
-          text.textContent = opt.label;
-
-          main.appendChild(input);
-          main.appendChild(text);
-
-          const time = document.createElement("span");
-          time.className = "option-time";
-          time.textContent = `${opt.minutes} min`;
-
-          row.appendChild(main);
-          row.appendChild(time);
-          list.appendChild(row);
-        });
-
-        groupEl.appendChild(header);
-        groupEl.appendChild(list);
-        optionsGrid.appendChild(groupEl);
-      });
-
-      updateSelectedCount();
-      updateAddButtonState();
-    }
-
-    function updateSelectedCount() {
-      if (!currentCategories.length) {
-        selectedCountLabel.textContent = "(0/0 selected)";
-        return;
-      }
-      let selected = 0;
-      currentCategories.forEach(cat => {
-        const checked = document.querySelector(
-          `input[name="${cat.inputName}"]:checked`
-        );
-        if (checked) selected += 1;
-      });
-      selectedCountLabel.textContent = `(${selected}/${currentCategories.length} selected)`;
-    }
-
-    function updateAddButtonState() {
-      let hasAnySelection = false;
-      currentCategories.forEach(cat => {
-        const checked = document.querySelector(
-          `input[name="${cat.inputName}"]:checked`
-        );
-        if (checked) hasAnySelection = true;
-      });
-      addToQuoteBtn.disabled = !hasAnySelection || !currentService;
-    }
-
-    function addToQuote() {
-      if (!currentService) return;
-
-      const selections = [];
-      currentCategories.forEach(cat => {
-        const checked = document.querySelector(
-          `input[name="${cat.inputName}"]:checked`
-        );
-        if (!checked) return;
-
-        const label = checked.value;
-        const row = databaseRows.find(
-          r =>
-            r.service === currentService &&
-            r.category === cat.name &&
-            r.option === label
-        );
-        const minutes = row ? Number(row.minutes) || 0 : 0;
-
-        selections.push({ category: cat.name, option: label, minutes });
-      });
-
-      if (!selections.length) {
-        alert("Please select at least one option.");
-        return;
-      }
-
-      const totalMinutes = selections.reduce(
-        (sum, s) => sum + (Number(s.minutes) || 0),
-        0
-      );
-
-      const item = {
-        id: Date.now() + Math.random(),
-        service: currentService,
-        selections,
-        totalMinutes
-      };
-
-      quoteItems.push(item);
-      renderQuoteItems();
-    }
-
-    function renderQuoteItems() {
-      quoteItemsContainer.innerHTML = "";
-      if (!quoteItems.length) {
-        const empty = document.createElement("div");
-        empty.className = "empty-state";
-        empty.textContent =
-          "No items yet. Select a service, pick options, and click Add to Quote.";
-        quoteItemsContainer.appendChild(empty);
-      } else {
-        quoteItems.forEach(item => {
-          const wrap = document.createElement("div");
-          wrap.className = "quote-item";
-
-          const header = document.createElement("div");
-          header.className = "quote-item-header";
-
-          const title = document.createElement("div");
-          title.className = "quote-item-title";
-          title.textContent = item.service;
-
-          const timeWrap = document.createElement("div");
-          timeWrap.className = "quote-item-time";
-
-          const timeLabel = document.createElement("span");
-          timeLabel.textContent = "Time (min):";
-
-          const timeInput = document.createElement("input");
-          timeInput.type = "number";
-          timeInput.min = "0";
-          timeInput.step = "1";
-          timeInput.value = item.totalMinutes;
-
-          timeInput.addEventListener("change", () => {
-            let val = Number(timeInput.value);
-            if (!isFinite(val) || val < 0) val = 0;
-            item.totalMinutes = val;
-            timeInput.value = val;
-            updateTotals();
-          });
-
-          timeWrap.appendChild(timeLabel);
-          timeWrap.appendChild(timeInput);
-
-          header.appendChild(title);
-          header.appendChild(timeWrap);
-
-          const body = document.createElement("div");
-          body.className = "quote-item-body";
-          item.selections.forEach(sel => {
-            const line = document.createElement("div");
-            line.textContent = `${sel.category}: ${sel.option} (${sel.minutes} min)`;
-            body.appendChild(line);
-          });
-
-          const removeBtn = document.createElement("button");
-          removeBtn.className = "quote-item-remove-btn";
-          removeBtn.type = "button";
-          removeBtn.textContent = "Remove";
-          removeBtn.addEventListener("click", () => {
-            quoteItems = quoteItems.filter(q => q.id !== item.id);
-            renderQuoteItems();
-          });
-
-          wrap.appendChild(header);
-          wrap.appendChild(body);
-          wrap.appendChild(removeBtn);
-          quoteItemsContainer.appendChild(wrap);
-        });
-      }
-
-      quoteItemsCount.textContent =
-        quoteItems.length === 1
-          ? "1 item in quote"
-          : `${quoteItems.length} items in quote`;
-
-      updateTotals();
-    }
-
-    function clearQuote() {
-      if (
-        !quoteItems.length &&
-        !materials.length &&
-        !customerNameInput.value &&
-        !customerEmailInput.value
-      ) {
-        return;
-      }
-      if (
-        !confirm(
-          "Clear the current quote? This does not delete any saved quotes in the backend."
-        )
-      )
-        return;
-
-      quoteItems = [];
-      materials = [];
-      customerNameInput.value = "";
-      customerEmailInput.value = "";
-      hourlyRateInput.value = "75";
-      discountPercentInput.value = "0";
-      currentQuoteId = null;
-      updateCurrentQuoteIdLabel();
-
-      renderQuoteItems();
-      renderMaterials();
-      updateTotals();
-    }
-
-    /* ---------- Materials ---------- */
-    function addMaterial() {
-      const desc = materialDescInput.value.trim();
-      const cost = Number(materialCostInput.value);
-      if (!desc || !isFinite(cost) || cost < 0) {
-        alert("Enter a valid description and cost for the material.");
-        return;
-      }
-
-      materials.push({
-        id: Date.now() + Math.random(),
-        description: desc,
-        cost
-      });
-
-      materialDescInput.value = "";
-      materialCostInput.value = "";
-
-      renderMaterials();
-      updateTotals();
-    }
-
-    function renderMaterials() {
-      materialsList.innerHTML = "";
-
-      if (!materials.length) {
-        materialsList.textContent = "No materials added.";
-        materialsList.classList.add("muted");
-        return;
-      }
-
-      materialsList.classList.remove("muted");
-      materials.forEach(mat => {
-        const row = document.createElement("div");
-        row.className = "material-item";
-        row.innerHTML = `
-          <span>${mat.description}</span>
-          <span>
-            $${mat.cost.toFixed(2)}
-            <button class="material-remove-btn" type="button">Remove</button>
-          </span>
-        `;
-        row.querySelector("button").addEventListener("click", () => {
-          materials = materials.filter(m => m.id !== mat.id);
-          renderMaterials();
-          updateTotals();
-        });
-        materialsList.appendChild(row);
-      });
-    }
-
-    /* ---------- Totals ---------- */
-    function updateTotals() {
-      const totalMinutes = quoteItems.reduce(
-        (sum, item) => sum + (Number(item.totalMinutes) || 0),
-        0
-      );
-      const rate = Number(hourlyRateInput.value) || 0;
-      let discountPercent = Number(discountPercentInput.value) || 0;
-      if (discountPercent < 0) discountPercent = 0;
-      if (discountPercent > 100) discountPercent = 100;
-      discountPercentInput.value = discountPercent;
-
-      const laborSubtotal = (totalMinutes / 60) * rate;
-      const discountAmount = laborSubtotal * (discountPercent / 100);
-      const laborAfterDiscount = laborSubtotal - discountAmount;
-      const materialsTotal = materials.reduce(
-        (sum, m) => sum + (Number(m.cost) || 0),
-        0
-      );
-      const taxBase = laborAfterDiscount + materialsTotal;
-      const tax = taxBase * SALES_TAX_RATE;
-      const totalAfterTax = taxBase + tax;
-
-      totalTimeLabel.textContent = `${totalMinutes} min`;
-      laborSubtotalLabel.textContent = `$${laborSubtotal.toFixed(2)}`;
-      discountAmountLabel.textContent = `-$${discountAmount.toFixed(2)}`;
-      laborAfterDiscountLabel.textContent = `$${laborAfterDiscount.toFixed(2)}`;
-      materialsTotalLabel.textContent = `$${materialsTotal.toFixed(2)}`;
-      taxLabel.textContent = `$${tax.toFixed(2)}`;
-      totalAfterTaxLabel.textContent = `$${totalAfterTax.toFixed(2)}`;
-    }
-
-    /* ---------- Quote text/HTML ---------- */
-    function buildQuoteText(quoteId) {
-      const now = new Date();
-      const rate = Number(hourlyRateInput.value) || 0;
-      const name = customerNameInput.value.trim() || "Customer";
-      const totalMinutes = quoteItems.reduce(
-        (sum, item) => sum + (Number(item.totalMinutes) || 0),
-        0
-      );
-      const discountPercent = Number(discountPercentInput.value) || 0;
-      const laborSubtotal = (totalMinutes / 60) * rate;
-      const discountAmount = laborSubtotal * (discountPercent / 100);
-      const laborAfterDiscount = laborSubtotal - discountAmount;
-      const materialsTotal = materials.reduce(
-        (sum, m) => sum + (Number(m.cost) || 0),
-        0
-      );
-      const taxBase = laborAfterDiscount + materialsTotal;
-      const tax = taxBase * SALES_TAX_RATE;
-      const totalAfterTax = taxBase + tax;
-
-      const lines = [];
-      lines.push(`AnyFix Quote #${quoteId}`);
-      lines.push(`For: ${name}`);
-      lines.push("====================");
-      lines.push(`Generated: ${now.toLocaleString()}`);
-      lines.push("");
-
-      quoteItems.forEach((item, idx) => {
-        lines.push(`Item ${idx + 1}: ${item.service}`);
-        item.selections.forEach(sel => {
-          lines.push(
-            `  - ${sel.category}: ${sel.option} (${sel.minutes} min)`
-          );
-        });
-        lines.push(`  Total time for this item: ${item.totalMinutes} min`);
-        lines.push("");
-      });
-
-      if (materials.length) {
-        lines.push("Materials:");
-        materials.forEach(m => {
-          lines.push(`  - ${m.description}: $${m.cost.toFixed(2)}`);
-        });
-        lines.push("");
-      }
-
-      lines.push("Summary");
-      lines.push("-------");
-      lines.push(`Hourly rate: $${rate.toFixed(2)}`);
-      lines.push(`Labor time: ${totalMinutes} min`);
-      lines.push(`Labor subtotal: $${laborSubtotal.toFixed(2)}`);
-      lines.push(
-        `Discount (${discountPercent.toFixed(0)}%): -$${discountAmount.toFixed(2)}`
-      );
-      lines.push(`Labor after discount: $${laborAfterDiscount.toFixed(2)}`);
-      lines.push(`Materials: $${materialsTotal.toFixed(2)}`);
-      lines.push(`Tax (10.2%): $${tax.toFixed(2)}`);
-      lines.push(`Total after tax: $${totalAfterTax.toFixed(2)}`);
-
-      return lines.join("\n");
-    }
-
-    function buildQuoteHtml(quoteId) {
-      const now = new Date();
-      const rate = Number(hourlyRateInput.value) || 0;
-      const name = customerNameInput.value.trim() || "Customer";
-      const totalMinutes = quoteItems.reduce(
-        (sum, item) => sum + (Number(item.totalMinutes) || 0),
-        0
-      );
-      const discountPercent = Number(discountPercentInput.value) || 0;
-      const laborSubtotal = (totalMinutes / 60) * rate;
-      const discountAmount = laborSubtotal * (discountPercent / 100);
-      const laborAfterDiscount = laborSubtotal - discountAmount;
-      const materialsTotal = materials.reduce(
-        (sum, m) => sum + (Number(m.cost) || 0),
-        0
-      );
-      const taxBase = laborAfterDiscount + materialsTotal;
-      const tax = taxBase * SALES_TAX_RATE;
-      const totalAfterTax = taxBase + tax;
-
-      let html = `
-        <p style="margin:0 0 12px 0; color:#374151; font-size:14px;">
-          Quote for: <strong>${name}</strong><br/>
-          Generated: ${now.toLocaleString()}
-        </p>
-        <table cellpadding="0" cellspacing="0" border="0"
-          style="width:100%; border-collapse:collapse; font-size:14px; margin-bottom:16px;">
+    buildIndexes(parsed.data || []);
+    populateSelectors();
+
+    $("dbStatus").textContent = `DB: ${state.db.length} rows`;
+    $("dbStatus").className = "pill ok";
+    toast("Database loaded", `Loaded ${state.db.length} services from ${src}`, "ok");
+  }catch(err){
+    console.error(err);
+    $("dbStatus").textContent = "DB: failed";
+    $("dbStatus").className = "pill bad";
+
+    // fallback: minimal sample so UI stays usable
+    const fallback = [
+      { category:"Assembly", service:"Furniture assembly (small)", unit:"job", unitPrice:120, laborHours:1.5, description:"Basic assembly" },
+      { category:"Mounting", service:"TV mounting", unit:"job", unitPrice:180, laborHours:2.0, description:"Standard wall mount" },
+      { category:"Repairs", service:"Drywall patch (small)", unit:"job", unitPrice:150, laborHours:2.0, description:"Up to ~6in hole" }
+    ];
+    buildIndexes(fallback);
+    populateSelectors();
+
+    toast("Database failed to load", `Using fallback sample. Fix by placing database.csv at /database.csv or setting a valid CSV URL. (${err.message})`, "bad");
+  }
+
+  renderQuote();
+}
+
+function populateSelectors(){
+  const catSel = $("categorySelect");
+  catSel.innerHTML = "";
+  for(const c of state.categories){
+    const opt = document.createElement("option");
+    opt.value = c; opt.textContent = c;
+    catSel.appendChild(opt);
+  }
+  if(!state.categories.length){
+    const opt = document.createElement("option");
+    opt.value = ""; opt.textContent = "(no categories)";
+    catSel.appendChild(opt);
+  }
+  updateServiceSelect();
+}
+
+function updateServiceSelect(){
+  const cat = $("categorySelect").value;
+  const svcSel = $("serviceSelect");
+  svcSel.innerHTML = "";
+
+  const rows = state.servicesByCategory[cat] || [];
+  for(const r of rows){
+    const opt = document.createElement("option");
+    opt.value = r.service;
+    opt.textContent = `${r.service} — ${fmtMoney(r.unitPrice)} (${r.laborHours || 0}h)`;
+    svcSel.appendChild(opt);
+  }
+  if(!rows.length){
+    const opt = document.createElement("option");
+    opt.value = ""; opt.textContent = "(no services)";
+    svcSel.appendChild(opt);
+  }
+  updateLinePreview();
+}
+
+function findService(category, service){
+  const rows = state.servicesByCategory[category] || [];
+  return rows.find(r => r.service === service) || null;
+}
+
+// ---------- Quote math ----------
+function computeTotals(){
+  const items = state.quote.items || [];
+  const subtotal = round2(items.reduce((s, it) => s + (Number(it.unitPrice||0) * Number(it.qty||0)), 0));
+  const totalHours = round2(items.reduce((s, it) => s + (Number(it.laborHours||0) * Number(it.qty||0)), 0));
+
+  const discVal = Number(state.quote.discountValue || 0);
+  const discType = state.quote.discountType || "flat";
+
+  let discount = 0;
+  if(discType === "percent"){
+    discount = round2(subtotal * (discVal/100));
+  }else{
+    discount = round2(Math.min(discVal, subtotal));
+  }
+
+  const taxable = Math.max(0, subtotal - discount);
+  const taxRate = Number(state.quote.taxRate || 0);
+  const tax = round2(taxable * (taxRate/100));
+  const total = round2(taxable + tax);
+
+  return { subtotal, discount, taxable, tax, total, totalHours };
+}
+
+function renderQuote(){
+  // bind header pills
+  $("itemsCount").textContent = `Items: ${(state.quote.items || []).length}`;
+
+  // totals
+  const t = computeTotals();
+  $("subtotal").textContent = fmtMoney(t.subtotal);
+  $("discountAmt").textContent = `-${fmtMoney(t.discount)}`;
+  $("taxAmt").textContent = fmtMoney(t.tax);
+  $("total").textContent = fmtMoney(t.total);
+  $("totalHours").textContent = t.totalHours.toFixed(2);
+
+  // items table
+  const tb = $("itemsTable").querySelector("tbody");
+  tb.innerHTML = "";
+  for(const it of (state.quote.items || [])){
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>
+        <div style="font-weight:700;">${escapeHtml(it.service)}</div>
+        <div class="small muted">${escapeHtml(it.category)} · ${escapeHtml(it.unit || "job")}${it.notes ? " · " + escapeHtml(it.notes) : ""}</div>
+      </td>
+      <td class="mono">${Number(it.qty||0)}</td>
+      <td class="mono">${fmtMoney(it.unitPrice)}</td>
+      <td class="mono">${(Number(it.laborHours||0) * Number(it.qty||0)).toFixed(2)}</td>
+      <td class="mono">${fmtMoney(Number(it.unitPrice||0) * Number(it.qty||0))}</td>
+      <td>
+        <div class="row" style="gap:8px;">
+          <button type="button" data-edit="${it.id}">Edit</button>
+          <button type="button" class="danger" data-del="${it.id}">Delete</button>
+        </div>
+      </td>
+    `;
+    tb.appendChild(tr);
+  }
+
+  // table actions
+  tb.querySelectorAll("[data-edit]").forEach(btn=>{
+    btn.addEventListener("click", () => startEditLine(btn.getAttribute("data-edit")));
+  });
+  tb.querySelectorAll("[data-del]").forEach(btn=>{
+    btn.addEventListener("click", () => deleteLine(btn.getAttribute("data-del")));
+  });
+
+  saveLocal();
+}
+
+// ---------- Line add/edit ----------
+function updateLinePreview(){
+  const cat = $("categorySelect").value;
+  const svc = $("serviceSelect").value;
+  const qty = Number($("qtyInput").value || 1);
+
+  const s = findService(cat, svc);
+  if(!s){
+    $("linePreview").textContent = "";
+    return;
+  }
+  const price = ($("priceOverride").value !== "") ? Number($("priceOverride").value) : s.unitPrice;
+  const hours = ($("hoursOverride").value !== "") ? Number($("hoursOverride").value) : s.laborHours;
+
+  const total = round2(price * qty);
+  const totalH = round2(hours * qty);
+
+  $("linePreview").textContent = `Preview: ${qty} × ${fmtMoney(price)} = ${fmtMoney(total)} · hours: ${totalH.toFixed(2)}`;
+}
+
+function clearLineForm(){
+  state.editLineId = null;
+  $("btnAddLine").style.display = "";
+  $("btnUpdateLine").style.display = "none";
+  $("btnCancelEdit").style.display = "none";
+  $("priceOverride").value = "";
+  $("hoursOverride").value = "";
+  $("lineNotes").value = "";
+  $("qtyInput").value = 1;
+  updateLinePreview();
+}
+
+function addLine(){
+  const cat = $("categorySelect").value;
+  const svc = $("serviceSelect").value;
+  const qty = Math.max(1, Math.floor(Number($("qtyInput").value || 1)));
+
+  const s = findService(cat, svc);
+  if(!s){
+    toast("Cannot add line", "No service selected.", "bad");
+    return;
+  }
+
+  const unitPrice = ($("priceOverride").value !== "") ? Number($("priceOverride").value) : s.unitPrice;
+  const laborHours = ($("hoursOverride").value !== "") ? Number($("hoursOverride").value) : s.laborHours;
+  const notes = ($("lineNotes").value || "").trim();
+
+  state.quote.items.push({
+    id: uid(),
+    category: cat,
+    service: svc,
+    unit: s.unit || "job",
+    unitPrice: round2(unitPrice),
+    laborHours: round2(laborHours),
+    qty,
+    notes
+  });
+
+  toast("Line added", `${svc} added to quote.`, "ok");
+  clearLineForm();
+  renderQuote();
+}
+
+function startEditLine(id){
+  const it = (state.quote.items || []).find(x => x.id === id);
+  if(!it) return;
+
+  state.editLineId = id;
+
+  // set selects (ensure category exists)
+  if(state.categories.includes(it.category)){
+    $("categorySelect").value = it.category;
+    updateServiceSelect();
+  }
+  $("serviceSelect").value = it.service;
+  $("qtyInput").value = it.qty;
+  $("priceOverride").value = it.unitPrice;
+  $("hoursOverride").value = it.laborHours;
+  $("lineNotes").value = it.notes || "";
+
+  $("btnAddLine").style.display = "none";
+  $("btnUpdateLine").style.display = "";
+  $("btnCancelEdit").style.display = "";
+
+  updateLinePreview();
+  toast("Edit mode", "Update the fields and click “Update line”.", "warn");
+}
+
+function updateLine(){
+  const id = state.editLineId;
+  if(!id) return;
+
+  const idx = (state.quote.items || []).findIndex(x => x.id === id);
+  if(idx < 0) return;
+
+  const cat = $("categorySelect").value;
+  const svc = $("serviceSelect").value;
+  const qty = Math.max(1, Math.floor(Number($("qtyInput").value || 1)));
+
+  const s = findService(cat, svc);
+  if(!s){
+    toast("Cannot update line", "No service selected.", "bad");
+    return;
+  }
+
+  const unitPrice = ($("priceOverride").value !== "") ? Number($("priceOverride").value) : s.unitPrice;
+  const laborHours = ($("hoursOverride").value !== "") ? Number($("hoursOverride").value) : s.laborHours;
+  const notes = ($("lineNotes").value || "").trim();
+
+  state.quote.items[idx] = {
+    ...state.quote.items[idx],
+    category: cat,
+    service: svc,
+    unit: s.unit || "job",
+    unitPrice: round2(unitPrice),
+    laborHours: round2(laborHours),
+    qty,
+    notes
+  };
+
+  toast("Line updated", `${svc} updated.`, "ok");
+  clearLineForm();
+  renderQuote();
+}
+
+function deleteLine(id){
+  state.quote.items = (state.quote.items || []).filter(x => x.id !== id);
+  if(state.editLineId === id) clearLineForm();
+  renderQuote();
+}
+
+function clearQuote(){
+  state.quote.items = [];
+  renderQuote();
+  toast("Cleared", "Quote cleared.", "ok");
+}
+
+// ---------- Export / Print ----------
+function buildQuoteObject(){
+  const t = computeTotals();
+  return {
+    customer_name: state.quote.customerName,
+    customer_contact: state.quote.customerContact,
+    job_address: state.quote.jobAddress,
+    quote_date: state.quote.quoteDate,
+    tax_rate: Number(state.quote.taxRate || 0),
+    discount_type: state.quote.discountType,
+    discount_value: Number(state.quote.discountValue || 0),
+    notes: state.quote.notes,
+    items: state.quote.items || [],
+    totals: t
+  };
+}
+
+function downloadBlob(filename, content, mime){
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 1200);
+}
+
+function exportJSON(){
+  const obj = buildQuoteObject();
+  downloadBlob(`anyfix-quote-${(obj.quote_date || "date")}.json`, JSON.stringify(obj, null, 2), "application/json");
+  toast("Exported", "JSON downloaded.", "ok");
+}
+
+function exportCSV(){
+  const obj = buildQuoteObject();
+  const rows = (obj.items || []).map(it => ({
+    category: it.category,
+    service: it.service,
+    unit: it.unit,
+    qty: it.qty,
+    unit_price: it.unitPrice,
+    labor_hours: it.laborHours,
+    line_total: round2(Number(it.unitPrice||0) * Number(it.qty||0)),
+    line_hours: round2(Number(it.laborHours||0) * Number(it.qty||0)),
+    notes: it.notes || ""
+  }));
+  const csv = Papa.unparse(rows, { quotes: false });
+  downloadBlob(`anyfix-quote-lines-${(obj.quote_date || "date")}.csv`, csv, "text/csv;charset=utf-8");
+  toast("Exported", "CSV downloaded.", "ok");
+}
+
+function printQuote(){
+  // simple print view: open new window with summary + lines
+  const q = buildQuoteObject();
+  const html = `
+    <html>
+      <head>
+        <meta charset="utf-8"/>
+        <title>AnyFix Quote</title>
+        <style>
+          body{font-family: Arial, sans-serif; padding:24px; color:#111;}
+          h1{margin:0 0 8px;}
+          .muted{color:#555;}
+          table{width:100%; border-collapse:collapse; margin-top:14px;}
+          th,td{border:1px solid #ddd; padding:8px; font-size:13px; text-align:left;}
+          th{background:#f6f6f6;}
+          .right{text-align:right;}
+          .box{border:1px solid #ddd; padding:12px; border-radius:10px; margin-top:12px;}
+        </style>
+      </head>
+      <body>
+        <h1>AnyFix Quote</h1>
+        <div class="muted">Date: ${escapeHtml(q.quote_date || "")}</div>
+
+        <div class="box">
+          <div><b>Customer:</b> ${escapeHtml(q.customer_name || "")}</div>
+          <div><b>Contact:</b> ${escapeHtml(q.customer_contact || "")}</div>
+          <div><b>Address:</b> ${escapeHtml(q.job_address || "")}</div>
+        </div>
+
+        <table>
           <thead>
             <tr>
-              <th align="left" style="border-bottom:1px solid #e5e7eb; padding:8px 4px;">Item</th>
-              <th align="left" style="border-bottom:1px solid #e5e7eb; padding:8px 4px;">Details</th>
-              <th align="right" style="border-bottom:1px solid #e5e7eb; padding:8px 4px;">Time (min)</th>
+              <th>Category</th><th>Service</th><th class="right">Qty</th>
+              <th class="right">Unit price</th><th class="right">Line total</th>
             </tr>
           </thead>
           <tbody>
-      `;
-
-      quoteItems.forEach((item, idx) => {
-        const details = item.selections
-          .map(sel => `${sel.category}: ${sel.option} (${sel.minutes} min)`)
-          .join("<br/>");
-
-        html += `
-          <tr>
-            <td valign="top" style="padding:8px 4px; border-bottom:1px solid #f3f4f6;">
-              ${idx + 1}. ${item.service}
-            </td>
-            <td valign="top" style="padding:8px 4px; border-bottom:1px solid #f3f4f6; color:#4b5563;">
-              ${details}
-            </td>
-            <td valign="top" align="right" style="padding:8px 4px; border-bottom:1px solid #f3f4f6;">
-              ${item.totalMinutes}
-            </td>
-          </tr>
-        `;
-      });
-
-      html += `
+            ${(q.items||[]).map(it => `
+              <tr>
+                <td>${escapeHtml(it.category)}</td>
+                <td>${escapeHtml(it.service)}</td>
+                <td class="right">${Number(it.qty||0)}</td>
+                <td class="right">${fmtMoney(it.unitPrice)}</td>
+                <td class="right">${fmtMoney(Number(it.unitPrice||0)*Number(it.qty||0))}</td>
+              </tr>
+            `).join("")}
           </tbody>
         </table>
-      `;
 
-      if (materials.length) {
-        html += `
-          <p style="margin:0 0 6px 0; font-size:14px; color:#111827;"><strong>Materials</strong></p>
-          <table cellpadding="0" cellspacing="0" border="0"
-            style="width:100%; border-collapse:collapse; font-size:14px; margin-bottom:12px;">
-            <thead>
-              <tr>
-                <th align="left" style="border-bottom:1px solid #e5e7eb; padding:6px 4px;">Description</th>
-                <th align="right" style="border-bottom:1px solid #e5e7eb; padding:6px 4px;">Cost</th>
-              </tr>
-            </thead>
-            <tbody>
-        `;
-        materials.forEach(m => {
-          html += `
-            <tr>
-              <td style="padding:6px 4px; border-bottom:1px solid #f3f4f6;">${m.description}</td>
-              <td align="right" style="padding:6px 4px; border-bottom:1px solid #f3f4f6;">
-                $${m.cost.toFixed(2)}
-              </td>
-            </tr>
-          `;
-        });
-        html += `
-            </tbody>
-          </table>
-        `;
-      }
+        <div class="box">
+          <div><b>Subtotal:</b> ${fmtMoney(q.totals.subtotal)}</div>
+          <div><b>Discount:</b> -${fmtMoney(q.totals.discount)}</div>
+          <div><b>Tax:</b> ${fmtMoney(q.totals.tax)}</div>
+          <div style="font-size:16px; margin-top:6px;"><b>Total:</b> ${fmtMoney(q.totals.total)}</div>
+          <div class="muted" style="margin-top:6px;"><b>Estimated labor hours:</b> ${q.totals.totalHours.toFixed(2)}</div>
+        </div>
 
-      html += `
-        <p style="font-size:14px; color:#111827; margin:0;">
-          <strong>Hourly rate:</strong> $${rate.toFixed(2)}<br/>
-          <strong>Labor time:</strong> ${totalMinutes} min<br/>
-          <strong>Labor subtotal:</strong> $${laborSubtotal.toFixed(2)}<br/>
-          <strong>Discount (${discountPercent.toFixed(0)}%):</strong> -$${discountAmount.toFixed(2)}<br/>
-          <strong>Labor after discount:</strong> $${laborAfterDiscount.toFixed(2)}<br/>
-          <strong>Materials:</strong> $${materialsTotal.toFixed(2)}<br/>
-          <strong>Tax (10.2%):</strong> $${tax.toFixed(2)}<br/>
-          <strong>Total after tax:</strong> $${totalAfterTax.toFixed(2)}
-        </p>
-      `;
+        ${q.notes ? `<div class="box"><b>Notes:</b><div>${escapeHtml(q.notes)}</div></div>` : ""}
 
-      return html;
+        <script>window.onload=()=>window.print();<\/script>
+      </body>
+    </html>
+  `;
+  const w = window.open("", "_blank");
+  w.document.open();
+  w.document.write(html);
+  w.document.close();
+}
+
+function escapeHtml(s){
+  return String(s ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#39;");
+}
+
+// ---------- Supabase ----------
+function initSupabaseClient(){
+  const url = (state.supabase.url || "").trim();
+  const key = (state.supabase.key || "").trim();
+  if(!url || !key){
+    state.supabase.client = null;
+    $("sbStatus").textContent = "Not configured";
+    $("sbStatus").className = "pill warn";
+    return null;
+  }
+  try{
+    state.supabase.client = window.supabase.createClient(url, key);
+    $("sbStatus").textContent = "Configured";
+    $("sbStatus").className = "pill ok";
+    return state.supabase.client;
+  }catch(err){
+    console.error(err);
+    state.supabase.client = null;
+    $("sbStatus").textContent = "Failed";
+    $("sbStatus").className = "pill bad";
+    return null;
+  }
+}
+
+async function testSupabase(){
+  const client = initSupabaseClient();
+  if(!client){
+    toast("Supabase not ready", "Add URL + anon key first.", "warn");
+    return;
+  }
+  try{
+    // lightweight ping: read 1 row (table may be empty; error still tells us connectivity)
+    const { data, error } = await client.from("quotes").select("id").limit(1);
+    if(error){
+      toast("Supabase connected (but check table)", error.message, "warn");
+    }else{
+      toast("Supabase OK", `Connected. quotes rows (sample): ${data?.length ?? 0}`, "ok");
     }
+  }catch(err){
+    toast("Supabase error", err.message, "bad");
+  }
+}
 
-    function generateQuoteId() {
-      const now = new Date();
-      return (
-        "AFQ-" +
-        now.getFullYear().toString() +
-        String(now.getMonth() + 1).padStart(2, "0") +
-        String(now.getDate()).padStart(2, "0") +
-        "-" +
-        String(now.getHours()).padStart(2, "0") +
-        String(now.getMinutes()).padStart(2, "0") +
-        String(now.getSeconds()).padStart(2, "0")
-      );
-    }
+async function saveQuoteToSupabase(){
+  const client = initSupabaseClient();
+  if(!client){
+    toast("Supabase not ready", "Add URL + anon key first.", "warn");
+    return;
+  }
+  const q = buildQuoteObject();
 
-    function buildServiceSummary() {
-      const services = Array.from(new Set(quoteItems.map(i => i.service)));
-      if (services.length === 0) return "No services";
-      if (services.length === 1) return services[0];
-      if (services.length === 2) return services[0] + " & " + services[1];
-      return (
-        services[0] + ", " + services[1] + " + " + (services.length - 2) + " more"
-      );
-    }
+  // basic validation
+  if(!q.customer_name && !q.job_address && !(q.items||[]).length){
+    toast("Nothing to save", "Add at least one line item or customer/job info.", "warn");
+    return;
+  }
 
-    /* ---------- Download & email ---------- */
-    async function downloadQuote() {
-      if (!quoteItems.length && !materials.length) {
-        alert("No items or materials in the quote yet.");
-        return;
-      }
-      const quoteId = (await internalSaveQuote(true)) || ensureCurrentQuoteId();
-      const text = buildQuoteText(quoteId);
-      const blob = new Blob([text], { type: "text/plain" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `anyfix-quote-${quoteId}.txt`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
+  try{
+    const payload = {
+      customer_name: q.customer_name,
+      customer_contact: q.customer_contact,
+      job_address: q.job_address,
+      quote_date: q.quote_date || null,
+      tax_rate: q.tax_rate,
+      discount_type: q.discount_type,
+      discount_value: q.discount_value,
+      notes: q.notes,
+      items: q.items,
+      totals: q.totals
+    };
 
-    async function sendQuoteByEmail() {
-      if (!quoteItems.length && !materials.length) {
-        alert("No items or materials in the quote yet.");
-        return;
-      }
-      const toEmail = customerEmailInput.value.trim();
-      if (!toEmail) {
-        alert("Please enter a customer email address.");
-        return;
-      }
+    const { data, error } = await client.from("quotes").insert(payload).select("id").single();
+    if(error) throw error;
 
-      const quoteId = (await internalSaveQuote(true)) || ensureCurrentQuoteId();
-      const serviceSummary = buildServiceSummary();
-      const quoteText = buildQuoteText(quoteId);
-      const quoteHtml = buildQuoteHtml(quoteId);
-      const subject = `AnyFix Quote #${quoteId} – ${serviceSummary}`;
-      const customerName = customerNameInput.value.trim() || "Customer";
+    toast("Saved to Supabase", `Quote saved. id: ${data?.id || "(unknown)"}`, "ok");
+  }catch(err){
+    console.error(err);
+    toast("Save failed", err.message || "Unknown error", "bad");
+  }
+}
 
-      const templateParams = {
-        quote_id: quoteId,
-        service_summary: serviceSummary,
-        customer_name: customerName,
-        quote_text: quoteText,
-        quote_html: quoteHtml,
-        email: toEmail,
-        subject: subject
-      };
+// ---------- Bindings ----------
+function bindInputs(){
+  // set default date
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth()+1).padStart(2,"0");
+  const dd = String(today.getDate()).padStart(2,"0");
+  if(!state.quote.quoteDate) state.quote.quoteDate = `${yyyy}-${mm}-${dd}`;
 
-      emailQuoteBtn.disabled = true;
-      emailQuoteBtn.textContent = "Sending...";
+  $("customerName").value = state.quote.customerName || "";
+  $("customerContact").value = state.quote.customerContact || "";
+  $("jobAddress").value = state.quote.jobAddress || "";
+  $("quoteDate").value = state.quote.quoteDate || "";
+  $("taxRate").value = state.quote.taxRate ?? 10.10;
+  $("discountType").value = state.quote.discountType || "flat";
+  $("discountValue").value = state.quote.discountValue ?? 0;
+  $("quoteNotes").value = state.quote.notes || "";
 
-      emailjs
-        .send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
-        .then(() => {
-          alert("Quote sent successfully.");
-        })
-        .catch(err => {
-          console.error("EmailJS error:", err);
-          alert("EmailJS error: " + JSON.stringify(err));
-        })
-        .finally(() => {
-          emailQuoteBtn.disabled = false;
-          emailQuoteBtn.textContent = "Send quote by email";
-        });
-    }
+  $("csvUrl").value = state.csvUrlOverride || "";
+  $("sbUrl").value = state.supabase.url || "";
+  $("sbKey").value = state.supabase.key || "";
 
-    /* ---------- Events & init ---------- */
-    function attachEvents() {
-      serviceSelect.addEventListener("change", onServiceChange);
-      addToQuoteBtn.addEventListener("click", addToQuote);
-      clearQuoteBtn.addEventListener("click", clearQuote);
-      hourlyRateInput.addEventListener("input", updateTotals);
-      discountPercentInput.addEventListener("input", updateTotals);
-      downloadQuoteBtn.addEventListener("click", () => { downloadQuote(); });
-      emailQuoteBtn.addEventListener("click", () => { sendQuoteByEmail(); });
-      addMaterialBtn.addEventListener("click", addMaterial);
-      saveQuoteBtn.addEventListener("click", () => { saveCurrentQuote(); });
-      savedQuotesSelect.addEventListener("change", () => {
-        const id = savedQuotesSelect.value;
-        if (id) loadQuoteById(id);
-      });
-      quoteSearchInput.addEventListener("input", () => {
-        const val = quoteSearchInput.value;
-        refreshSavedQuotesDropdown(val);
-      });
-    }
+  const onChange = () => {
+    state.quote.customerName = $("customerName").value;
+    state.quote.customerContact = $("customerContact").value;
+    state.quote.jobAddress = $("jobAddress").value;
+    state.quote.quoteDate = $("quoteDate").value;
+    state.quote.taxRate = Number($("taxRate").value || 0);
+    state.quote.discountType = $("discountType").value;
+    state.quote.discountValue = Number($("discountValue").value || 0);
+    state.quote.notes = $("quoteNotes").value;
+    renderQuote();
+  };
 
-    async function init() {
-      attachEvents();
-      updateCurrentQuoteIdLabel();
-      loadDatabaseFromCSV();
-      await fetchSavedQuotesFromBackend();
-    }
+  ["customerName","customerContact","jobAddress","quoteDate","taxRate","discountType","discountValue","quoteNotes"]
+    .forEach(id => $(id).addEventListener("input", onChange));
 
-    init();
-  </script>
+  $("categorySelect").addEventListener("change", updateServiceSelect);
+  $("serviceSelect").addEventListener("change", updateLinePreview);
+  $("qtyInput").addEventListener("input", updateLinePreview);
+  $("priceOverride").addEventListener("input", updateLinePreview);
+  $("hoursOverride").addEventListener("input", updateLinePreview);
+
+  $("btnAddLine").addEventListener("click", addLine);
+  $("btnUpdateLine").addEventListener("click", updateLine);
+  $("btnCancelEdit").addEventListener("click", clearLineForm);
+
+  $("btnReload").addEventListener("click", loadDatabase);
+  $("btnAdd").addEventListener("click", addLine);
+  $("btnClear").addEventListener("click", clearQuote);
+
+  $("btnExportJSON").addEventListener("click", exportJSON);
+  $("btnExportCSV").addEventListener("click", exportCSV);
+  $("btnPrint").addEventListener("click", printQuote);
+
+  $("btnSaveCsvUrl").addEventListener("click", () => {
+    state.csvUrlOverride = $("csvUrl").value.trim();
+    saveLocal();
+    toast("Saved", "CSV URL saved. Reloading database…", "ok");
+    loadDatabase();
+  });
+
+  $("btnUseDefaultCsv").addEventListener("click", () => {
+    state.csvUrlOverride = "";
+    $("csvUrl").value = "";
+    saveLocal();
+    toast("Default", "Using /database.csv. Reloading database…", "ok");
+    loadDatabase();
+  });
+
+  $("btnSaveSupabase").addEventListener("click", () => {
+    state.supabase.url = $("sbUrl").value.trim();
+    state.supabase.key = $("sbKey").value.trim();
+    saveLocal();
+    initSupabaseClient();
+    toast("Saved", "Supabase settings saved.", "ok");
+  });
+
+  $("btnTestSupabase").addEventListener("click", testSupabase);
+  $("btnSaveQuote").addEventListener("click", saveQuoteToSupabase);
+}
+
+// ---------- Init ----------
+(function init(){
+  loadLocal();
+  bindInputs();
+  initSupabaseClient();
+  loadDatabase();
+  renderQuote();
+})();
+</script>
 </body>
 </html>
-
-
