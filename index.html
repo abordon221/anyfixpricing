@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -443,6 +442,52 @@
     .saved-search-row select {
       flex: 1;
     }
+
+    /* ------- NEW: small connection/status pill ------- */
+    .status-pill {
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      border: 1px solid var(--border);
+      background:#fff;
+      color: var(--muted);
+      margin-left: 8px;
+    }
+    .dot { width:8px; height:8px; border-radius:50%; background:#d1d5db; }
+    .dot.ok { background:#10b981; }
+    .dot.bad { background:#ef4444; }
+    .dot.warn { background:#f59e0b; }
+
+    /* ------- NEW: csv/supabase settings mini panel ------- */
+    .mini-panel {
+      border: 1px dashed var(--border);
+      border-radius: 14px;
+      padding: 10px;
+      background: #f9fafb;
+      margin-bottom: 12px;
+    }
+    .mini-panel .row {
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .mini-panel input[type="text"]{
+      border-radius: 999px;
+      padding: 8px 10px;
+      flex: 1;
+      min-width: 220px;
+      border: 1px solid var(--border);
+      background:#fff;
+    }
+    .mini-panel .hint{
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 6px;
+    }
   </style>
 </head>
 <body>
@@ -452,6 +497,15 @@
       <div class="header-title">
         <h1>AnyFix</h1>
         <span>Quote Builder</span>
+      </div>
+
+      <!-- NEW: connection status -->
+      <div class="status-pill" title="CSV + Supabase status">
+        <span class="dot warn" id="csvDot"></span>
+        <span id="csvStatusText">CSV: loading…</span>
+        <span style="opacity:.5;">|</span>
+        <span class="dot warn" id="sbDot"></span>
+        <span id="sbStatusText">SB: checking…</span>
       </div>
     </div>
 
@@ -505,6 +559,34 @@
           <button id="clearQuoteBtn" class="btn btn-ghost" type="button">
             Clear Current
           </button>
+        </div>
+
+        <!-- NEW: CSV + Supabase settings to avoid disconnects -->
+        <div class="mini-panel">
+          <div class="section-title" style="margin-bottom:6px;">Connectivity</div>
+
+          <div class="field-row" style="margin-bottom:8px;">
+            <label for="csvUrlInput">CSV URL (leave blank = /database.csv)</label>
+            <div class="row">
+              <input type="text" id="csvUrlInput" placeholder="/database.csv" />
+              <button id="saveCsvUrlBtn" class="btn btn-secondary" type="button">Save</button>
+              <button id="reloadCsvBtn" class="btn btn-secondary" type="button">Reload</button>
+            </div>
+            <div class="hint">
+              If your app “randomly stops” seeing the CSV on Vercel, this reload uses cache-busting + no-store.
+              Make sure <strong>database.csv is at the repo root</strong> so it resolves as <strong>/database.csv</strong>.
+            </div>
+          </div>
+
+          <div class="field-row" style="margin-bottom:0;">
+            <label>Supabase</label>
+            <div class="hint">
+              Using your hardcoded keys below. If you rotate keys, update the constants. “Test” checks the <span style="font-family:ui-monospace, Menlo, Consolas;">quotes</span> table.
+            </div>
+            <div class="row" style="margin-top:8px;">
+              <button id="testSupabaseBtn" class="btn btn-secondary" type="button">Test Supabase</button>
+            </div>
+          </div>
         </div>
 
         <!-- Saved quotes + search -->
@@ -643,7 +725,11 @@
   <script>
     /* ===== CONFIGURE THESE TWO CONSTANTS WITH YOUR SUPABASE PROJECT ===== */
     const SUPABASE_URL = "https://krphfybgsyupjvacpeao.supabase.co";  // TODO: replace
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtycGhmeWJnc3l1cGp2YWNwZWFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUzOTUwODYsImV4cCI6MjA4MDk3MTA4Nn0.fgNSoyaLJCW4MwoYz18y2a6zyuqcCluTmEmgZMpUkyA";             // TODO: replace
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtycGhmeWJnc3l1cGp2YWNwZWFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUzOTUwODYsImV4cCI6MjA4MDk3MTA4Nn0.fgNSoyaLJCW4MwoYz18y2a6zyuqcCluTmEmgZMpUkyA"; // TODO: replace
+
+    // NEW: resilient CSV URL + cache-busting helpers
+    const DEFAULT_CSV_URL = "/database.csv";
+    const LS_CSV_URL_KEY = "anyfix_csv_url_v3";
 
     const supabase = window.supabase.createClient(
       SUPABASE_URL,
@@ -699,6 +785,52 @@
     const downloadQuoteBtn = document.getElementById("downloadQuoteBtn");
     const emailQuoteBtn = document.getElementById("emailQuoteBtn");
 
+    // NEW: connectivity UI
+    const csvDot = document.getElementById("csvDot");
+    const csvStatusText = document.getElementById("csvStatusText");
+    const sbDot = document.getElementById("sbDot");
+    const sbStatusText = document.getElementById("sbStatusText");
+
+    const csvUrlInput = document.getElementById("csvUrlInput");
+    const saveCsvUrlBtn = document.getElementById("saveCsvUrlBtn");
+    const reloadCsvBtn = document.getElementById("reloadCsvBtn");
+    const testSupabaseBtn = document.getElementById("testSupabaseBtn");
+
+    /* ---------- NEW: small status helpers ---------- */
+    function setCsvStatus(kind, text) {
+      csvDot.classList.remove("ok","bad","warn");
+      csvDot.classList.add(kind);
+      csvStatusText.textContent = text;
+    }
+    function setSbStatus(kind, text) {
+      sbDot.classList.remove("ok","bad","warn");
+      sbDot.classList.add(kind);
+      sbStatusText.textContent = text;
+    }
+
+    function getCsvUrl() {
+      const saved = localStorage.getItem(LS_CSV_URL_KEY) || "";
+      return (saved.trim() || DEFAULT_CSV_URL);
+    }
+
+    function setCsvUrl(url) {
+      const cleaned = (url || "").trim();
+      if (!cleaned) {
+        localStorage.removeItem(LS_CSV_URL_KEY);
+        csvUrlInput.value = "";
+      } else {
+        localStorage.setItem(LS_CSV_URL_KEY, cleaned);
+        csvUrlInput.value = cleaned;
+      }
+    }
+
+    function withCacheBust(url) {
+      // Avoid Vercel edge caching issues
+      const u = new URL(url, window.location.origin);
+      u.searchParams.set("v", String(Date.now()));
+      return u.toString();
+    }
+
     /* ---------- Supabase helpers ---------- */
     async function fetchSavedQuotesFromBackend() {
       const { data, error } = await supabase
@@ -708,13 +840,16 @@
 
       if (error) {
         console.error("Supabase fetch error:", error);
+        setSbStatus("bad", "SB: fetch failed");
         return;
       }
       savedQuotes = data || [];
       refreshSavedQuotesDropdown();
+      setSbStatus("ok", `SB: ${savedQuotes.length} quotes`);
     }
 
     async function upsertQuoteToBackend(quoteObj) {
+      // Keep your schema EXACTLY the same to avoid breaking saved quotes
       const { error } = await supabase.from("quotes").upsert({
         quote_id: quoteObj.id,
         timestamp: quoteObj.timestamp,
@@ -731,6 +866,25 @@
       }
     }
 
+    async function testSupabase() {
+      setSbStatus("warn", "SB: testing…");
+      try {
+        const { error } = await supabase.from("quotes").select("quote_id").limit(1);
+        if (error) {
+          console.error("Supabase test error:", error);
+          setSbStatus("bad", "SB: check table/keys");
+          alert("Supabase test failed: " + error.message);
+          return;
+        }
+        setSbStatus("ok", "SB: connected");
+        alert("Supabase looks OK (connected to quotes table).");
+      } catch (e) {
+        console.error(e);
+        setSbStatus("bad", "SB: error");
+        alert("Supabase test error: " + e.message);
+      }
+    }
+
     function refreshSavedQuotesDropdown(filterText = "") {
       const filter = filterText.toLowerCase();
       savedQuotesSelect.innerHTML =
@@ -743,12 +897,7 @@
         const name = q.customer_name || "Customer";
         const label = `${id} – ${name} – ${dateStr}`;
 
-        if (
-          filter &&
-          !label.toLowerCase().includes(filter)
-        ) {
-          return;
-        }
+        if (filter && !label.toLowerCase().includes(filter)) return;
 
         const opt = document.createElement("option");
         opt.value = id;
@@ -798,6 +947,7 @@
         return id;
       } catch (err) {
         if (!silent) alert("Error saving quote: " + err.message);
+        setSbStatus("bad", "SB: save failed");
         return null;
       }
     }
@@ -837,26 +987,61 @@
       loadQuoteFromSupabaseRow(row);
     }
 
-    /* ---------- CSV / services ---------- */
+    /* ---------- CSV / services (UPDATED to be resilient) ---------- */
     function loadDatabaseFromCSV() {
-      Papa.parse("/database.csv", {
-        download: true,
-        header: true,
-        skipEmptyLines: true,
-        complete: function (results) {
-          databaseRows = results.data.map(row => ({
+      const csvUrl = getCsvUrl();
+      setCsvStatus("warn", "CSV: loading…");
+
+      // NOTE: Papa's download sometimes caches; we avoid by using cache-busted URL + fetch ourselves.
+      fetch(withCacheBust(csvUrl), { cache: "no-store" })
+        .then(res => {
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          return res.text();
+        })
+        .then(text => {
+          const results = Papa.parse(text, { header: true, skipEmptyLines: true });
+          if (results.errors && results.errors.length) {
+            console.warn("CSV parse warnings:", results.errors);
+          }
+
+          databaseRows = (results.data || []).map(row => ({
             service: row.service,
             category: row.category,
             option: row.option,
             minutes: Number(row.minutes) || 0
           }));
+
+          if (!databaseRows.length) {
+            setCsvStatus("bad", "CSV: empty/invalid");
+            alert("CSV loaded but no rows found. Check headers: service, category, option, minutes");
+            initServices(); // clear dropdown safely
+            return;
+          }
+
+          setCsvStatus("ok", `CSV: ${databaseRows.length} rows`);
           initServices();
-        },
-        error: function (err) {
+
+          // If current service was selected, re-render options safely
+          if (currentService) {
+            const stillExists = databaseRows.some(r => r.service === currentService);
+            if (!stillExists) {
+              currentService = "";
+              serviceSelect.value = "";
+              optionsGrid.innerHTML = "";
+              currentCategories = [];
+              addToQuoteBtn.disabled = true;
+              updateSelectedCount();
+              serviceHint.textContent = "Choose a service to see options.";
+            } else {
+              onServiceChange();
+            }
+          }
+        })
+        .catch(err => {
           console.error("Error loading CSV", err);
-          alert("Could not load database.csv. Check the file name/location.");
-        }
-      });
+          setCsvStatus("bad", "CSV: failed");
+          alert("Could not load database.csv. Check file name/location.\n\n" + err.message);
+        });
     }
 
     function initServices() {
@@ -1501,11 +1686,44 @@
         const val = quoteSearchInput.value;
         refreshSavedQuotesDropdown(val);
       });
+
+      // NEW: CSV controls
+      saveCsvUrlBtn.addEventListener("click", () => {
+        setCsvUrl(csvUrlInput.value);
+        loadDatabaseFromCSV();
+        alert("CSV URL saved. Reloading CSV…");
+      });
+      reloadCsvBtn.addEventListener("click", () => {
+        loadDatabaseFromCSV();
+      });
+
+      // NEW: Supabase test button
+      testSupabaseBtn.addEventListener("click", () => { testSupabase(); });
     }
 
     async function init() {
       attachEvents();
       updateCurrentQuoteIdLabel();
+
+      // NEW: load CSV URL from localStorage into UI
+      const savedCsv = localStorage.getItem(LS_CSV_URL_KEY) || "";
+      csvUrlInput.value = savedCsv;
+
+      // NEW: do a quick Supabase check label (non-blocking)
+      try {
+        setSbStatus("warn", "SB: checking…");
+        const { error } = await supabase.from("quotes").select("quote_id").limit(1);
+        if (error) {
+          console.warn("Supabase check:", error);
+          setSbStatus("bad", "SB: check table/keys");
+        } else {
+          setSbStatus("ok", "SB: connected");
+        }
+      } catch (e) {
+        console.warn(e);
+        setSbStatus("bad", "SB: error");
+      }
+
       loadDatabaseFromCSV();
       await fetchSavedQuotesFromBackend();
     }
@@ -1514,5 +1732,3 @@
   </script>
 </body>
 </html>
-
-
