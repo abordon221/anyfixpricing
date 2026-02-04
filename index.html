@@ -14,476 +14,95 @@
   />
 
   <style>
-    :root {
-      --primary: #f97316;
-      --primary-soft: #ffedd5;
-      --bg: #f9fafb;
-      --card-bg: #ffffff;
-      --border: #e5e7eb;
-      --text: #111827;
-      --muted: #6b7280;
-      --danger: #dc2626;
-      --radius-lg: 16px;
-      --radius-md: 12px;
-      --shadow-soft: 0 10px 25px rgba(15, 23, 42, 0.08);
+    :root{
+      --primary:#f97316; --primary-soft:#ffedd5;
+      --bg:#f9fafb; --card-bg:#fff; --border:#e5e7eb;
+      --text:#111827; --muted:#6b7280; --danger:#dc2626;
+      --radius-lg:16px; --radius-md:12px; --shadow-soft:0 10px 25px rgba(15,23,42,.08);
     }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
-        "Segoe UI", sans-serif;
-      background: var(--bg);
-      color: var(--text);
+    *{box-sizing:border-box}
+    body{margin:0;padding:0;font-family:"Inter",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+    .page{max-width:1220px;margin:0 auto;padding:24px 16px 40px}
+    .header{display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+    .logo{width:36px;height:36px;border-radius:14px;background:linear-gradient(135deg,#fb923c,#f97316);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-family:"Poppins",system-ui;box-shadow:0 8px 18px rgba(248,113,113,.3)}
+    .header-title{display:flex;flex-direction:column;gap:2px}
+    .header-title h1{margin:0;font-size:1.1rem;font-weight:600}
+    .header-title span{font-size:.8rem;color:var(--muted)}
+    .status-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;font-size:.78rem;border:1px solid var(--border);background:#fff;color:var(--muted);margin-left:8px;flex:1 1 auto;min-width:280px;max-width:620px}
+    .dot{width:8px;height:8px;border-radius:50%;background:#d1d5db}
+    .dot.ok{background:#10b981}.dot.bad{background:#ef4444}.dot.warn{background:#f59e0b}
+    .hero{margin-bottom:20px}
+    .hero h2{margin:0 0 4px;font-size:1.8rem;font-family:"Poppins",system-ui;letter-spacing:-.02em}
+    .hero p{margin:0;color:var(--muted);font-size:.95rem;max-width:520px}
+    .layout{display:grid;grid-template-columns:minmax(0,2fr) minmax(320px,1fr);gap:20px;align-items:flex-start}
+    @media(max-width:900px){.layout{grid-template-columns:1fr}}
+    .card{background:var(--card-bg);border-radius:var(--radius-lg);border:1px solid var(--border);box-shadow:var(--shadow-soft);padding:18px}
+    .section-title{font-weight:600;font-size:.95rem;margin-bottom:6px}
+    label{font-size:.85rem;margin-bottom:4px;display:inline-block;font-weight:500}
+    select,input[type="number"],input[type="text"],input[type="email"],textarea{
+      width:100%;padding:9px 11px;border-radius:999px;border:1px solid var(--border);
+      font-size:.9rem;outline:none;background:#fdfdfd;transition:border-color .15s,box-shadow .15s,background .15s
     }
-
-    .page {
-      max-width: 1220px;
-      margin: 0 auto;
-      padding: 24px 16px 40px;
-    }
-
-    .header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-    }
-
-    .logo {
-      width: 36px;
-      height: 36px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, #fb923c, #f97316);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-weight: 700;
-      font-family: "Poppins", system-ui;
-      box-shadow: 0 8px 18px rgba(248, 113, 113, 0.3);
-      flex: 0 0 auto;
-    }
-
-    .header-title {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      flex: 0 0 auto;
-    }
-    .header-title h1 {
-      margin: 0;
-      font-size: 1.1rem;
-      font-weight: 600;
-    }
-    .header-title span {
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-
-    .status-pill {
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 0.78rem;
-      border: 1px solid var(--border);
-      background:#fff;
-      color: var(--muted);
-      margin-left: 8px;
-      flex: 1 1 auto;
-      min-width: 260px;
-      max-width: 560px;
-    }
-    .dot { width:8px; height:8px; border-radius:50%; background:#d1d5db; }
-    .dot.ok { background:#10b981; }
-    .dot.bad { background:#ef4444; }
-    .dot.warn { background:#f59e0b; }
-
-    .hero { margin-bottom: 20px; }
-    .hero h2 {
-      margin: 0 0 4px;
-      font-size: 1.8rem;
-      font-family: "Poppins", system-ui;
-      letter-spacing: -0.02em;
-    }
-    .hero p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.95rem;
-      max-width: 520px;
-    }
-
-    .layout {
-      display: grid;
-      grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
-      gap: 20px;
-      align-items: flex-start;
-    }
-    @media (max-width: 900px) {
-      .layout { grid-template-columns: 1fr; }
-    }
-
-    .card {
-      background: var(--card-bg);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-soft);
-      padding: 18px;
-    }
-
-    .section-title {
-      font-weight: 600;
-      font-size: 0.95rem;
-      margin-bottom: 6px;
-    }
-
-    label {
-      font-size: 0.85rem;
-      margin-bottom: 4px;
-      display: inline-block;
-      font-weight: 500;
-    }
-
-    select,
-    input[type="number"],
-    input[type="text"],
-    input[type="email"] {
-      width: 100%;
-      padding: 9px 11px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      font-size: 0.9rem;
-      outline: none;
-      background: #fdfdfd;
-      transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
-    }
-    select:focus,
-    input[type="number"]:focus,
-    input[type="text"]:focus,
-    input[type="email"]:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 1px var(--primary-soft);
-      background: #ffffff;
-    }
-
-    .top-row {
-      display: flex;
-      gap: 12px;
-      align-items: flex-end;
-      margin-bottom: 10px;
-    }
-    @media (max-width: 600px) {
-      .top-row { flex-direction: column; align-items: stretch; }
-    }
-    .top-row-main { flex: 1; }
-
-    .btn {
-      border-radius: 999px;
-      border: none;
-      padding: 9px 18px;
-      font-weight: 600;
-      font-size: 0.9rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: background 0.15s, box-shadow 0.15s, transform 0.05s, opacity 0.15s;
-      white-space: nowrap;
-    }
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-      box-shadow: 0 6px 14px rgba(248, 113, 22, 0.35);
-    }
-    .btn-primary:hover {
-      background: #ea580c;
-      transform: translateY(-1px);
-    }
-    .btn-primary:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      box-shadow: none;
-      transform: none;
-    }
-    .btn-ghost {
-      background: transparent;
-      color: var(--muted);
-      padding-inline: 4px;
-      box-shadow: none;
-    }
-    .btn-ghost:hover {
-      color: var(--danger);
-      background: #fee2e2;
-    }
-    .btn-secondary {
-      background: #e5e7eb;
-      color: #111827;
-      box-shadow: none;
-    }
-    .btn-secondary:hover { background: #d1d5db; }
-
-    .options-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 4px;
-      margin-bottom: 10px;
-      font-size: 0.85rem;
-    }
-    .badge-counter { font-size: 0.8rem; color: var(--muted); }
-    .muted { color: var(--muted); font-size: 0.82rem; }
-
-    .options-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-    @media (max-width: 900px) {
-      .options-grid { grid-template-columns: 1fr; }
-    }
-
-    .option-group {
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border);
-      background: #fdfdfd;
-      padding: 12px 12px 10px;
-    }
-    .option-group-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 6px;
-    }
-    .option-group-title {
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-    .option-group-meta {
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-
-    .option-list {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .option-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-      padding: 4px 6px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.12s;
-      font-size: 0.87rem;
-    }
-    .option-row:hover { background: #f3f4f6; }
-    .option-main { display: flex; align-items: center; gap: 6px; }
-    .option-row input[type="radio"] { cursor: pointer; }
-    .option-time {
-      font-size: 0.8rem;
-      color: var(--muted);
-      white-space: nowrap;
-    }
-
-    .quote-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    .quote-meta {
-      font-size: 0.8rem;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .quote-items {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 12px;
-      max-height: 260px;
-      overflow-y: auto;
-    }
-    .quote-item {
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: #fdfdfd;
-      padding: 10px 10px 9px;
-      font-size: 0.85rem;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .quote-item-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 4px;
-      gap: 8px;
-    }
-    .quote-item-title { font-weight: 600; }
-
-    .quote-item-time {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-    .quote-item-time input {
-      width: 72px;
-      padding: 3px 6px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      font-size: 0.8rem;
-      text-align: right;
-      background: #ffffff;
-    }
-
-    .quote-item-body {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 2px 12px;
-      color: var(--muted);
-      font-size: 0.8rem;
-    }
-    @media (max-width: 480px) {
-      .quote-item-body { grid-template-columns: 1fr; }
-    }
-
-    .quote-item-remove-btn {
-      border-radius: 999px;
-      border: none;
-      padding: 3px 10px;
-      font-size: 0.75rem;
-      cursor: pointer;
-      background: #fee2e2;
-      color: #b91c1c;
-      align-self: flex-start;
-      margin-top: 4px;
-    }
-    .quote-item-remove-btn:hover { background: #fecaca; }
-
-    .field-row {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      margin-bottom: 10px;
-    }
-
-    .totals-block {
-      border-radius: 14px;
-      border: 1px dashed var(--border);
-      padding: 10px;
-      background: #f9fafb;
-      font-size: 0.88rem;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      margin-bottom: 10px;
-    }
-    .totals-row,
-    .totals-row-sub,
-    .totals-row-total {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .totals-row-sub {
-      font-size: 0.86rem;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-    .totals-row-total {
-      margin-top: 4px;
-      font-size: 0.97rem;
-      font-weight: 600;
-      color: #111827;
-    }
-    .totals-label { color: var(--muted); }
-
-    .actions-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 4px;
-      margin-bottom: 4px;
-    }
-
-    .empty-state {
-      font-size: 0.85rem;
-      color: var(--muted);
-      text-align: center;
-      padding: 12px 8px;
-      border-radius: 10px;
-      background: #f9fafb;
-      border: 1px dashed var(--border);
-    }
-
-    .materials-list {
-      margin-top: 6px;
-      font-size: 0.8rem;
-    }
-    .material-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 4px;
-    }
-    .material-remove-btn {
-      border: none;
-      background: transparent;
-      color: #b91c1c;
-      font-size: 0.8rem;
-      cursor: pointer;
-    }
-
-    .saved-search-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-    .saved-search-row input { flex: 1; }
-    .saved-search-row select { flex: 1; }
-
-    .mini-panel {
-      border: 1px dashed var(--border);
-      border-radius: 14px;
-      padding: 10px;
-      background: #f9fafb;
-      margin-bottom: 12px;
-    }
-    .mini-panel .row {
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-    .mini-panel input[type="text"]{
-      border-radius: 999px;
-      padding: 8px 10px;
-      flex: 1;
-      min-width: 220px;
-      border: 1px solid var(--border);
-      background:#fff;
-    }
-    .mini-panel .hint{
-      font-size: 0.78rem;
-      color: var(--muted);
-      margin-top: 6px;
-    }
+    textarea{border-radius:14px;min-height:120px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:.82rem}
+    select:focus,input:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary-soft);background:#fff}
+    .top-row{display:flex;gap:12px;align-items:flex-end;margin-bottom:10px}
+    @media(max-width:600px){.top-row{flex-direction:column;align-items:stretch}}
+    .top-row-main{flex:1}
+    .btn{border-radius:999px;border:none;padding:9px 18px;font-weight:600;font-size:.9rem;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .15s,box-shadow .15s,transform .05s,opacity .15s;white-space:nowrap}
+    .btn-primary{background:var(--primary);color:#fff;box-shadow:0 6px 14px rgba(248,113,22,.35)}
+    .btn-primary:hover{background:#ea580c;transform:translateY(-1px)}
+    .btn-primary:disabled{opacity:.5;cursor:not-allowed;box-shadow:none;transform:none}
+    .btn-ghost{background:transparent;color:var(--muted);padding-inline:4px;box-shadow:none}
+    .btn-ghost:hover{color:var(--danger);background:#fee2e2}
+    .btn-secondary{background:#e5e7eb;color:#111827;box-shadow:none}
+    .btn-secondary:hover{background:#d1d5db}
+    .options-header{display:flex;justify-content:space-between;align-items:center;margin-top:4px;margin-bottom:10px;font-size:.85rem}
+    .badge-counter{font-size:.8rem;color:var(--muted)}
+    .muted{color:var(--muted);font-size:.82rem}
+    .options-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    @media(max-width:900px){.options-grid{grid-template-columns:1fr}}
+    .option-group{border-radius:var(--radius-md);border:1px solid var(--border);background:#fdfdfd;padding:12px 12px 10px}
+    .option-group-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+    .option-group-title{font-size:.9rem;font-weight:600}
+    .option-group-meta{font-size:.8rem;color:var(--muted)}
+    .option-list{display:flex;flex-direction:column;gap:4px}
+    .option-row{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:4px 6px;border-radius:8px;cursor:pointer;transition:background .12s;font-size:.87rem}
+    .option-row:hover{background:#f3f4f6}
+    .option-main{display:flex;align-items:center;gap:6px}
+    .option-row input[type="radio"]{cursor:pointer}
+    .option-time{font-size:.8rem;color:var(--muted);white-space:nowrap}
+    .quote-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .quote-meta{font-size:.8rem;color:var(--muted);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+    .quote-items{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;max-height:260px;overflow-y:auto}
+    .quote-item{border-radius:14px;border:1px solid var(--border);background:#fdfdfd;padding:10px 10px 9px;font-size:.85rem;display:flex;flex-direction:column;gap:4px}
+    .quote-item-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;gap:8px}
+    .quote-item-title{font-weight:600}
+    .quote-item-time{display:flex;align-items:center;gap:4px;font-size:.8rem;color:var(--muted)}
+    .quote-item-time input{width:72px;padding:3px 6px;border-radius:999px;border:1px solid var(--border);font-size:.8rem;text-align:right;background:#fff}
+    .quote-item-body{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 12px;color:var(--muted);font-size:.8rem}
+    @media(max-width:480px){.quote-item-body{grid-template-columns:1fr}}
+    .quote-item-remove-btn{border-radius:999px;border:none;padding:3px 10px;font-size:.75rem;cursor:pointer;background:#fee2e2;color:#b91c1c;align-self:flex-start;margin-top:4px}
+    .quote-item-remove-btn:hover{background:#fecaca}
+    .field-row{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+    .totals-block{border-radius:14px;border:1px dashed var(--border);padding:10px;background:#f9fafb;font-size:.88rem;display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+    .totals-row,.totals-row-sub,.totals-row-total{display:flex;justify-content:space-between;align-items:center}
+    .totals-row-sub{font-size:.86rem;color:var(--muted);margin-top:2px}
+    .totals-row-total{margin-top:4px;font-size:.97rem;font-weight:600;color:#111827}
+    .totals-label{color:var(--muted)}
+    .actions-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;margin-bottom:4px}
+    .empty-state{font-size:.85rem;color:var(--muted);text-align:center;padding:12px 8px;border-radius:10px;background:#f9fafb;border:1px dashed var(--border)}
+    .materials-list{margin-top:6px;font-size:.8rem}
+    .material-item{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+    .material-remove-btn{border:none;background:transparent;color:#b91c1c;font-size:.8rem;cursor:pointer}
+    .saved-search-row{display:flex;gap:8px;align-items:center}
+    .saved-search-row input{flex:1}
+    .saved-search-row select{flex:1}
+    .mini-panel{border:1px dashed var(--border);border-radius:14px;padding:10px;background:#f9fafb;margin-bottom:12px}
+    .mini-panel .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .mini-panel input[type="text"]{border-radius:999px;padding:8px 10px;flex:1;min-width:220px;border:1px solid var(--border);background:#fff}
+    .mini-panel .hint{font-size:.78rem;color:var(--muted);margin-top:6px}
+    .logbox{margin-top:8px;border-radius:14px;border:1px solid var(--border);background:#fff;padding:8px}
+    .logline{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:.75rem;color:#374151;white-space:pre-wrap}
   </style>
 </head>
 
@@ -507,10 +126,7 @@
 
     <div class="hero">
       <h2>Build Your Quote</h2>
-      <p>
-        Select a service type, configure the options that match your project, and
-        get an instant time and price estimate for the job.
-      </p>
+      <p>Select a service type, configure the options that match your project, and get an instant time and price estimate for the job.</p>
     </div>
 
     <div class="layout">
@@ -552,35 +168,45 @@
               <span id="currentQuoteIdLabel">Quote: New</span>
             </div>
           </div>
-          <button id="clearQuoteBtn" class="btn btn-ghost" type="button">
-            Clear Current
-          </button>
+          <button id="clearQuoteBtn" class="btn btn-ghost" type="button">Clear Current</button>
         </div>
 
+        <!-- CONNECTIVITY -->
         <div class="mini-panel">
           <div class="section-title" style="margin-bottom:6px;">Connectivity</div>
 
-          <div class="field-row" style="margin-bottom:8px;">
-            <label for="csvUrlInput">CSV URL (leave blank = /database.csv)</label>
+          <div class="field-row" style="margin-bottom:10px;">
+            <label for="csvUrlInput">CSV URL (blank = /database.csv)</label>
             <div class="row">
               <input type="text" id="csvUrlInput" placeholder="/database.csv" />
               <button id="saveCsvUrlBtn" class="btn btn-secondary" type="button">Save</button>
               <button id="reloadCsvBtn" class="btn btn-secondary" type="button">Reload</button>
             </div>
-            <div class="hint">
-              Uses timeout + no-store + cache-busting and tries common CSV paths.
-              Ensure the CSV is actually served at <strong>/database.csv</strong>.
+
+            <div class="row" style="margin-top:8px;">
+              <input type="file" id="csvFileInput" accept=".csv,text/csv" />
+              <button id="usePastedCsvBtn" class="btn btn-secondary" type="button">Use pasted CSV</button>
+              <button id="clearLocalCsvBtn" class="btn btn-secondary" type="button">Clear local CSV</button>
             </div>
+
+            <div class="hint">Fallbacks: file upload, then pasted CSV (stored locally). Required headers: <strong>service,category,option,minutes</strong>.</div>
+            <textarea id="csvPasteArea" placeholder="Paste database.csv here (including header row)"></textarea>
           </div>
 
           <div class="field-row" style="margin-bottom:0;">
             <label>Supabase</label>
             <div class="row" style="margin-top:8px;">
               <button id="testSupabaseBtn" class="btn btn-secondary" type="button">Test Supabase</button>
+              <button id="reloadQuotesBtn" class="btn btn-secondary" type="button">Reload quotes</button>
             </div>
+          </div>
+
+          <div class="logbox" id="logBox" aria-label="Debug log">
+            <div class="logline" id="logLine">log: ready</div>
           </div>
         </div>
 
+        <!-- Saved quotes + search -->
         <div class="field-row">
           <label for="savedQuotesSelect">Saved quotes</label>
           <div class="saved-search-row">
@@ -593,8 +219,7 @@
 
         <div class="quote-items" id="quoteItemsContainer">
           <div class="empty-state">
-            No items yet. Select a service, pick options, and click
-            <strong>Add to Quote</strong>.
+            No items yet. Select a service, pick options, and click <strong>Add to Quote</strong>.
           </div>
         </div>
 
@@ -619,6 +244,7 @@
           <span class="muted">Applies to labor subtotal before tax. 0–100.</span>
         </div>
 
+        <!-- Materials -->
         <div class="field-row">
           <label>Materials</label>
           <div style="display:flex; gap:8px; flex-wrap:wrap;">
@@ -666,31 +292,30 @@
           <button id="emailQuoteBtn" class="btn btn-primary" type="button">Send quote by email</button>
         </div>
 
-        <div class="muted">
-          Amounts are estimates based on your hourly rate, discount, and configured time.
-          You can manually override minutes per item if needed.
-        </div>
+        <div class="muted">Amounts are estimates based on your hourly rate, discount, and configured time. You can manually override minutes per item if needed.</div>
       </div>
     </div>
   </div>
 
-  <!-- Libraries -->
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <!-- EmailJS (optional; app still works if blocked) -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
   <script>
+    /* ===== CONFIG ===== */
     const SUPABASE_URL = "https://krphfybgsyupjvacpeao.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtycGhmeWJnc3l1cGp2YWNwZWFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUzOTUwODYsImV4cCI6MjA4MDk3MTA4Nn0.fgNSoyaLJCW4MwoYz18y2a6zyuqcCluTmEmgZMpUkyA";
-
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
     const SALES_TAX_RATE = 0.102;
 
-    emailjs.init("UmuPL_Uw9bxoJunoI");
+    // EmailJS (optional)
+    const EMAILJS_PUBLIC_KEY = "UmuPL_Uw9bxoJunoI";
     const EMAILJS_SERVICE_ID = "service_anyfix";
     const EMAILJS_TEMPLATE_ID = "anyfix_quote_505050";
 
+    /* ===== Local storage keys ===== */
+    const LS_CSV_URL_KEY = "anyfix_csv_url_v6";
+    const LS_LOCAL_CSV_TEXT = "anyfix_local_csv_text_v1";
+
+    /* ===== State ===== */
     let databaseRows = [];
     let currentService = "";
     let currentCategories = [];
@@ -699,6 +324,7 @@
     let currentQuoteId = null;
     let savedQuotes = [];
 
+    /* ===== DOM ===== */
     const serviceSelect = document.getElementById("serviceSelect");
     const addToQuoteBtn = document.getElementById("addToQuoteBtn");
     const clearQuoteBtn = document.getElementById("clearQuoteBtn");
@@ -741,106 +367,284 @@
     const csvUrlInput = document.getElementById("csvUrlInput");
     const saveCsvUrlBtn = document.getElementById("saveCsvUrlBtn");
     const reloadCsvBtn = document.getElementById("reloadCsvBtn");
-    const testSupabaseBtn = document.getElementById("testSupabaseBtn");
+    const csvFileInput = document.getElementById("csvFileInput");
+    const csvPasteArea = document.getElementById("csvPasteArea");
+    const usePastedCsvBtn = document.getElementById("usePastedCsvBtn");
+    const clearLocalCsvBtn = document.getElementById("clearLocalCsvBtn");
 
-    function setCsvStatus(kind, text) {
+    const testSupabaseBtn = document.getElementById("testSupabaseBtn");
+    const reloadQuotesBtn = document.getElementById("reloadQuotesBtn");
+
+    const logLine = document.getElementById("logLine");
+
+    /* ===== Utilities ===== */
+    function log(msg){
+      logLine.textContent = "log: " + msg;
+      try { console.log("[AnyFix]", msg); } catch(e){}
+    }
+
+    window.addEventListener("error", (e) => {
+      try { log("JS error: " + (e?.message || "unknown")); } catch(_) {}
+    });
+    window.addEventListener("unhandledrejection", (e) => {
+      try { log("Promise error: " + (e?.reason?.message || String(e?.reason || "unknown"))); } catch(_) {}
+    });
+
+    function setCsvStatus(kind, text){
       csvDot.classList.remove("ok","bad","warn");
       csvDot.classList.add(kind);
       csvStatusText.textContent = text;
     }
-    function setSbStatus(kind, text) {
+    function setSbStatus(kind, text){
       sbDot.classList.remove("ok","bad","warn");
       sbDot.classList.add(kind);
       sbStatusText.textContent = text;
     }
 
-    // ===== HARD FIX #1: INIT NEVER BLOCKS ON SUPABASE =====
-    // ===== HARD FIX #2: TIMEOUT WRAPPERS FOR SUPABASE CALLS =====
-    function withTimeout(promise, ms, label) {
+    function withTimeout(promise, ms, label){
       return Promise.race([
         promise,
         new Promise((_, reject) => setTimeout(() => reject(new Error(label + " timeout")), ms))
       ]);
     }
 
-    // ===== CSV loader =====
-    const DEFAULT_CSV_URL = "/database.csv";
-    const LS_CSV_URL_KEY = "anyfix_csv_url_v5";
+    /* ===== CSV parsing (no external libs) ===== */
+    function parseCSV(text){
+      // Robust-enough CSV parser: supports quotes, commas, CRLF
+      const rows = [];
+      let i = 0, field = "", row = [], inQuotes = false;
 
-    function getCsvUrl() {
-      const saved = (localStorage.getItem(LS_CSV_URL_KEY) || "").trim();
-      return saved || DEFAULT_CSV_URL;
+      const pushField = () => { row.push(field); field = ""; };
+      const pushRow = () => { rows.push(row); row = []; };
+
+      while (i < text.length) {
+        const c = text[i];
+
+        if (inQuotes) {
+          if (c === '"') {
+            const next = text[i+1];
+            if (next === '"') { field += '"'; i += 2; continue; }
+            inQuotes = false; i++; continue;
+          } else {
+            field += c; i++; continue;
+          }
+        } else {
+          if (c === '"') { inQuotes = true; i++; continue; }
+          if (c === ',') { pushField(); i++; continue; }
+          if (c === '\n') { pushField(); pushRow(); i++; continue; }
+          if (c === '\r') {
+            // ignore CR; handle CRLF
+            i++;
+            if (text[i] === '\n') { pushField(); pushRow(); i++; }
+            continue;
+          }
+          field += c; i++; continue;
+        }
+      }
+      pushField();
+      pushRow();
+
+      // remove empty trailing rows
+      while (rows.length && rows[rows.length-1].every(v => (v||"").trim() === "")) rows.pop();
+      return rows;
     }
-    function setCsvUrl(url) {
+
+    function rowsToObjects(csvText){
+      const rows = parseCSV(csvText);
+      if (!rows.length) return [];
+      const headers = rows[0].map(h => (h||"").trim());
+      const out = [];
+      for (let r=1; r<rows.length; r++){
+        const obj = {};
+        for (let c=0; c<headers.length; c++){
+          obj[headers[c]] = (rows[r][c] ?? "").toString();
+        }
+        out.push(obj);
+      }
+      return out;
+    }
+
+    function normalizeDatabaseRows(objs){
+      return (objs || [])
+        .map(row => ({
+          service: (row.service || "").trim(),
+          category: (row.category || "").trim(),
+          option: (row.option || "").trim(),
+          minutes: Number(row.minutes) || 0
+        }))
+        .filter(r => r.service && r.category && r.option);
+    }
+
+    /* ===== CSV loading (URL -> local fallback) ===== */
+    function getCsvUrl(){
+      const saved = (localStorage.getItem(LS_CSV_URL_KEY) || "").trim();
+      return saved || "/database.csv";
+    }
+    function setCsvUrl(url){
       const cleaned = (url || "").trim();
       if (!cleaned) localStorage.removeItem(LS_CSV_URL_KEY);
       else localStorage.setItem(LS_CSV_URL_KEY, cleaned);
     }
-    function withCacheBust(url) {
+    function cacheBust(url){
       const u = new URL(url, window.location.origin);
       u.searchParams.set("v", String(Date.now()));
       return u.toString();
     }
-    function fetchWithTimeout(url, ms = 8000) {
+
+    async function fetchText(url, ms=8000){
       const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), ms);
-      return fetch(url, { cache: "no-store", signal: controller.signal })
-        .finally(() => clearTimeout(timer));
+      const t = setTimeout(() => controller.abort(), ms);
+      try{
+        const res = await fetch(url, { cache: "no-store", signal: controller.signal });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return await res.text();
+      } finally {
+        clearTimeout(t);
+      }
     }
 
-    async function loadDatabaseFromCSV() {
-      const userUrl = getCsvUrl();
+    async function loadDatabaseFromURL(){
+      const base = getCsvUrl();
       const candidates = [
-        userUrl,
+        base,
         "/database.csv",
         "./database.csv",
-        "database.csv",
-        "/database.csv?raw=1"
+        "database.csv"
       ];
 
       setCsvStatus("warn", "CSV: loading…");
+      log("CSV: trying " + candidates.join(", "));
 
-      let lastErr = null;
+      for (const c of candidates){
+        try{
+          const url = cacheBust(c);
+          const text = await fetchText(url, 8000);
+          const objs = rowsToObjects(text);
+          const normalized = normalizeDatabaseRows(objs);
+          if (!normalized.length) throw new Error("0 rows");
+          databaseRows = normalized;
 
-      for (const c of candidates) {
-        try {
-          const url = withCacheBust(c);
-          const res = await fetchWithTimeout(url, 8000);
-          if (!res.ok) throw new Error(`HTTP ${res.status} (${c})`);
+          localStorage.setItem(LS_LOCAL_CSV_TEXT, text); // keep last known good
+          setCsvStatus("ok", "CSV: " + databaseRows.length + " rows");
+          log("CSV: loaded from " + c);
 
-          const text = await res.text();
-
-          const parsed = Papa.parse(text, {
-            header: true,
-            skipEmptyLines: true
-          });
-
-          databaseRows = (parsed.data || [])
-            .map(row => ({
-              service: (row.service || "").trim(),
-              category: (row.category || "").trim(),
-              option: (row.option || "").trim(),
-              minutes: Number(row.minutes) || 0
-            }))
-            .filter(r => r.service && r.category && r.option);
-
-          if (!databaseRows.length) {
-            throw new Error(`0 valid rows (${c})`);
-          }
-
-          setCsvStatus("ok", `CSV: ${databaseRows.length} rows`);
           initServices();
-          return;
-        } catch (e) {
-          lastErr = e;
+          return true;
+        } catch(e){
+          // continue
         }
       }
 
       setCsvStatus("bad", "CSV: failed");
-      alert("CSV failed to load. Check that database.csv is served at /database.csv.\n\nLast error: " + (lastErr?.message || "unknown"));
+      log("CSV: URL failed, trying local cache…");
+
+      const cached = (localStorage.getItem(LS_LOCAL_CSV_TEXT) || "").trim();
+      if (cached){
+        try{
+          const objs = rowsToObjects(cached);
+          const normalized = normalizeDatabaseRows(objs);
+          if (normalized.length){
+            databaseRows = normalized;
+            setCsvStatus("ok", "CSV: " + databaseRows.length + " rows (local)");
+            log("CSV: loaded from local cache");
+            initServices();
+            return true;
+          }
+        } catch(_){}
+      }
+
+      return false;
     }
 
-    function initServices() {
+    function loadDatabaseFromText(csvText, label){
+      const objs = rowsToObjects(csvText || "");
+      const normalized = normalizeDatabaseRows(objs);
+      if (!normalized.length) return false;
+      databaseRows = normalized;
+      localStorage.setItem(LS_LOCAL_CSV_TEXT, csvText);
+      setCsvStatus("ok", "CSV: " + databaseRows.length + " rows (" + label + ")");
+      log("CSV: loaded from " + label);
+      initServices();
+      return true;
+    }
+
+    /* ===== Supabase REST (no supabase-js dependency) ===== */
+    function sbHeaders(extra={}){
+      return {
+        "apikey": SUPABASE_ANON_KEY,
+        "Authorization": "Bearer " + SUPABASE_ANON_KEY,
+        ...extra
+      };
+    }
+    function sbUrl(path, params){
+      const u = new URL(SUPABASE_URL.replace(/\/$/,"") + path);
+      if (params){
+        Object.entries(params).forEach(([k,v]) => u.searchParams.set(k, v));
+      }
+      return u.toString();
+    }
+
+    async function sbTest(){
+      setSbStatus("warn","SB: checking…");
+      try{
+        const url = sbUrl("/rest/v1/quotes", { select: "quote_id", limit: "1" });
+        const res = await withTimeout(fetch(url, { headers: sbHeaders() }), 8000, "SB");
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        setSbStatus("ok","SB: connected");
+        log("SB: connected");
+        return true;
+      } catch(e){
+        setSbStatus("bad","SB: failed");
+        log("SB: failed");
+        return false;
+      }
+    }
+
+    async function sbFetchQuotes(){
+      try{
+        const url = sbUrl("/rest/v1/quotes", { select: "*", order: "timestamp.desc" });
+        const res = await withTimeout(fetch(url, { headers: sbHeaders({ "Accept":"application/json" }) }), 8000, "SB fetch");
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+        savedQuotes = Array.isArray(data) ? data : [];
+        refreshSavedQuotesDropdown();
+        if (sbDot.classList.contains("ok")) setSbStatus("ok","SB: " + savedQuotes.length + " quotes");
+        log("SB: fetched quotes: " + savedQuotes.length);
+      } catch(e){
+        setSbStatus("bad","SB: fetch failed");
+        log("SB: fetch failed");
+      }
+    }
+
+    async function sbUpsertQuote(quoteObj){
+      // PostgREST upsert with on_conflict=quote_id
+      const url = sbUrl("/rest/v1/quotes", { on_conflict: "quote_id" });
+
+      const payload = [{
+        quote_id: quoteObj.id,
+        timestamp: quoteObj.timestamp,
+        customer_name: quoteObj.customerName,
+        customer_email: quoteObj.customerEmail,
+        hourly_rate: quoteObj.hourlyRate,
+        discount_percent: quoteObj.discountPercent,
+        quote_items: quoteObj.quoteItems,
+        materials: quoteObj.materials
+      }];
+
+      const res = await withTimeout(fetch(url, {
+        method: "POST",
+        headers: sbHeaders({
+          "Content-Type": "application/json",
+          "Prefer": "resolution=merge-duplicates,return=minimal"
+        }),
+        body: JSON.stringify(payload)
+      }), 8000, "SB upsert");
+
+      if (!res.ok) throw new Error("HTTP " + res.status);
+    }
+
+    /* ===== Quotes UI / behaviors ===== */
+    function initServices(){
       serviceSelect.innerHTML = '<option value="">Select a service…</option>';
       const services = Array.from(new Set(databaseRows.map(r => r.service))).sort();
       services.forEach(service => {
@@ -849,30 +653,37 @@
         opt.textContent = service;
         serviceSelect.appendChild(opt);
       });
+
+      // keep current selection if possible
+      if (currentService && services.includes(currentService)){
+        serviceSelect.value = currentService;
+        onServiceChange();
+      } else {
+        currentService = "";
+        optionsGrid.innerHTML = "";
+        serviceHint.textContent = "Choose a service to see options.";
+      }
     }
 
-    // ===== Service UI =====
-    function onServiceChange() {
+    function onServiceChange(){
       currentService = serviceSelect.value;
       optionsGrid.innerHTML = "";
       currentCategories = [];
       addToQuoteBtn.disabled = true;
       updateSelectedCount();
 
-      if (!currentService) {
+      if (!currentService){
         serviceHint.textContent = "Choose a service to see options.";
         return;
       }
 
       serviceHint.textContent = currentService;
+
       const rows = databaseRows.filter(r => r.service === currentService);
       const categoryNames = Array.from(new Set(rows.map(r => r.category))).sort();
 
       categoryNames.forEach((cat, index) => {
-        const options = rows
-          .filter(r => r.category === cat)
-          .map(r => ({ label: r.option, minutes: Number(r.minutes) || 0 }));
-
+        const options = rows.filter(r => r.category === cat).map(r => ({ label: r.option, minutes: Number(r.minutes)||0 }));
         const inputName = `cat-${index}`;
         currentCategories.push({ name: cat, options, inputName });
 
@@ -897,8 +708,8 @@
         list.className = "option-list";
 
         options.forEach(opt => {
-          const row = document.createElement("label");
-          row.className = "option-row";
+          const rowEl = document.createElement("label");
+          rowEl.className = "option-row";
 
           const main = document.createElement("div");
           main.className = "option-main";
@@ -923,9 +734,10 @@
           time.className = "option-time";
           time.textContent = `${opt.minutes} min`;
 
-          row.appendChild(main);
-          row.appendChild(time);
-          list.appendChild(row);
+          rowEl.appendChild(main);
+          rowEl.appendChild(time);
+
+          list.appendChild(rowEl);
         });
 
         groupEl.appendChild(header);
@@ -937,8 +749,8 @@
       updateAddButtonState();
     }
 
-    function updateSelectedCount() {
-      if (!currentCategories.length) {
+    function updateSelectedCount(){
+      if (!currentCategories.length){
         selectedCountLabel.textContent = "(0/0 selected)";
         return;
       }
@@ -950,7 +762,7 @@
       selectedCountLabel.textContent = `(${selected}/${currentCategories.length} selected)`;
     }
 
-    function updateAddButtonState() {
+    function updateAddButtonState(){
       let hasAnySelection = false;
       currentCategories.forEach(cat => {
         const checked = document.querySelector(`input[name="${cat.inputName}"]:checked`);
@@ -959,7 +771,7 @@
       addToQuoteBtn.disabled = !hasAnySelection || !currentService;
     }
 
-    function addToQuote() {
+    function addToQuote(){
       if (!currentService) return;
 
       const selections = [];
@@ -968,20 +780,15 @@
         if (!checked) return;
 
         const label = checked.value;
-        const row = databaseRows.find(
-          r => r.service === currentService && r.category === cat.name && r.option === label
-        );
-        const minutes = row ? (Number(row.minutes) || 0) : 0;
+        const row = databaseRows.find(r => r.service === currentService && r.category === cat.name && r.option === label);
+        const minutes = row ? (Number(row.minutes)||0) : 0;
 
         selections.push({ category: cat.name, option: label, minutes });
       });
 
-      if (!selections.length) {
-        alert("Please select at least one option.");
-        return;
-      }
+      if (!selections.length) return;
 
-      const totalMinutes = selections.reduce((sum, s) => sum + (Number(s.minutes) || 0), 0);
+      const totalMinutes = selections.reduce((sum, s) => sum + (Number(s.minutes)||0), 0);
 
       quoteItems.push({
         id: Date.now() + Math.random(),
@@ -993,10 +800,9 @@
       renderQuoteItems();
     }
 
-    function renderQuoteItems() {
+    function renderQuoteItems(){
       quoteItemsContainer.innerHTML = "";
-
-      if (!quoteItems.length) {
+      if (!quoteItems.length){
         const empty = document.createElement("div");
         empty.className = "empty-state";
         empty.textContent = "No items yet. Select a service, pick options, and click Add to Quote.";
@@ -1059,6 +865,7 @@
           wrap.appendChild(header);
           wrap.appendChild(body);
           wrap.appendChild(removeBtn);
+
           quoteItemsContainer.appendChild(wrap);
         });
       }
@@ -1067,10 +874,7 @@
       updateTotals();
     }
 
-    function clearQuote() {
-      if (!quoteItems.length && !materials.length && !customerNameInput.value && !customerEmailInput.value) return;
-      if (!confirm("Clear the current quote? This does not delete any saved quotes in the backend.")) return;
-
+    function clearQuote(){
       quoteItems = [];
       materials = [];
       customerNameInput.value = "";
@@ -1078,21 +882,16 @@
       hourlyRateInput.value = "75";
       discountPercentInput.value = "0";
       currentQuoteId = null;
-
       updateCurrentQuoteIdLabel();
       renderQuoteItems();
       renderMaterials();
       updateTotals();
     }
 
-    // ===== Materials =====
-    function addMaterial() {
+    function addMaterial(){
       const desc = materialDescInput.value.trim();
       const cost = Number(materialCostInput.value);
-      if (!desc || !isFinite(cost) || cost < 0) {
-        alert("Enter a valid description and cost for the material.");
-        return;
-      }
+      if (!desc || !isFinite(cost) || cost < 0) return;
 
       materials.push({ id: Date.now() + Math.random(), description: desc, cost });
       materialDescInput.value = "";
@@ -1101,16 +900,15 @@
       updateTotals();
     }
 
-    function renderMaterials() {
+    function renderMaterials(){
       materialsList.innerHTML = "";
-
-      if (!materials.length) {
+      if (!materials.length){
         materialsList.textContent = "No materials added.";
         materialsList.classList.add("muted");
         return;
       }
-
       materialsList.classList.remove("muted");
+
       materials.forEach(mat => {
         const row = document.createElement("div");
         row.className = "material-item";
@@ -1130,9 +928,8 @@
       });
     }
 
-    // ===== Totals =====
-    function updateTotals() {
-      const totalMinutes = quoteItems.reduce((sum, item) => sum + (Number(item.totalMinutes) || 0), 0);
+    function updateTotals(){
+      const totalMinutes = quoteItems.reduce((sum, item) => sum + (Number(item.totalMinutes)||0), 0);
       const rate = Number(hourlyRateInput.value) || 0;
 
       let discountPercent = Number(discountPercentInput.value) || 0;
@@ -1140,11 +937,11 @@
       if (discountPercent > 100) discountPercent = 100;
       discountPercentInput.value = discountPercent;
 
-      const laborSubtotal = (totalMinutes / 60) * rate;
-      const discountAmount = laborSubtotal * (discountPercent / 100);
+      const laborSubtotal = (totalMinutes/60) * rate;
+      const discountAmount = laborSubtotal * (discountPercent/100);
       const laborAfterDiscount = laborSubtotal - discountAmount;
 
-      const materialsTotal = materials.reduce((sum, m) => sum + (Number(m.cost) || 0), 0);
+      const materialsTotal = materials.reduce((sum, m) => sum + (Number(m.cost)||0), 0);
 
       const taxBase = laborAfterDiscount + materialsTotal;
       const tax = taxBase * SALES_TAX_RATE;
@@ -1159,51 +956,8 @@
       totalAfterTaxLabel.textContent = `$${totalAfterTax.toFixed(2)}`;
     }
 
-    // ===== Quotes (Supabase, timeout-safe) =====
-    async function fetchSavedQuotesFromBackend() {
-      try {
-        const { data, error } = await withTimeout(
-          supabase.from("quotes").select("*").order("timestamp", { ascending: false }),
-          8000,
-          "Supabase fetch"
-        );
-
-        if (error) {
-          setSbStatus("bad", "SB: fetch failed");
-          return;
-        }
-
-        savedQuotes = data || [];
-        refreshSavedQuotesDropdown();
-        setSbStatus("ok", `SB: ${savedQuotes.length} quotes`);
-      } catch (e) {
-        setSbStatus("bad", "SB: failed");
-      }
-    }
-
-    async function upsertQuoteToBackend(quoteObj) {
-      const payload = {
-        quote_id: quoteObj.id,
-        timestamp: quoteObj.timestamp,
-        customer_name: quoteObj.customerName,
-        customer_email: quoteObj.customerEmail,
-        hourly_rate: quoteObj.hourlyRate,
-        discount_percent: quoteObj.discountPercent,
-        quote_items: quoteObj.quoteItems,
-        materials: quoteObj.materials
-      };
-
-      const { error } = await withTimeout(
-        supabase.from("quotes").upsert(payload),
-        8000,
-        "Supabase upsert"
-      );
-
-      if (error) throw error;
-    }
-
-    function refreshSavedQuotesDropdown(filterText = "") {
-      const filter = (filterText || "").toLowerCase();
+    function refreshSavedQuotesDropdown(filterText=""){
+      const filter = (filterText||"").toLowerCase();
       savedQuotesSelect.innerHTML = '<option value="">Select a saved quote…</option>';
 
       savedQuotes.forEach(q => {
@@ -1222,19 +976,31 @@
       });
     }
 
-    function updateCurrentQuoteIdLabel() {
+    function updateCurrentQuoteIdLabel(){
       currentQuoteIdLabel.textContent = "Quote: " + (currentQuoteId ? currentQuoteId : "New");
     }
 
-    function ensureCurrentQuoteId() {
-      if (!currentQuoteId) {
+    function generateQuoteId(){
+      const now = new Date();
+      return (
+        "AFQ-" + now.getFullYear() +
+        String(now.getMonth()+1).padStart(2,"0") +
+        String(now.getDate()).padStart(2,"0") + "-" +
+        String(now.getHours()).padStart(2,"0") +
+        String(now.getMinutes()).padStart(2,"0") +
+        String(now.getSeconds()).padStart(2,"0")
+      );
+    }
+
+    function ensureCurrentQuoteId(){
+      if (!currentQuoteId){
         currentQuoteId = generateQuoteId();
         updateCurrentQuoteIdLabel();
       }
       return currentQuoteId;
     }
 
-    function buildQuoteObjectForSave(id) {
+    function buildQuoteObjectForSave(id){
       return {
         id,
         timestamp: Date.now(),
@@ -1242,74 +1008,48 @@
         customerEmail: customerEmailInput.value.trim(),
         hourlyRate: Number(hourlyRateInput.value) || 0,
         discountPercent: Number(discountPercentInput.value) || 0,
-        quoteItems: quoteItems,
-        materials: materials
+        quoteItems,
+        materials
       };
     }
 
-    async function internalSaveQuote(silent = false) {
-      if (!quoteItems.length && !materials.length) {
-        if (!silent) alert("Cannot save an empty quote.");
-        return null;
-      }
+    async function internalSaveQuote(silent=false){
+      if (!quoteItems.length && !materials.length) return null;
+
       const id = ensureCurrentQuoteId();
       const quoteData = buildQuoteObjectForSave(id);
 
-      try {
-        await upsertQuoteToBackend(quoteData);
-        fetchSavedQuotesFromBackend(); // fire-and-forget
+      try{
+        await sbUpsertQuote(quoteData);
+        sbFetchQuotes();
         if (!silent) alert("Quote saved.");
         return id;
-      } catch (err) {
-        setSbStatus("bad", "SB: save failed");
-        if (!silent) alert("Error saving quote.");
+      } catch(e){
+        setSbStatus("bad","SB: save failed");
+        if (!silent) alert("Save failed.");
         return null;
       }
     }
 
-    async function saveCurrentQuote() {
-      await internalSaveQuote(false);
+    function buildServiceSummary(){
+      const services = Array.from(new Set(quoteItems.map(i => i.service)));
+      if (services.length === 0) return "No services";
+      if (services.length === 1) return services[0];
+      if (services.length === 2) return services[0] + " & " + services[1];
+      return services[0] + ", " + services[1] + " + " + (services.length - 2) + " more";
     }
 
-    function getSavedQuoteById(id) {
-      return savedQuotes.find(q => q.quote_id === id) || null;
-    }
-
-    function loadQuoteFromSupabaseRow(row) {
-      currentQuoteId = row.quote_id;
-      customerNameInput.value = row.customer_name || "";
-      customerEmailInput.value = row.customer_email || "";
-      hourlyRateInput.value = typeof row.hourly_rate === "number" ? row.hourly_rate : 75;
-      discountPercentInput.value = typeof row.discount_percent === "number" ? row.discount_percent : 0;
-      quoteItems = Array.isArray(row.quote_items) ? row.quote_items : [];
-      materials = Array.isArray(row.materials) ? row.materials : [];
-
-      renderQuoteItems();
-      renderMaterials();
-      updateTotals();
-      updateCurrentQuoteIdLabel();
-    }
-
-    function loadQuoteById(id) {
-      if (!id) return;
-      const row = getSavedQuoteById(id);
-      if (!row) return;
-      loadQuoteFromSupabaseRow(row);
-    }
-
-    // ===== Quote text/HTML =====
-    function buildQuoteText(quoteId) {
+    function buildQuoteText(quoteId){
       const now = new Date();
       const rate = Number(hourlyRateInput.value) || 0;
       const name = customerNameInput.value.trim() || "Customer";
-      const totalMinutes = quoteItems.reduce((sum, item) => sum + (Number(item.totalMinutes) || 0), 0);
+      const totalMinutes = quoteItems.reduce((sum, item) => sum + (Number(item.totalMinutes)||0), 0);
       const discountPercent = Number(discountPercentInput.value) || 0;
 
-      const laborSubtotal = (totalMinutes / 60) * rate;
-      const discountAmount = laborSubtotal * (discountPercent / 100);
+      const laborSubtotal = (totalMinutes/60) * rate;
+      const discountAmount = laborSubtotal * (discountPercent/100);
       const laborAfterDiscount = laborSubtotal - discountAmount;
-
-      const materialsTotal = materials.reduce((sum, m) => sum + (Number(m.cost) || 0), 0);
+      const materialsTotal = materials.reduce((sum, m) => sum + (Number(m.cost)||0), 0);
       const taxBase = laborAfterDiscount + materialsTotal;
       const tax = taxBase * SALES_TAX_RATE;
       const totalAfterTax = taxBase + tax;
@@ -1322,13 +1062,13 @@
       lines.push("");
 
       quoteItems.forEach((item, idx) => {
-        lines.push(`Item ${idx + 1}: ${item.service}`);
+        lines.push(`Item ${idx+1}: ${item.service}`);
         item.selections.forEach(sel => lines.push(`  - ${sel.category}: ${sel.option} (${sel.minutes} min)`));
         lines.push(`  Total time for this item: ${item.totalMinutes} min`);
         lines.push("");
       });
 
-      if (materials.length) {
+      if (materials.length){
         lines.push("Materials:");
         materials.forEach(m => lines.push(`  - ${m.description}: $${m.cost.toFixed(2)}`));
         lines.push("");
@@ -1348,129 +1088,8 @@
       return lines.join("\n");
     }
 
-    function buildQuoteHtml(quoteId) {
-      const now = new Date();
-      const rate = Number(hourlyRateInput.value) || 0;
-      const name = customerNameInput.value.trim() || "Customer";
-      const totalMinutes = quoteItems.reduce((sum, item) => sum + (Number(item.totalMinutes) || 0), 0);
-      const discountPercent = Number(discountPercentInput.value) || 0;
-
-      const laborSubtotal = (totalMinutes / 60) * rate;
-      const discountAmount = laborSubtotal * (discountPercent / 100);
-      const laborAfterDiscount = laborSubtotal - discountAmount;
-
-      const materialsTotal = materials.reduce((sum, m) => sum + (Number(m.cost) || 0), 0);
-      const taxBase = laborAfterDiscount + materialsTotal;
-      const tax = taxBase * SALES_TAX_RATE;
-      const totalAfterTax = taxBase + tax;
-
-      let html = `
-        <p style="margin:0 0 12px 0; color:#374151; font-size:14px;">
-          Quote for: <strong>${name}</strong><br/>
-          Generated: ${now.toLocaleString()}
-        </p>
-        <table cellpadding="0" cellspacing="0" border="0"
-          style="width:100%; border-collapse:collapse; font-size:14px; margin-bottom:16px;">
-          <thead>
-            <tr>
-              <th align="left" style="border-bottom:1px solid #e5e7eb; padding:8px 4px;">Item</th>
-              <th align="left" style="border-bottom:1px solid #e5e7eb; padding:8px 4px;">Details</th>
-              <th align="right" style="border-bottom:1px solid #e5e7eb; padding:8px 4px;">Time (min)</th>
-            </tr>
-          </thead>
-          <tbody>
-      `;
-
-      quoteItems.forEach((item, idx) => {
-        const details = item.selections
-          .map(sel => `${sel.category}: ${sel.option} (${sel.minutes} min)`)
-          .join("<br/>");
-
-        html += `
-          <tr>
-            <td valign="top" style="padding:8px 4px; border-bottom:1px solid #f3f4f6;">
-              ${idx + 1}. ${item.service}
-            </td>
-            <td valign="top" style="padding:8px 4px; border-bottom:1px solid #f3f4f6; color:#4b5563;">
-              ${details}
-            </td>
-            <td valign="top" align="right" style="padding:8px 4px; border-bottom:1px solid #f3f4f6;">
-              ${item.totalMinutes}
-            </td>
-          </tr>
-        `;
-      });
-
-      html += `</tbody></table>`;
-
-      if (materials.length) {
-        html += `
-          <p style="margin:0 0 6px 0; font-size:14px; color:#111827;"><strong>Materials</strong></p>
-          <table cellpadding="0" cellspacing="0" border="0"
-            style="width:100%; border-collapse:collapse; font-size:14px; margin-bottom:12px;">
-            <thead>
-              <tr>
-                <th align="left" style="border-bottom:1px solid #e5e7eb; padding:6px 4px;">Description</th>
-                <th align="right" style="border-bottom:1px solid #e5e7eb; padding:6px 4px;">Cost</th>
-              </tr>
-            </thead>
-            <tbody>
-        `;
-        materials.forEach(m => {
-          html += `
-            <tr>
-              <td style="padding:6px 4px; border-bottom:1px solid #f3f4f6;">${m.description}</td>
-              <td align="right" style="padding:6px 4px; border-bottom:1px solid #f3f4f6;">
-                $${m.cost.toFixed(2)}
-              </td>
-            </tr>
-          `;
-        });
-        html += `</tbody></table>`;
-      }
-
-      html += `
-        <p style="font-size:14px; color:#111827; margin:0;">
-          <strong>Hourly rate:</strong> $${rate.toFixed(2)}<br/>
-          <strong>Labor time:</strong> ${totalMinutes} min<br/>
-          <strong>Labor subtotal:</strong> $${laborSubtotal.toFixed(2)}<br/>
-          <strong>Discount (${discountPercent.toFixed(0)}%):</strong> -$${discountAmount.toFixed(2)}<br/>
-          <strong>Labor after discount:</strong> $${laborAfterDiscount.toFixed(2)}<br/>
-          <strong>Materials:</strong> $${materialsTotal.toFixed(2)}<br/>
-          <strong>Tax (10.2%):</strong> $${tax.toFixed(2)}<br/>
-          <strong>Total after tax:</strong> $${totalAfterTax.toFixed(2)}
-        </p>
-      `;
-      return html;
-    }
-
-    function generateQuoteId() {
-      const now = new Date();
-      return (
-        "AFQ-" +
-        now.getFullYear().toString() +
-        String(now.getMonth() + 1).padStart(2, "0") +
-        String(now.getDate()).padStart(2, "0") +
-        "-" +
-        String(now.getHours()).padStart(2, "0") +
-        String(now.getMinutes()).padStart(2, "0") +
-        String(now.getSeconds()).padStart(2, "0")
-      );
-    }
-
-    function buildServiceSummary() {
-      const services = Array.from(new Set(quoteItems.map(i => i.service)));
-      if (services.length === 0) return "No services";
-      if (services.length === 1) return services[0];
-      if (services.length === 2) return services[0] + " & " + services[1];
-      return services[0] + ", " + services[1] + " + " + (services.length - 2) + " more";
-    }
-
-    async function downloadQuote() {
-      if (!quoteItems.length && !materials.length) {
-        alert("No items or materials in the quote yet.");
-        return;
-      }
+    async function downloadQuote(){
+      if (!quoteItems.length && !materials.length) return;
       const quoteId = (await internalSaveQuote(true)) || ensureCurrentQuoteId();
       const text = buildQuoteText(quoteId);
       const blob = new Blob([text], { type: "text/plain" });
@@ -1484,71 +1103,44 @@
       URL.revokeObjectURL(url);
     }
 
-    async function sendQuoteByEmail() {
-      if (!quoteItems.length && !materials.length) {
-        alert("No items or materials in the quote yet.");
-        return;
-      }
+    async function sendQuoteByEmail(){
+      if (!quoteItems.length && !materials.length) return;
       const toEmail = customerEmailInput.value.trim();
-      if (!toEmail) {
-        alert("Please enter a customer email address.");
-        return;
-      }
+      if (!toEmail) return;
 
       const quoteId = (await internalSaveQuote(true)) || ensureCurrentQuoteId();
       const serviceSummary = buildServiceSummary();
       const quoteText = buildQuoteText(quoteId);
-      const quoteHtml = buildQuoteHtml(quoteId);
       const subject = `AnyFix Quote #${quoteId} – ${serviceSummary}`;
       const customerName = customerNameInput.value.trim() || "Customer";
 
-      const templateParams = {
-        quote_id: quoteId,
-        service_summary: serviceSummary,
-        customer_name: customerName,
-        quote_text: quoteText,
-        quote_html: quoteHtml,
-        email: toEmail,
-        subject: subject
-      };
+      if (!window.emailjs) { alert("Email library blocked."); return; }
+
+      try{
+        window.emailjs.init(EMAILJS_PUBLIC_KEY);
+      } catch(_) {}
 
       emailQuoteBtn.disabled = true;
       emailQuoteBtn.textContent = "Sending...";
 
-      emailjs
-        .send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
-        .then(() => alert("Quote sent successfully."))
-        .catch(() => alert("Email send failed."))
-        .finally(() => {
-          emailQuoteBtn.disabled = false;
-          emailQuoteBtn.textContent = "Send quote by email";
-        });
+      window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        quote_id: quoteId,
+        service_summary: serviceSummary,
+        customer_name: customerName,
+        quote_text: quoteText,
+        email: toEmail,
+        subject
+      })
+      .then(() => alert("Quote sent."))
+      .catch(() => alert("Email failed."))
+      .finally(() => {
+        emailQuoteBtn.disabled = false;
+        emailQuoteBtn.textContent = "Send quote by email";
+      });
     }
 
-    async function checkSupabaseQuick() {
-      setSbStatus("warn", "SB: checking…");
-      try {
-        const { error } = await withTimeout(
-          supabase.from("quotes").select("quote_id").limit(1),
-          7000,
-          "Supabase check"
-        );
-        if (error) {
-          setSbStatus("bad", "SB: check table/keys");
-          return;
-        }
-        setSbStatus("ok", "SB: connected");
-      } catch (e) {
-        setSbStatus("bad", "SB: failed");
-      }
-    }
-
-    async function testSupabase() {
-      await checkSupabaseQuick();
-      alert(sbStatusText.textContent);
-    }
-
-    function attachEvents() {
+    /* ===== Events ===== */
+    function attachEvents(){
       serviceSelect.addEventListener("change", onServiceChange);
       addToQuoteBtn.addEventListener("click", addToQuote);
       clearQuoteBtn.addEventListener("click", clearQuote);
@@ -1556,42 +1148,90 @@
       hourlyRateInput.addEventListener("input", updateTotals);
       discountPercentInput.addEventListener("input", updateTotals);
 
+      addMaterialBtn.addEventListener("click", addMaterial);
+
+      saveQuoteBtn.addEventListener("click", () => internalSaveQuote(false));
       downloadQuoteBtn.addEventListener("click", downloadQuote);
       emailQuoteBtn.addEventListener("click", sendQuoteByEmail);
 
-      addMaterialBtn.addEventListener("click", addMaterial);
-      saveQuoteBtn.addEventListener("click", saveCurrentQuote);
-
       savedQuotesSelect.addEventListener("change", () => {
         const id = savedQuotesSelect.value;
-        if (id) loadQuoteById(id);
+        const row = savedQuotes.find(q => q.quote_id === id);
+        if (!row) return;
+
+        currentQuoteId = row.quote_id;
+        customerNameInput.value = row.customer_name || "";
+        customerEmailInput.value = row.customer_email || "";
+        hourlyRateInput.value = typeof row.hourly_rate === "number" ? row.hourly_rate : 75;
+        discountPercentInput.value = typeof row.discount_percent === "number" ? row.discount_percent : 0;
+        quoteItems = Array.isArray(row.quote_items) ? row.quote_items : [];
+        materials = Array.isArray(row.materials) ? row.materials : [];
+
+        updateCurrentQuoteIdLabel();
+        renderQuoteItems();
+        renderMaterials();
+        updateTotals();
       });
 
-      quoteSearchInput.addEventListener("input", () => {
-        refreshSavedQuotesDropdown(quoteSearchInput.value);
-      });
+      quoteSearchInput.addEventListener("input", () => refreshSavedQuotesDropdown(quoteSearchInput.value));
 
-      saveCsvUrlBtn.addEventListener("click", () => {
+      saveCsvUrlBtn.addEventListener("click", async () => {
         setCsvUrl(csvUrlInput.value);
-        loadDatabaseFromCSV();
+        await loadDatabaseFromURL();
       });
 
-      reloadCsvBtn.addEventListener("click", () => loadDatabaseFromCSV());
-      testSupabaseBtn.addEventListener("click", () => testSupabase());
+      reloadCsvBtn.addEventListener("click", async () => {
+        await loadDatabaseFromURL();
+      });
+
+      csvFileInput.addEventListener("change", async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const text = await file.text();
+        const ok = loadDatabaseFromText(text, "file");
+        if (!ok) setCsvStatus("bad","CSV: invalid");
+      });
+
+      usePastedCsvBtn.addEventListener("click", () => {
+        const ok = loadDatabaseFromText(csvPasteArea.value, "pasted");
+        if (!ok) setCsvStatus("bad","CSV: invalid");
+      });
+
+      clearLocalCsvBtn.addEventListener("click", () => {
+        localStorage.removeItem(LS_LOCAL_CSV_TEXT);
+        csvPasteArea.value = "";
+        log("local CSV cleared");
+      });
+
+      testSupabaseBtn.addEventListener("click", sbTest);
+      reloadQuotesBtn.addEventListener("click", sbFetchQuotes);
     }
 
-    function init() {
+    /* ===== Init ===== */
+    async function init(){
       attachEvents();
       updateCurrentQuoteIdLabel();
 
       csvUrlInput.value = (localStorage.getItem(LS_CSV_URL_KEY) || "").trim();
+      csvPasteArea.value = (localStorage.getItem(LS_LOCAL_CSV_TEXT) || "").trim();
 
-      // start CSV immediately (never blocked)
-      loadDatabaseFromCSV();
+      setCsvStatus("warn","CSV: loading…");
+      setSbStatus("warn","SB: checking…");
 
-      // start supabase in background (never blocks CSV/UI)
-      checkSupabaseQuick();
-      fetchSavedQuotesFromBackend();
+      // CSV first (never blocked)
+      const okCsv = await loadDatabaseFromURL();
+      if (!okCsv){
+        const cached = (localStorage.getItem(LS_LOCAL_CSV_TEXT) || "").trim();
+        if (cached){
+          loadDatabaseFromText(cached, "local");
+        } else {
+          setCsvStatus("bad","CSV: needs input");
+        }
+      }
+
+      // Supabase in parallel (REST)
+      await sbTest();
+      await sbFetchQuotes();
     }
 
     if (document.readyState === "loading") {
