@@ -84,26 +84,25 @@
       color: var(--muted);
     }
 
-    /* NEW: status pill */
     .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
       padding: 6px 10px;
       border-radius: 999px;
       font-size: 0.78rem;
       border: 1px solid var(--border);
-      background: #fff;
+      background:#fff;
       color: var(--muted);
       margin-left: 8px;
       flex: 1 1 auto;
       min-width: 260px;
-      max-width: 520px;
+      max-width: 560px;
     }
-    .dot { width: 8px; height: 8px; border-radius: 50%; background: #d1d5db; }
-    .dot.ok { background: #10b981; }
-    .dot.bad { background: #ef4444; }
-    .dot.warn { background: #f59e0b; }
+    .dot { width:8px; height:8px; border-radius:50%; background:#d1d5db; }
+    .dot.ok { background:#10b981; }
+    .dot.bad { background:#ef4444; }
+    .dot.warn { background:#f59e0b; }
 
     .hero { margin-bottom: 20px; }
     .hero h2 {
@@ -459,7 +458,6 @@
     .saved-search-row input { flex: 1; }
     .saved-search-row select { flex: 1; }
 
-    /* NEW: connectivity panel */
     .mini-panel {
       border: 1px dashed var(--border);
       border-radius: 14px;
@@ -468,10 +466,10 @@
       margin-bottom: 12px;
     }
     .mini-panel .row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      align-items: center;
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
     }
     .mini-panel input[type="text"]{
       border-radius: 999px;
@@ -498,7 +496,6 @@
         <span>Quote Builder</span>
       </div>
 
-      <!-- NEW: status pill -->
       <div class="status-pill" title="CSV + Supabase status">
         <span class="dot warn" id="csvDot"></span>
         <span id="csvStatusText">CSV: loading…</span>
@@ -517,7 +514,7 @@
     </div>
 
     <div class="layout">
-      <!-- LEFT: service & options -->
+      <!-- LEFT -->
       <div class="card">
         <div class="top-row">
           <div class="top-row-main">
@@ -544,7 +541,7 @@
         <div id="optionsGrid" class="options-grid"></div>
       </div>
 
-      <!-- RIGHT: quote summary -->
+      <!-- RIGHT -->
       <div class="card">
         <div class="quote-card-header">
           <div>
@@ -560,7 +557,6 @@
           </button>
         </div>
 
-        <!-- NEW: Connectivity panel -->
         <div class="mini-panel">
           <div class="section-title" style="margin-bottom:6px;">Connectivity</div>
 
@@ -573,7 +569,7 @@
             </div>
             <div class="hint">
               Uses timeout + no-store + cache-busting and tries common CSV paths.
-              If you use a framework, make sure database.csv is actually served at /database.csv.
+              Ensure the CSV is actually served at <strong>/database.csv</strong>.
             </div>
           </div>
 
@@ -585,7 +581,6 @@
           </div>
         </div>
 
-        <!-- Saved quotes + search -->
         <div class="field-row">
           <label for="savedQuotesSelect">Saved quotes</label>
           <div class="saved-search-row">
@@ -624,7 +619,6 @@
           <span class="muted">Applies to labor subtotal before tax. 0–100.</span>
         </div>
 
-        <!-- Materials -->
         <div class="field-row">
           <label>Materials</label>
           <div style="display:flex; gap:8px; flex-wrap:wrap;">
@@ -686,9 +680,8 @@
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
   <script>
-    /* ===== CONFIGURE THESE TWO CONSTANTS WITH YOUR SUPABASE PROJECT ===== */
-    const SUPABASE_URL = "https://krphfybgsyupjvacpeao.supabase.co";  // TODO: replace if needed
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtycGhmeWJnc3l1cGp2YWNwZWFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUzOTUwODYsImV4cCI6MjA4MDk3MTA4Nn0.fgNSoyaLJCW4MwoYz18y2a6zyuqcCluTmEmgZMpUkyA"; // TODO: replace if needed
+    const SUPABASE_URL = "https://krphfybgsyupjvacpeao.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtycGhmeWJnc3l1cGp2YWNwZWFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUzOTUwODYsImV4cCI6MjA4MDk3MTA4Nn0.fgNSoyaLJCW4MwoYz18y2a6zyuqcCluTmEmgZMpUkyA";
 
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -698,7 +691,6 @@
     const EMAILJS_SERVICE_ID = "service_anyfix";
     const EMAILJS_TEMPLATE_ID = "anyfix_quote_505050";
 
-    // ===== State =====
     let databaseRows = [];
     let currentService = "";
     let currentCategories = [];
@@ -707,7 +699,6 @@
     let currentQuoteId = null;
     let savedQuotes = [];
 
-    // ===== DOM =====
     const serviceSelect = document.getElementById("serviceSelect");
     const addToQuoteBtn = document.getElementById("addToQuoteBtn");
     const clearQuoteBtn = document.getElementById("clearQuoteBtn");
@@ -742,7 +733,6 @@
     const downloadQuoteBtn = document.getElementById("downloadQuoteBtn");
     const emailQuoteBtn = document.getElementById("emailQuoteBtn");
 
-    // Connectivity UI
     const csvDot = document.getElementById("csvDot");
     const csvStatusText = document.getElementById("csvStatusText");
     const sbDot = document.getElementById("sbDot");
@@ -753,7 +743,6 @@
     const reloadCsvBtn = document.getElementById("reloadCsvBtn");
     const testSupabaseBtn = document.getElementById("testSupabaseBtn");
 
-    // ===== NEW: Status helpers =====
     function setCsvStatus(kind, text) {
       csvDot.classList.remove("ok","bad","warn");
       csvDot.classList.add(kind);
@@ -765,9 +754,18 @@
       sbStatusText.textContent = text;
     }
 
-    // ===== NEW (A): Resilient CSV config + loader =====
+    // ===== HARD FIX #1: INIT NEVER BLOCKS ON SUPABASE =====
+    // ===== HARD FIX #2: TIMEOUT WRAPPERS FOR SUPABASE CALLS =====
+    function withTimeout(promise, ms, label) {
+      return Promise.race([
+        promise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error(label + " timeout")), ms))
+      ]);
+    }
+
+    // ===== CSV loader =====
     const DEFAULT_CSV_URL = "/database.csv";
-    const LS_CSV_URL_KEY = "anyfix_csv_url_v4";
+    const LS_CSV_URL_KEY = "anyfix_csv_url_v5";
 
     function getCsvUrl() {
       const saved = (localStorage.getItem(LS_CSV_URL_KEY) || "").trim();
@@ -783,7 +781,7 @@
       u.searchParams.set("v", String(Date.now()));
       return u.toString();
     }
-    function fetchWithTimeout(url, ms = 9000) {
+    function fetchWithTimeout(url, ms = 8000) {
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), ms);
       return fetch(url, { cache: "no-store", signal: controller.signal })
@@ -792,65 +790,54 @@
 
     async function loadDatabaseFromCSV() {
       const userUrl = getCsvUrl();
-
       const candidates = [
         userUrl,
         "/database.csv",
         "./database.csv",
         "database.csv",
-        "/public/database.csv"
+        "/database.csv?raw=1"
       ];
 
       setCsvStatus("warn", "CSV: loading…");
+
       let lastErr = null;
 
       for (const c of candidates) {
         try {
           const url = withCacheBust(c);
-          const res = await fetchWithTimeout(url, 9000);
-          if (!res.ok) throw new Error(`HTTP ${res.status} for ${c}`);
+          const res = await fetchWithTimeout(url, 8000);
+          if (!res.ok) throw new Error(`HTTP ${res.status} (${c})`);
 
           const text = await res.text();
-          const results = Papa.parse(text, { header: true, skipEmptyLines: true });
 
-          if (results.errors && results.errors.length) {
-            console.warn("CSV parse warnings:", results.errors);
-          }
+          const parsed = Papa.parse(text, {
+            header: true,
+            skipEmptyLines: true
+          });
 
-          databaseRows = (results.data || [])
+          databaseRows = (parsed.data || [])
             .map(row => ({
-              service: row.service,
-              category: row.category,
-              option: row.option,
+              service: (row.service || "").trim(),
+              category: (row.category || "").trim(),
+              option: (row.option || "").trim(),
               minutes: Number(row.minutes) || 0
             }))
             .filter(r => r.service && r.category && r.option);
 
           if (!databaseRows.length) {
-            throw new Error(`Loaded ${c} but got 0 valid rows. Check headers: service, category, option, minutes`);
+            throw new Error(`0 valid rows (${c})`);
           }
 
           setCsvStatus("ok", `CSV: ${databaseRows.length} rows`);
           initServices();
-
-          // keep current selection if still valid
-          if (currentService) {
-            const exists = databaseRows.some(r => r.service === currentService);
-            if (exists) onServiceChange();
-          }
           return;
         } catch (e) {
           lastErr = e;
-          console.warn("CSV load failed for:", c, e);
         }
       }
 
       setCsvStatus("bad", "CSV: failed");
-      alert(
-        "CSV could not be loaded.\n\n" +
-        "Most common cause: database.csv is not being served at /database.csv.\n\n" +
-        "Last error: " + (lastErr?.message || "unknown")
-      );
+      alert("CSV failed to load. Check that database.csv is served at /database.csv.\n\nLast error: " + (lastErr?.message || "unknown"));
     }
 
     function initServices() {
@@ -864,141 +851,7 @@
       });
     }
 
-    // ===== Supabase helpers =====
-    async function fetchSavedQuotesFromBackend() {
-      const { data, error } = await supabase
-        .from("quotes")
-        .select("*")
-        .order("timestamp", { ascending: false });
-
-      if (error) {
-        console.error("Supabase fetch error:", error);
-        setSbStatus("bad", "SB: fetch failed");
-        return;
-      }
-      savedQuotes = data || [];
-      refreshSavedQuotesDropdown();
-      // Don't overwrite "connected" if already set; just show useful info
-      setSbStatus("ok", `SB: ${savedQuotes.length} quotes`);
-    }
-
-    async function upsertQuoteToBackend(quoteObj) {
-      const { error } = await supabase.from("quotes").upsert({
-        quote_id: quoteObj.id,
-        timestamp: quoteObj.timestamp,
-        customer_name: quoteObj.customerName,
-        customer_email: quoteObj.customerEmail,
-        hourly_rate: quoteObj.hourlyRate,
-        discount_percent: quoteObj.discountPercent,
-        quote_items: quoteObj.quoteItems,
-        materials: quoteObj.materials
-      });
-      if (error) {
-        console.error("Supabase upsert error:", error);
-        throw error;
-      }
-    }
-
-    function refreshSavedQuotesDropdown(filterText = "") {
-      const filter = (filterText || "").toLowerCase();
-      savedQuotesSelect.innerHTML = '<option value="">Select a saved quote…</option>';
-
-      savedQuotes.forEach(q => {
-        const d = q.timestamp ? new Date(q.timestamp) : new Date();
-        const dateStr = d.toLocaleDateString();
-        const id = q.quote_id;
-        const name = q.customer_name || "Customer";
-        const label = `${id} – ${name} – ${dateStr}`;
-
-        if (filter && !label.toLowerCase().includes(filter)) return;
-
-        const opt = document.createElement("option");
-        opt.value = id;
-        opt.textContent = label;
-        savedQuotesSelect.appendChild(opt);
-      });
-    }
-
-    function updateCurrentQuoteIdLabel() {
-      currentQuoteIdLabel.textContent = "Quote: " + (currentQuoteId ? currentQuoteId : "New");
-    }
-
-    function ensureCurrentQuoteId() {
-      if (!currentQuoteId) {
-        currentQuoteId = generateQuoteId();
-        updateCurrentQuoteIdLabel();
-      }
-      return currentQuoteId;
-    }
-
-    function buildQuoteObjectForSave(id) {
-      return {
-        id,
-        timestamp: Date.now(),
-        customerName: customerNameInput.value.trim(),
-        customerEmail: customerEmailInput.value.trim(),
-        hourlyRate: Number(hourlyRateInput.value) || 0,
-        discountPercent: Number(discountPercentInput.value) || 0,
-        quoteItems: quoteItems,
-        materials: materials
-      };
-    }
-
-    async function internalSaveQuote(silent = false) {
-      if (!quoteItems.length && !materials.length) {
-        if (!silent) alert("Cannot save an empty quote.");
-        return null;
-      }
-      const id = ensureCurrentQuoteId();
-      const quoteData = buildQuoteObjectForSave(id);
-
-      try {
-        await upsertQuoteToBackend(quoteData);
-        await fetchSavedQuotesFromBackend();
-        if (!silent) alert("Quote saved.");
-        return id;
-      } catch (err) {
-        console.error(err);
-        if (!silent) alert("Error saving quote: " + (err?.message || String(err)));
-        setSbStatus("bad", "SB: save failed");
-        return null;
-      }
-    }
-
-    async function saveCurrentQuote() {
-      await internalSaveQuote(false);
-    }
-
-    function getSavedQuoteById(id) {
-      return savedQuotes.find(q => q.quote_id === id) || null;
-    }
-
-    function loadQuoteFromSupabaseRow(row) {
-      currentQuoteId = row.quote_id;
-      customerNameInput.value = row.customer_name || "";
-      customerEmailInput.value = row.customer_email || "";
-      hourlyRateInput.value = typeof row.hourly_rate === "number" ? row.hourly_rate : 75;
-      discountPercentInput.value = typeof row.discount_percent === "number" ? row.discount_percent : 0;
-      quoteItems = Array.isArray(row.quote_items) ? row.quote_items : [];
-      materials = Array.isArray(row.materials) ? row.materials : [];
-
-      renderQuoteItems();
-      renderMaterials();
-      updateTotals();
-      updateCurrentQuoteIdLabel();
-    }
-
-    function loadQuoteById(id) {
-      if (!id) return;
-      const row = getSavedQuoteById(id);
-      if (!row) {
-        alert("Saved quote not found.");
-        return;
-      }
-      loadQuoteFromSupabaseRow(row);
-    }
-
-    // ===== Service / options UI =====
+    // ===== Service UI =====
     function onServiceChange() {
       currentService = serviceSelect.value;
       optionsGrid.innerHTML = "";
@@ -1025,7 +878,6 @@
 
         const groupEl = document.createElement("div");
         groupEl.className = "option-group";
-        groupEl.dataset.category = cat;
 
         const header = document.createElement("div");
         header.className = "option-group-header";
@@ -1116,10 +968,8 @@
         if (!checked) return;
 
         const label = checked.value;
-        const row = databaseRows.find(r =>
-          r.service === currentService &&
-          r.category === cat.name &&
-          r.option === label
+        const row = databaseRows.find(
+          r => r.service === currentService && r.category === cat.name && r.option === label
         );
         const minutes = row ? (Number(row.minutes) || 0) : 0;
 
@@ -1133,19 +983,19 @@
 
       const totalMinutes = selections.reduce((sum, s) => sum + (Number(s.minutes) || 0), 0);
 
-      const item = {
+      quoteItems.push({
         id: Date.now() + Math.random(),
         service: currentService,
         selections,
         totalMinutes
-      };
+      });
 
-      quoteItems.push(item);
       renderQuoteItems();
     }
 
     function renderQuoteItems() {
       quoteItemsContainer.innerHTML = "";
+
       if (!quoteItems.length) {
         const empty = document.createElement("div");
         empty.className = "empty-state";
@@ -1213,7 +1063,7 @@
         });
       }
 
-      quoteItemsCount.textContent = (quoteItems.length === 1) ? "1 item in quote" : `${quoteItems.length} items in quote`;
+      quoteItemsCount.textContent = quoteItems.length === 1 ? "1 item in quote" : `${quoteItems.length} items in quote`;
       updateTotals();
     }
 
@@ -1228,8 +1078,8 @@
       hourlyRateInput.value = "75";
       discountPercentInput.value = "0";
       currentQuoteId = null;
-      updateCurrentQuoteIdLabel();
 
+      updateCurrentQuoteIdLabel();
       renderQuoteItems();
       renderMaterials();
       updateTotals();
@@ -1309,6 +1159,144 @@
       totalAfterTaxLabel.textContent = `$${totalAfterTax.toFixed(2)}`;
     }
 
+    // ===== Quotes (Supabase, timeout-safe) =====
+    async function fetchSavedQuotesFromBackend() {
+      try {
+        const { data, error } = await withTimeout(
+          supabase.from("quotes").select("*").order("timestamp", { ascending: false }),
+          8000,
+          "Supabase fetch"
+        );
+
+        if (error) {
+          setSbStatus("bad", "SB: fetch failed");
+          return;
+        }
+
+        savedQuotes = data || [];
+        refreshSavedQuotesDropdown();
+        setSbStatus("ok", `SB: ${savedQuotes.length} quotes`);
+      } catch (e) {
+        setSbStatus("bad", "SB: failed");
+      }
+    }
+
+    async function upsertQuoteToBackend(quoteObj) {
+      const payload = {
+        quote_id: quoteObj.id,
+        timestamp: quoteObj.timestamp,
+        customer_name: quoteObj.customerName,
+        customer_email: quoteObj.customerEmail,
+        hourly_rate: quoteObj.hourlyRate,
+        discount_percent: quoteObj.discountPercent,
+        quote_items: quoteObj.quoteItems,
+        materials: quoteObj.materials
+      };
+
+      const { error } = await withTimeout(
+        supabase.from("quotes").upsert(payload),
+        8000,
+        "Supabase upsert"
+      );
+
+      if (error) throw error;
+    }
+
+    function refreshSavedQuotesDropdown(filterText = "") {
+      const filter = (filterText || "").toLowerCase();
+      savedQuotesSelect.innerHTML = '<option value="">Select a saved quote…</option>';
+
+      savedQuotes.forEach(q => {
+        const d = q.timestamp ? new Date(q.timestamp) : new Date();
+        const dateStr = d.toLocaleDateString();
+        const id = q.quote_id;
+        const name = q.customer_name || "Customer";
+        const label = `${id} – ${name} – ${dateStr}`;
+
+        if (filter && !label.toLowerCase().includes(filter)) return;
+
+        const opt = document.createElement("option");
+        opt.value = id;
+        opt.textContent = label;
+        savedQuotesSelect.appendChild(opt);
+      });
+    }
+
+    function updateCurrentQuoteIdLabel() {
+      currentQuoteIdLabel.textContent = "Quote: " + (currentQuoteId ? currentQuoteId : "New");
+    }
+
+    function ensureCurrentQuoteId() {
+      if (!currentQuoteId) {
+        currentQuoteId = generateQuoteId();
+        updateCurrentQuoteIdLabel();
+      }
+      return currentQuoteId;
+    }
+
+    function buildQuoteObjectForSave(id) {
+      return {
+        id,
+        timestamp: Date.now(),
+        customerName: customerNameInput.value.trim(),
+        customerEmail: customerEmailInput.value.trim(),
+        hourlyRate: Number(hourlyRateInput.value) || 0,
+        discountPercent: Number(discountPercentInput.value) || 0,
+        quoteItems: quoteItems,
+        materials: materials
+      };
+    }
+
+    async function internalSaveQuote(silent = false) {
+      if (!quoteItems.length && !materials.length) {
+        if (!silent) alert("Cannot save an empty quote.");
+        return null;
+      }
+      const id = ensureCurrentQuoteId();
+      const quoteData = buildQuoteObjectForSave(id);
+
+      try {
+        await upsertQuoteToBackend(quoteData);
+        fetchSavedQuotesFromBackend(); // fire-and-forget
+        if (!silent) alert("Quote saved.");
+        return id;
+      } catch (err) {
+        setSbStatus("bad", "SB: save failed");
+        if (!silent) alert("Error saving quote.");
+        return null;
+      }
+    }
+
+    async function saveCurrentQuote() {
+      await internalSaveQuote(false);
+    }
+
+    function getSavedQuoteById(id) {
+      return savedQuotes.find(q => q.quote_id === id) || null;
+    }
+
+    function loadQuoteFromSupabaseRow(row) {
+      currentQuoteId = row.quote_id;
+      customerNameInput.value = row.customer_name || "";
+      customerEmailInput.value = row.customer_email || "";
+      hourlyRateInput.value = typeof row.hourly_rate === "number" ? row.hourly_rate : 75;
+      discountPercentInput.value = typeof row.discount_percent === "number" ? row.discount_percent : 0;
+      quoteItems = Array.isArray(row.quote_items) ? row.quote_items : [];
+      materials = Array.isArray(row.materials) ? row.materials : [];
+
+      renderQuoteItems();
+      renderMaterials();
+      updateTotals();
+      updateCurrentQuoteIdLabel();
+    }
+
+    function loadQuoteById(id) {
+      if (!id) return;
+      const row = getSavedQuoteById(id);
+      if (!row) return;
+      loadQuoteFromSupabaseRow(row);
+    }
+
     // ===== Quote text/HTML =====
     function buildQuoteText(quoteId) {
       const now = new Date();
@@ -1335,9 +1323,7 @@
 
       quoteItems.forEach((item, idx) => {
         lines.push(`Item ${idx + 1}: ${item.service}`);
-        item.selections.forEach(sel => {
-          lines.push(`  - ${sel.category}: ${sel.option} (${sel.minutes} min)`);
-        });
+        item.selections.forEach(sel => lines.push(`  - ${sel.category}: ${sel.option} (${sel.minutes} min)`));
         lines.push(`  Total time for this item: ${item.totalMinutes} min`);
         lines.push("");
       });
@@ -1455,7 +1441,6 @@
           <strong>Total after tax:</strong> $${totalAfterTax.toFixed(2)}
         </p>
       `;
-
       return html;
     }
 
@@ -1481,7 +1466,6 @@
       return services[0] + ", " + services[1] + " + " + (services.length - 2) + " more";
     }
 
-    // ===== Download & email =====
     async function downloadQuote() {
       if (!quoteItems.length && !materials.length) {
         alert("No items or materials in the quote yet.");
@@ -1534,36 +1518,27 @@
       emailjs
         .send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
         .then(() => alert("Quote sent successfully."))
-        .catch(err => {
-          console.error("EmailJS error:", err);
-          alert("EmailJS error: " + JSON.stringify(err));
-        })
+        .catch(() => alert("Email send failed."))
         .finally(() => {
           emailQuoteBtn.disabled = false;
           emailQuoteBtn.textContent = "Send quote by email";
         });
     }
 
-    // ===== NEW (B): Supabase check with timeout =====
-    async function supabaseSelectWithTimeout(ms = 9000) {
-      return await Promise.race([
-        supabase.from("quotes").select("quote_id").limit(1),
-        new Promise((_, reject) => setTimeout(() => reject(new Error("Supabase timeout")), ms))
-      ]);
-    }
-
     async function checkSupabaseQuick() {
       setSbStatus("warn", "SB: checking…");
       try {
-        const { error } = await supabaseSelectWithTimeout(9000);
+        const { error } = await withTimeout(
+          supabase.from("quotes").select("quote_id").limit(1),
+          7000,
+          "Supabase check"
+        );
         if (error) {
-          console.warn("Supabase check error:", error);
           setSbStatus("bad", "SB: check table/keys");
           return;
         }
         setSbStatus("ok", "SB: connected");
       } catch (e) {
-        console.warn("Supabase check failed:", e);
         setSbStatus("bad", "SB: failed");
       }
     }
@@ -1573,7 +1548,6 @@
       alert(sbStatusText.textContent);
     }
 
-    // ===== Events & init =====
     function attachEvents() {
       serviceSelect.addEventListener("change", onServiceChange);
       addToQuoteBtn.addEventListener("click", addToQuote);
@@ -1597,31 +1571,34 @@
         refreshSavedQuotesDropdown(quoteSearchInput.value);
       });
 
-      // connectivity panel
       saveCsvUrlBtn.addEventListener("click", () => {
         setCsvUrl(csvUrlInput.value);
         loadDatabaseFromCSV();
-        alert("CSV URL saved. Reloading…");
       });
 
       reloadCsvBtn.addEventListener("click", () => loadDatabaseFromCSV());
       testSupabaseBtn.addEventListener("click", () => testSupabase());
     }
 
-    async function init() {
+    function init() {
       attachEvents();
       updateCurrentQuoteIdLabel();
 
-      // fill CSV URL field from storage
       csvUrlInput.value = (localStorage.getItem(LS_CSV_URL_KEY) || "").trim();
 
-      // checks + loads
-      await checkSupabaseQuick();
-      await fetchSavedQuotesFromBackend();
-      await loadDatabaseFromCSV();
+      // start CSV immediately (never blocked)
+      loadDatabaseFromCSV();
+
+      // start supabase in background (never blocks CSV/UI)
+      checkSupabaseQuick();
+      fetchSavedQuotesFromBackend();
     }
 
-    init();
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+    } else {
+      init();
+    }
   </script>
 </body>
 </html>
