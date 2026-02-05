@@ -1047,53 +1047,83 @@
       URL.revokeObjectURL(url);
     }
 
-    async function sendQuoteByEmail(){
-      if(!quoteItems.length && !materials.length){ alert("No items/materials to send."); return; }
+	// REPLACE your existing sendQuoteByEmail() with this one
+	async function sendQuoteByEmail() {
+	  if (!quoteItems.length && !materials.length) {
+		alert("No items or materials in the quote yet.");
+		return;
+	  }
 
-      const toEmail = customerEmailInput.value.trim();
-      if(!toEmail){ alert("Please enter customer email."); return; }
+	  const toEmail = customerEmailInput.value.trim();
+	  if (!toEmail) {
+		alert("Please enter a customer email address.");
+		return;
+	  }
 
-      const quoteId = (await internalSaveQuote(true)) || ensureCurrentQuoteId();
-      const serviceSummary = buildServiceSummary();
-      const subject = `AnyFix Quote #${quoteId} – ${serviceSummary}`;
-      const customerName = customerNameInput.value.trim() || "Customer";
+	  const quoteId = (await internalSaveQuote(true)) || ensureCurrentQuoteId();
+	  const serviceSummary = buildServiceSummary();
+	  const customerName = customerNameInput.value.trim() || "Customer";
+	  const subject = `AnyFix Quote #${quoteId} – ${serviceSummary}`;
 
-      // MUST match template variable: {{{quote_html}}}
-      const quoteHtml = buildQuoteHtmlEmail(quoteId);
+	  // Build content
+	  const quoteText = buildQuoteText(quoteId);
+	  const quoteHtml = buildQuoteHtmlEmail(quoteId);
+	  const quoteHtmlMin = buildQuoteHtmlMinimalFallback(quoteId);
 
-      // Fallback text -> minimal HTML, in case the template has the wrong tag
-      const quoteText = buildQuoteText(quoteId);
-      const quoteHtmlMin = buildQuoteHtmlMinimalFallback(quoteId);
+	  // Init EmailJS
+	  try { emailjs.init(EMAILJS_PUBLIC_KEY); } catch (_) {}
 
-      try{ window.emailjs.init(EMAILJS_PUBLIC_KEY); } catch(_) {}
+	  emailQuoteBtn.disabled = true;
+	  emailQuoteBtn.textContent = "Sending...";
 
-      emailQuoteBtn.disabled = true;
-      emailQuoteBtn.textContent = "Sending...";
+	  // SEND LOTS OF ALIASES (EmailJS template variable name mismatch is the #1 cause of seeing {{var}} literally)
+	  const templateParams = {
+		// routing / common
+		to_email: toEmail,
+		email: toEmail,
+		reply_to: toEmail,
+		customer_email: toEmail,
 
-      // Send BOTH:
-      //  - quote_html (the exact variable your template is using)
-      //  - quote_text (if you want to switch template to plain text later)
-      //  - quote_html_min (if you need a safer HTML variant)
-      const templateParams = {
-        email: toEmail,
-        subject,
-        customer_name: customerName,
-        quote_id: quoteId,
-        service_summary: serviceSummary,
+		subject: subject,
+		quote_id: quoteId,
+		service_summary: serviceSummary,
 
-        quote_html: quoteHtml,
-        quote_html_min: quoteHtmlMin,
-        quote_text: quoteText
-      };
+		// name aliases
+		customer_name: customerName,
+		customerName: customerName,
+		to_name: customerName,
+		name: customerName,
 
-      window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
-        .then(() => alert("Quote sent."))
-        .catch(() => alert("Email failed."))
-        .finally(() => {
-          emailQuoteBtn.disabled = false;
-          emailQuoteBtn.textContent = "Send quote by email";
-        });
-    }
+		// html aliases
+		quote_html: quoteHtml,      // <-- your template shows {{{quote_html}}}
+		quoteHtml: quoteHtml,
+		quote_html_safe: quoteHtml,
+		html: quoteHtml,
+		message_html: quoteHtml,
+		project_summary: quoteHtml,
+
+		// safe/min html + text fallbacks
+		quote_html_min: quoteHtmlMin,
+		quote_text: quoteText,
+		message: quoteText,
+		text: quoteText
+	  };
+
+	  // If your template's To field uses something else (like {{to_email}}), this still covers it.
+
+	  emailjs
+		.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+		.then(() => alert("Quote sent successfully."))
+		.catch((err) => {
+		  console.error("EmailJS error:", err);
+		  alert("Email failed. Check EmailJS console/logs.");
+		})
+		.finally(() => {
+		  emailQuoteBtn.disabled = false;
+		  emailQuoteBtn.textContent = "Send quote by email";
+		});
+	}
+
 
     /* ===== Events ===== */
     function attachEvents(){
