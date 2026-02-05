@@ -383,13 +383,6 @@
       try { console.log("[AnyFix]", msg); } catch(e){}
     }
 
-    window.addEventListener("error", (e) => {
-      try { log("JS error: " + (e?.message || "unknown")); } catch(_) {}
-    });
-    window.addEventListener("unhandledrejection", (e) => {
-      try { log("Promise error: " + (e?.reason?.message || String(e?.reason || "unknown"))); } catch(_) {}
-    });
-
     function setCsvStatus(kind, text){
       csvDot.classList.remove("ok","bad","warn");
       csvDot.classList.add(kind);
@@ -410,30 +403,24 @@
 
     /* ===== CSV parsing (no external libs) ===== */
     function parseCSV(text){
-      // Robust-enough CSV parser: supports quotes, commas, CRLF
       const rows = [];
       let i = 0, field = "", row = [], inQuotes = false;
-
       const pushField = () => { row.push(field); field = ""; };
       const pushRow = () => { rows.push(row); row = []; };
 
       while (i < text.length) {
         const c = text[i];
-
         if (inQuotes) {
           if (c === '"') {
             const next = text[i+1];
             if (next === '"') { field += '"'; i += 2; continue; }
             inQuotes = false; i++; continue;
-          } else {
-            field += c; i++; continue;
-          }
+          } else { field += c; i++; continue; }
         } else {
           if (c === '"') { inQuotes = true; i++; continue; }
           if (c === ',') { pushField(); i++; continue; }
           if (c === '\n') { pushField(); pushRow(); i++; continue; }
           if (c === '\r') {
-            // ignore CR; handle CRLF
             i++;
             if (text[i] === '\n') { pushField(); pushRow(); i++; }
             continue;
@@ -441,10 +428,7 @@
           field += c; i++; continue;
         }
       }
-      pushField();
-      pushRow();
-
-      // remove empty trailing rows
+      pushField(); pushRow();
       while (rows.length && rows[rows.length-1].every(v => (v||"").trim() === "")) rows.pop();
       return rows;
     }
@@ -475,7 +459,7 @@
         .filter(r => r.service && r.category && r.option);
     }
 
-    /* ===== CSV loading (URL -> local fallback) ===== */
+    /* ===== CSV loading ===== */
     function getCsvUrl(){
       const saved = (localStorage.getItem(LS_CSV_URL_KEY) || "").trim();
       return saved || "/database.csv";
@@ -498,36 +482,26 @@
         const res = await fetch(url, { cache: "no-store", signal: controller.signal });
         if (!res.ok) throw new Error("HTTP " + res.status);
         return await res.text();
-      } finally {
-        clearTimeout(t);
-      }
+      } finally { clearTimeout(t); }
     }
 
     async function loadDatabaseFromURL(){
       const base = getCsvUrl();
-      const candidates = [
-        base,
-        "/database.csv",
-        "./database.csv",
-        "database.csv"
-      ];
+      const candidates = [ base, "/database.csv", "./database.csv", "database.csv" ];
 
       setCsvStatus("warn", "CSV: loading…");
-      log("CSV: trying " + candidates.join(", "));
+      log("CSV: trying URL candidates");
 
       for (const c of candidates){
         try{
           const url = cacheBust(c);
           const text = await fetchText(url, 8000);
-          const objs = rowsToObjects(text);
-          const normalized = normalizeDatabaseRows(objs);
+          const normalized = normalizeDatabaseRows(rowsToObjects(text));
           if (!normalized.length) throw new Error("0 rows");
           databaseRows = normalized;
-
-          localStorage.setItem(LS_LOCAL_CSV_TEXT, text); // keep last known good
+          localStorage.setItem(LS_LOCAL_CSV_TEXT, text);
           setCsvStatus("ok", "CSV: " + databaseRows.length + " rows");
           log("CSV: loaded from " + c);
-
           initServices();
           return true;
         } catch(e){
@@ -535,30 +509,13 @@
         }
       }
 
-      setCsvStatus("bad", "CSV: failed");
-      log("CSV: URL failed, trying local cache…");
-
-      const cached = (localStorage.getItem(LS_LOCAL_CSV_TEXT) || "").trim();
-      if (cached){
-        try{
-          const objs = rowsToObjects(cached);
-          const normalized = normalizeDatabaseRows(objs);
-          if (normalized.length){
-            databaseRows = normalized;
-            setCsvStatus("ok", "CSV: " + databaseRows.length + " rows (local)");
-            log("CSV: loaded from local cache");
-            initServices();
-            return true;
-          }
-        } catch(_){}
-      }
-
+      setCsvStatus("bad", "CSV: needs input");
+      log("CSV: URL failed");
       return false;
     }
 
     function loadDatabaseFromText(csvText, label){
-      const objs = rowsToObjects(csvText || "");
-      const normalized = normalizeDatabaseRows(objs);
+      const normalized = normalizeDatabaseRows(rowsToObjects(csvText || ""));
       if (!normalized.length) return false;
       databaseRows = normalized;
       localStorage.setItem(LS_LOCAL_CSV_TEXT, csvText);
@@ -568,19 +525,13 @@
       return true;
     }
 
-    /* ===== Supabase REST (no supabase-js dependency) ===== */
+    /* ===== Supabase REST ===== */
     function sbHeaders(extra={}){
-      return {
-        "apikey": SUPABASE_ANON_KEY,
-        "Authorization": "Bearer " + SUPABASE_ANON_KEY,
-        ...extra
-      };
+      return { "apikey": SUPABASE_ANON_KEY, "Authorization": "Bearer " + SUPABASE_ANON_KEY, ...extra };
     }
     function sbUrl(path, params){
       const u = new URL(SUPABASE_URL.replace(/\/$/,"") + path);
-      if (params){
-        Object.entries(params).forEach(([k,v]) => u.searchParams.set(k, v));
-      }
+      if (params) Object.entries(params).forEach(([k,v]) => u.searchParams.set(k, v));
       return u.toString();
     }
 
@@ -617,9 +568,7 @@
     }
 
     async function sbUpsertQuote(quoteObj){
-      // PostgREST upsert with on_conflict=quote_id
       const url = sbUrl("/rest/v1/quotes", { on_conflict: "quote_id" });
-
       const payload = [{
         quote_id: quoteObj.id,
         timestamp: quoteObj.timestamp,
@@ -643,7 +592,7 @@
       if (!res.ok) throw new Error("HTTP " + res.status);
     }
 
-    /* ===== Quotes UI / behaviors ===== */
+    /* ===== App UI ===== */
     function initServices(){
       serviceSelect.innerHTML = '<option value="">Select a service…</option>';
       const services = Array.from(new Set(databaseRows.map(r => r.service))).sort();
@@ -653,8 +602,6 @@
         opt.textContent = service;
         serviceSelect.appendChild(opt);
       });
-
-      // keep current selection if possible
       if (currentService && services.includes(currentService)){
         serviceSelect.value = currentService;
         onServiceChange();
@@ -736,7 +683,6 @@
 
           rowEl.appendChild(main);
           rowEl.appendChild(time);
-
           list.appendChild(rowEl);
         });
 
@@ -790,13 +736,7 @@
 
       const totalMinutes = selections.reduce((sum, s) => sum + (Number(s.minutes)||0), 0);
 
-      quoteItems.push({
-        id: Date.now() + Math.random(),
-        service: currentService,
-        selections,
-        totalMinutes
-      });
-
+      quoteItems.push({ id: Date.now()+Math.random(), service: currentService, selections, totalMinutes });
       renderQuoteItems();
     }
 
@@ -893,7 +833,7 @@
       const cost = Number(materialCostInput.value);
       if (!desc || !isFinite(cost) || cost < 0) return;
 
-      materials.push({ id: Date.now() + Math.random(), description: desc, cost });
+      materials.push({ id: Date.now()+Math.random(), description: desc, cost });
       materialDescInput.value = "";
       materialCostInput.value = "";
       renderMaterials();
@@ -966,7 +906,6 @@
         const id = q.quote_id;
         const name = q.customer_name || "Customer";
         const label = `${id} – ${name} – ${dateStr}`;
-
         if (filter && !label.toLowerCase().includes(filter)) return;
 
         const opt = document.createElement("option");
@@ -1039,6 +978,132 @@
       return services[0] + ", " + services[1] + " + " + (services.length - 2) + " more";
     }
 
+    /* =========================================================
+       FIX: HTML EMAIL CONTENT MUST BE IN A SUPPORTED PARAM NAME
+       Many EmailJS templates won't render arbitrary "quote_html".
+       We'll send:
+         - quote_html_safe  (full HTML)
+         - quote_html_min   (fallback minimal HTML)
+         - quote_text       (plain text fallback)
+       Also: escape plain text + build robust HTML tables.
+    ========================================================= */
+
+    function escapeHtml(s){
+      return (s ?? "").toString()
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function buildQuoteHtmlEmail(quoteId){
+      const now = new Date();
+      const rate = Number(hourlyRateInput.value) || 0;
+      const name = customerNameInput.value.trim() || "Customer";
+      const totalMinutes = quoteItems.reduce((sum, item) => sum + (Number(item.totalMinutes)||0), 0);
+      const discountPercent = Number(discountPercentInput.value) || 0;
+
+      const laborSubtotal = (totalMinutes/60) * rate;
+      const discountAmount = laborSubtotal * (discountPercent/100);
+      const laborAfterDiscount = laborSubtotal - discountAmount;
+
+      const materialsTotal = materials.reduce((sum, m) => sum + (Number(m.cost)||0), 0);
+
+      const taxBase = laborAfterDiscount + materialsTotal;
+      const tax = taxBase * SALES_TAX_RATE;
+      const totalAfterTax = taxBase + tax;
+
+      // Items table rows
+      const itemRows = quoteItems.map((item, idx) => {
+        const details = item.selections
+          .map(sel => `${escapeHtml(sel.category)}: ${escapeHtml(sel.option)} (${Number(sel.minutes)||0} min)`)
+          .join("<br/>");
+
+        return `
+          <tr>
+            <td style="padding:10px 8px;border-bottom:1px solid #e5e7eb;vertical-align:top;">
+              <strong>${idx+1}. ${escapeHtml(item.service)}</strong>
+            </td>
+            <td style="padding:10px 8px;border-bottom:1px solid #e5e7eb;vertical-align:top;color:#4b5563;">
+              ${details}
+            </td>
+            <td style="padding:10px 8px;border-bottom:1px solid #e5e7eb;vertical-align:top;text-align:right;">
+              ${Number(item.totalMinutes)||0}
+            </td>
+          </tr>
+        `;
+      }).join("");
+
+      const materialsSection = materials.length ? `
+        <h3 style="margin:18px 0 8px 0;font-size:16px;color:#111827;">Materials</h3>
+        <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-size:14px;">
+          <thead>
+            <tr>
+              <th align="left" style="padding:8px;border-bottom:2px solid #111827;">Description</th>
+              <th align="right" style="padding:8px;border-bottom:2px solid #111827;">Cost</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${materials.map(m => `
+              <tr>
+                <td style="padding:8px;border-bottom:1px solid #e5e7eb;">${escapeHtml(m.description)}</td>
+                <td style="padding:8px;border-bottom:1px solid #e5e7eb;text-align:right;">$${(Number(m.cost)||0).toFixed(2)}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      ` : "";
+
+      return `
+        <div style="font-family:Arial,Helvetica,sans-serif;color:#111827;">
+          <p style="margin:0 0 10px 0;font-size:14px;">Hi ${escapeHtml(name)},</p>
+
+          <p style="margin:0 0 12px 0;font-size:14px;color:#374151;">
+            Here is your AnyFix quote (ID <strong>${escapeHtml(quoteId)}</strong>) generated on ${escapeHtml(now.toLocaleString())}.
+          </p>
+
+          <h3 style="margin:18px 0 8px 0;font-size:16px;color:#111827;">Quote Details</h3>
+
+          <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-size:14px;">
+            <thead>
+              <tr>
+                <th align="left" style="padding:8px;border-bottom:2px solid #111827;">Item</th>
+                <th align="left" style="padding:8px;border-bottom:2px solid #111827;">Details</th>
+                <th align="right" style="padding:8px;border-bottom:2px solid #111827;">Time (min)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itemRows || `
+                <tr><td colspan="3" style="padding:10px 8px;border-bottom:1px solid #e5e7eb;color:#6b7280;">No items</td></tr>
+              `}
+            </tbody>
+          </table>
+
+          ${materialsSection}
+
+          <h3 style="margin:18px 0 8px 0;font-size:16px;color:#111827;">Summary</h3>
+
+          <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-size:14px;">
+            <tbody>
+              <tr><td style="padding:6px 0;color:#6b7280;">Hourly rate</td><td style="padding:6px 0;text-align:right;">$${rate.toFixed(2)}</td></tr>
+              <tr><td style="padding:6px 0;color:#6b7280;">Labor time</td><td style="padding:6px 0;text-align:right;">${totalMinutes} min</td></tr>
+              <tr><td style="padding:6px 0;color:#6b7280;">Labor subtotal</td><td style="padding:6px 0;text-align:right;">$${laborSubtotal.toFixed(2)}</td></tr>
+              <tr><td style="padding:6px 0;color:#6b7280;">Discount (${discountPercent.toFixed(0)}%)</td><td style="padding:6px 0;text-align:right;">-$${discountAmount.toFixed(2)}</td></tr>
+              <tr><td style="padding:6px 0;color:#6b7280;">Labor after discount</td><td style="padding:6px 0;text-align:right;">$${laborAfterDiscount.toFixed(2)}</td></tr>
+              <tr><td style="padding:6px 0;color:#6b7280;">Materials</td><td style="padding:6px 0;text-align:right;">$${materialsTotal.toFixed(2)}</td></tr>
+              <tr><td style="padding:6px 0;color:#6b7280;">Tax (10.2%)</td><td style="padding:6px 0;text-align:right;">$${tax.toFixed(2)}</td></tr>
+              <tr><td style="padding:10px 0;font-weight:700;">Total after tax</td><td style="padding:10px 0;text-align:right;font-weight:700;">$${totalAfterTax.toFixed(2)}</td></tr>
+            </tbody>
+          </table>
+
+          <p style="margin:16px 0 0 0;font-size:12px;color:#6b7280;">
+            This quote is an estimate based on time, materials, and scope. Reply to this email if you'd like to schedule or make changes.
+          </p>
+        </div>
+      `;
+    }
+
     function buildQuoteText(quoteId){
       const now = new Date();
       const rate = Number(hourlyRateInput.value) || 0;
@@ -1057,25 +1122,20 @@
       const lines = [];
       lines.push(`AnyFix Quote #${quoteId}`);
       lines.push(`For: ${name}`);
-      lines.push("====================");
       lines.push(`Generated: ${now.toLocaleString()}`);
       lines.push("");
-
       quoteItems.forEach((item, idx) => {
         lines.push(`Item ${idx+1}: ${item.service}`);
         item.selections.forEach(sel => lines.push(`  - ${sel.category}: ${sel.option} (${sel.minutes} min)`));
         lines.push(`  Total time for this item: ${item.totalMinutes} min`);
         lines.push("");
       });
-
       if (materials.length){
         lines.push("Materials:");
-        materials.forEach(m => lines.push(`  - ${m.description}: $${m.cost.toFixed(2)}`));
+        materials.forEach(m => lines.push(`  - ${m.description}: $${Number(m.cost||0).toFixed(2)}`));
         lines.push("");
       }
-
       lines.push("Summary");
-      lines.push("-------");
       lines.push(`Hourly rate: $${rate.toFixed(2)}`);
       lines.push(`Labor time: ${totalMinutes} min`);
       lines.push(`Labor subtotal: $${laborSubtotal.toFixed(2)}`);
@@ -1084,8 +1144,14 @@
       lines.push(`Materials: $${materialsTotal.toFixed(2)}`);
       lines.push(`Tax (10.2%): $${tax.toFixed(2)}`);
       lines.push(`Total after tax: $${totalAfterTax.toFixed(2)}`);
-
       return lines.join("\n");
+    }
+
+    function buildQuoteHtmlMinimalFallback(quoteId){
+      // super safe, for templates that only render plain HTML in a single variable
+      const text = buildQuoteText(quoteId);
+      const safe = escapeHtml(text).replaceAll("\n","<br/>");
+      return `<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.4;color:#111827;">${safe}</div>`;
     }
 
     async function downloadQuote(){
@@ -1104,39 +1170,53 @@
     }
 
     async function sendQuoteByEmail(){
-      if (!quoteItems.length && !materials.length) return;
+      if (!quoteItems.length && !materials.length) { alert("No items/materials to send."); return; }
+
       const toEmail = customerEmailInput.value.trim();
-      if (!toEmail) return;
+      if (!toEmail) { alert("Please enter customer email."); return; }
 
       const quoteId = (await internalSaveQuote(true)) || ensureCurrentQuoteId();
       const serviceSummary = buildServiceSummary();
-      const quoteText = buildQuoteText(quoteId);
       const subject = `AnyFix Quote #${quoteId} – ${serviceSummary}`;
       const customerName = customerNameInput.value.trim() || "Customer";
 
+      const quoteText = buildQuoteText(quoteId);
+      const quoteHtmlSafe = buildQuoteHtmlEmail(quoteId);
+      const quoteHtmlMin = buildQuoteHtmlMinimalFallback(quoteId);
+
       if (!window.emailjs) { alert("Email library blocked."); return; }
 
-      try{
-        window.emailjs.init(EMAILJS_PUBLIC_KEY);
-      } catch(_) {}
+      try{ window.emailjs.init(EMAILJS_PUBLIC_KEY); } catch(_) {}
 
       emailQuoteBtn.disabled = true;
       emailQuoteBtn.textContent = "Sending...";
 
-      window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      // IMPORTANT: we send multiple keys, so your template can use whichever is set up.
+      // In EmailJS template, use ONE of these variables in the email body:
+      //   {{quote_html_safe}}  (recommended)
+      //   {{quote_html_min}}   (fallback)
+      //   {{quote_text}}       (plain text)
+      const templateParams = {
+        // common
+        email: toEmail,
+        subject,
+        customer_name: customerName,
         quote_id: quoteId,
         service_summary: serviceSummary,
-        customer_name: customerName,
-        quote_text: quoteText,
-        email: toEmail,
-        subject
-      })
-      .then(() => alert("Quote sent."))
-      .catch(() => alert("Email failed."))
-      .finally(() => {
-        emailQuoteBtn.disabled = false;
-        emailQuoteBtn.textContent = "Send quote by email";
-      });
+
+        // rendering options
+        quote_html_safe: quoteHtmlSafe,
+        quote_html_min: quoteHtmlMin,
+        quote_text: quoteText
+      };
+
+      window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+        .then(() => alert("Quote sent."))
+        .catch(() => alert("Email failed."))
+        .finally(() => {
+          emailQuoteBtn.disabled = false;
+          emailQuoteBtn.textContent = "Send quote by email";
+        });
     }
 
     /* ===== Events ===== */
@@ -1175,14 +1255,8 @@
 
       quoteSearchInput.addEventListener("input", () => refreshSavedQuotesDropdown(quoteSearchInput.value));
 
-      saveCsvUrlBtn.addEventListener("click", async () => {
-        setCsvUrl(csvUrlInput.value);
-        await loadDatabaseFromURL();
-      });
-
-      reloadCsvBtn.addEventListener("click", async () => {
-        await loadDatabaseFromURL();
-      });
+      saveCsvUrlBtn.addEventListener("click", async () => { setCsvUrl(csvUrlInput.value); await loadDatabaseFromURL(); });
+      reloadCsvBtn.addEventListener("click", async () => { await loadDatabaseFromURL(); });
 
       csvFileInput.addEventListener("change", async (e) => {
         const file = e.target.files && e.target.files[0];
@@ -1193,13 +1267,13 @@
       });
 
       usePastedCsvBtn.addEventListener("click", () => {
-        const ok = loadDatabaseFromText(csvPasteArea.value, "pasted");
+        const ok = loadDatabaseFromText(document.getElementById("csvPasteArea").value, "pasted");
         if (!ok) setCsvStatus("bad","CSV: invalid");
       });
 
       clearLocalCsvBtn.addEventListener("click", () => {
         localStorage.removeItem(LS_LOCAL_CSV_TEXT);
-        csvPasteArea.value = "";
+        document.getElementById("csvPasteArea").value = "";
         log("local CSV cleared");
       });
 
@@ -1213,32 +1287,25 @@
       updateCurrentQuoteIdLabel();
 
       csvUrlInput.value = (localStorage.getItem(LS_CSV_URL_KEY) || "").trim();
-      csvPasteArea.value = (localStorage.getItem(LS_LOCAL_CSV_TEXT) || "").trim();
+      document.getElementById("csvPasteArea").value = (localStorage.getItem(LS_LOCAL_CSV_TEXT) || "").trim();
 
       setCsvStatus("warn","CSV: loading…");
       setSbStatus("warn","SB: checking…");
 
-      // CSV first (never blocked)
       const okCsv = await loadDatabaseFromURL();
       if (!okCsv){
         const cached = (localStorage.getItem(LS_LOCAL_CSV_TEXT) || "").trim();
         if (cached){
           loadDatabaseFromText(cached, "local");
-        } else {
-          setCsvStatus("bad","CSV: needs input");
         }
       }
 
-      // Supabase in parallel (REST)
       await sbTest();
       await sbFetchQuotes();
     }
 
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", init);
-    } else {
-      init();
-    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+    else init();
   </script>
 </body>
 </html>
